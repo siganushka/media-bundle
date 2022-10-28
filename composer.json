@@ -1,0 +1,42 @@
+{
+    "name": "siganushka/media-bundle",
+    "description": "Media Bundle.",
+    "keywords": ["media-bundle"],
+    "homepage": "https://github.com/siganushka/media-bundle",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "siganushka",
+            "email": "siganushka@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "doctrine/doctrine-bundle": "^2.7",
+        "friendsofsymfony/rest-bundle": "^3.4",
+        "knplabs/knp-paginator-bundle": "^5.9",
+        "siganushka/doctrine-contracts": "dev-main",
+        "siganushka/registry-contracts": "^0.1",
+        "symfony/form": "^5.4|^6.0",
+        "symfony/framework-bundle": "^5.4|^6.0",
+        "symfony/validator": "^5.4|^6.0"
+    },
+    "require-dev": {
+        "symfony/phpunit-bridge": "^6.0",
+        "aliyuncs/oss-sdk-php": "^2.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Siganushka\\MediaBundle\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Siganushka\\MediaBundle\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
