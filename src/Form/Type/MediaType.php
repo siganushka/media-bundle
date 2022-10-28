@@ -19,6 +19,7 @@ class MediaType extends AbstractType
     {
         $builder
             ->add('channel', MediaChannelType::class, [
+                'label' => 'media.channel',
                 'constraints' => new NotBlank(),
             ])
         ;
@@ -40,6 +41,7 @@ class MediaType extends AbstractType
         /** @var FormInterface */
         $parent = $form->getParent();
         $parent->add('media', MediaFileType::class, [
+            'label' => 'media.file',
             'constraints' => $constraints,
         ]);
     }
