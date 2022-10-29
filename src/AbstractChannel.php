@@ -9,14 +9,9 @@ use Symfony\Component\Validator\Mapping\GenericMetadata;
 
 abstract class AbstractChannel implements ChannelInterface
 {
-    /**
-     * 为了避免同一目录下子目录/文件数量过多，使用 Channel+Date 格式的二级目录存储文件
-     * 考虑到文件在上传阶段已去重，为了保持文件 URL 尽可能短，因此使用 CRC32
-     * 作为文件名加上二级目录之后碰撞概率可以接受.
-     */
     public function getPathname(File $file): string
     {
-        return sprintf('%s/%s', str_replace('_', '-', $this->getAlias()), date('ym'));
+        return sprintf('%s/%s', str_replace('_', '-', $this->getAlias()), date('Ym'));
     }
 
     public function getFilename(File $file): string
