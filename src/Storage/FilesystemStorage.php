@@ -19,15 +19,15 @@ class FilesystemStorage implements StorageInterface
         $this->publicDir = $publicDir;
     }
 
-    public function save(ChannelInterface $channel, File $media): string
+    public function save(ChannelInterface $channel, File $file): string
     {
-        $pathname = $channel->getPathname($media);
-        $filename = $channel->getFilename($media);
+        $pathname = $channel->getPathname($file);
+        $filename = $channel->getFilename($file);
 
         $directory = sprintf('%s/%s', $this->publicDir, trim($pathname, '/'));
 
         try {
-            $targetFile = $media->move($directory, $filename);
+            $targetFile = $file->move($directory, $filename);
         } catch (\Throwable $th) {
             // add logger...
             throw $th;

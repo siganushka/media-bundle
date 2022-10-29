@@ -14,15 +14,15 @@ abstract class AbstractChannel implements ChannelInterface
      * 考虑到文件在上传阶段已去重，为了保持文件 URL 尽可能短，因此使用 CRC32
      * 作为文件名加上二级目录之后碰撞概率可以接受.
      */
-    public function getPathname(File $media): string
+    public function getPathname(File $file): string
     {
         return sprintf('%s/%s', str_replace('_', '-', $this->getAlias()), date('ym'));
     }
 
-    public function getFilename(File $media): string
+    public function getFilename(File $file): string
     {
-        $path = $media->getRealPath();
-        $extension = $media->guessExtension();
+        $path = $file->getRealPath();
+        $extension = $file->guessExtension();
 
         if ($path && $extension && $name = hash_file('CRC32', $path)) {
             return sprintf('%s.%s', $name, $extension);

@@ -8,7 +8,6 @@ use Siganushka\MediaBundle\Event\MediaFileSaveEvent;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class MediaFileSaveListener implements EventSubscriberInterface
 {
@@ -35,14 +34,10 @@ class MediaFileSaveListener implements EventSubscriberInterface
         // save to storage
         $mediaUrl = $this->storage->save($channel, $file);
 
-        $name = $file instanceof UploadedFile
-            ? $file->getClientOriginalName()
-            : pathinfo($mediaUrl, \PATHINFO_BASENAME);
-
         $meida = $this->mediaRepository->createNew();
         $meida->setHash($event->getFileHash());
         $meida->setChannel($channel->getAlias());
-        $meida->setName($name);
+        $meida->setName(pathinfo($mediaUrl, \PATHINFO_BASENAME));
         $meida->setSize($size);
         $meida->setWidth($width);
         $meida->setHeight($height);

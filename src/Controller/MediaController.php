@@ -10,7 +10,6 @@ use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\View\View;
 use Knp\Component\Pager\PaginatorInterface;
 use Siganushka\MediaBundle\ChannelInterface;
-use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Event\MediaFileSaveEvent;
 use Siganushka\MediaBundle\Form\Type\MediaType;
 use Siganushka\MediaBundle\Repository\MediaRepository;
@@ -63,7 +62,7 @@ class MediaController extends AbstractFOSRestController
         }
 
         $media = $this->mediaRepository->findOneBy(['hash' => $hash]);
-        if ($media instanceof Media) {
+        if ($media) {
             return $this->viewResponse($media);
         }
 
@@ -71,7 +70,7 @@ class MediaController extends AbstractFOSRestController
         $eventDispatcher->dispatch($event);
 
         $media = $event->getMedia();
-        if (!$media instanceof Media) {
+        if (!$media) {
             throw new HttpException(500, 'Unable to save file.');
         }
 

@@ -5,15 +5,13 @@ declare(strict_types=1);
 namespace Siganushka\MediaBundle\DependencyInjection;
 
 use Siganushka\MediaBundle\ChannelInterface;
-use Siganushka\MediaBundle\Doctrine\Types\MediaUrlType;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-class SiganushkaMediaExtension extends Extension implements PrependExtensionInterface
+class SiganushkaMediaExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
@@ -28,20 +26,5 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         $container->registerForAutoconfiguration(ChannelInterface::class)
             ->addTag('siganushka_media.channel')
         ;
-    }
-
-    public function prepend(ContainerBuilder $container): void
-    {
-        if (!$container->hasExtension('doctrine')) {
-            return;
-        }
-
-        $container->prependExtensionConfig('doctrine', [
-            'dbal' => [
-                'types' => [
-                    'media' => MediaUrlType::class,
-                ],
-            ],
-        ]);
     }
 }
