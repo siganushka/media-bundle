@@ -11,12 +11,14 @@ use FOS\RestBundle\View\View;
 use Knp\Component\Pager\PaginatorInterface;
 use Siganushka\MediaBundle\ChannelInterface;
 use Siganushka\MediaBundle\Entity\Media;
+use Siganushka\MediaBundle\Event\MediaFileSaveEvent;
 use Siganushka\MediaBundle\Form\Type\MediaType;
 use Siganushka\MediaBundle\Repository\MediaRepository;
-use Siganushka\MediaBundle\Storage\StorageInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class MediaController extends AbstractFOSRestController
 {
@@ -39,12 +41,9 @@ class MediaController extends AbstractFOSRestController
         return $this->viewResponse($pagination);
     }
 
-    public function postCollection(Request $request, EntityManagerInterface $entityManager, StorageInterface $storage)
+    public function postCollection(Request $request, EventDispatcherInterface $eventDispatcher, EntityManagerInterface $entityManager)
     {
-        $formData = array_replace_recursive(
-            $request->request->all(),
-            $request->files->all()
-        );
+        $formData = array_replace_recursive($request->request->all(), $request->files->all());
 
         $form = $this->createForm(MediaType::class);
         $form->submit($formData);
@@ -56,38 +55,30 @@ class MediaController extends AbstractFOSRestController
         /** @var ChannelInterface */
         $channel = $form['channel']->getData();
         /** @var UploadedFile */
-        $media = $form['media']->getData();
+        $file = $form['file']->getData();
 
-        $path = $media->getRealPath();
-        $size = $media->getSize();
-
-        if (false === $hash = hash_file('MD5', $path)) {
-            throw new \RuntimeException('Unable to hash file.');
+        $path = $file->getRealPath();
+        if ($path && false === $hash = hash_file('MD5', $path)) {
+            throw new HttpException(400, 'Unable to hash file.');
         }
 
-        $entity = $this->mediaRepository->findOneBy(['hash' => $hash]);
-        if ($entity instanceof Media) {
-            return $this->viewResponse($entity);
+        $media = $this->mediaRepository->findOneBy(['hash' => $hash]);
+        if ($media instanceof Media) {
+            return $this->viewResponse($media);
         }
 
-        // try to fetch width & height
-        [$width, $height] = @getimagesize($path);
+        $event = new MediaFileSaveEvent($channel, $file, $hash);
+        $eventDispatcher->dispatch($event);
 
-        // upload to storage
-        $mediaUrl = $storage->save($channel, $media);
+        $media = $event->getMedia();
+        if (!$media instanceof Media) {
+            throw new HttpException(500, 'Unable to save file.');
+        }
 
-        $entity = $this->mediaRepository->createNew();
-        $entity->setHash($hash);
-        $entity->setChannel($channel->getAlias());
-        $entity->setSize($size);
-        $entity->setWidth($width);
-        $entity->setHeight($height);
-        $entity->setUrl($mediaUrl);
-
-        $entityManager->persist($entity);
+        $entityManager->persist($media);
         $entityManager->flush();
 
-        return $this->viewResponse($entity);
+        return $this->viewResponse($media);
     }
 
     public function getItem(int $id): Response

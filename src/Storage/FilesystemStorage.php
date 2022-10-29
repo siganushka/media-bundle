@@ -21,22 +21,23 @@ class FilesystemStorage implements StorageInterface
 
     public function save(ChannelInterface $channel, File $media): string
     {
-        $newFile = sprintf('%s/%s', $this->publicDir, ltrim($channel->getNewFile($media), '/'));
+        $pathname = $channel->getPathname($media);
+        $filename = $channel->getFilename($media);
 
-        $directory = pathinfo($newFile, \PATHINFO_DIRNAME);
-        $name = pathinfo($newFile, \PATHINFO_BASENAME);
+        $directory = sprintf('%s/%s', $this->publicDir, trim($pathname, '/'));
 
         try {
-            $media->move($directory, $name);
+            $targetFile = $media->move($directory, $filename);
         } catch (\Throwable $th) {
-            // write logger...
+            // add logger...
             throw $th;
         }
 
-        if (str_starts_with($newFile, $this->publicDir)) {
-            $newFile = substr($newFile, \strlen($this->publicDir));
+        $path = $targetFile->getRealPath();
+        if (str_starts_with($path, $this->publicDir)) {
+            $path = substr($path, \strlen($this->publicDir));
         }
 
-        return $this->urlHelper->getAbsoluteUrl($newFile);
+        return $this->urlHelper->getAbsoluteUrl($path);
     }
 }

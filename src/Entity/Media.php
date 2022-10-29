@@ -9,15 +9,17 @@ use Siganushka\Contracts\Doctrine\ResourceInterface;
 use Siganushka\Contracts\Doctrine\ResourceTrait;
 use Siganushka\Contracts\Doctrine\TimestampableInterface;
 use Siganushka\Contracts\Doctrine\TimestampableTrait;
+use Siganushka\MediaBundle\Repository\MediaRepository;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ORM\MappedSuperclass
+ * @ORM\Entity(repositoryClass=MediaRepository::class)
  */
 class Media implements ResourceInterface, TimestampableInterface
 {
     use ResourceTrait;
     use TimestampableTrait;
+
     public const REFERENCE_KEY = 'ref';
 
     /**
@@ -31,6 +33,13 @@ class Media implements ResourceInterface, TimestampableInterface
      * @Groups({"media"})
      */
     private ?string $channel = null;
+
+    /**
+     * @ORM\Column(type="string")
+     *
+     * @Groups({"media"})
+     */
+    private ?string $name = null;
 
     /**
      * @ORM\Column(type="string")
@@ -87,6 +96,18 @@ class Media implements ResourceInterface, TimestampableInterface
     public function isChannel(string $channel): bool
     {
         return $this->channel && $this->channel === $channel;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
     }
 
     public function getUrl(): ?string

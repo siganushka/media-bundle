@@ -7,6 +7,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use Siganushka\MediaBundle\ChannelRegistry;
 use Siganushka\MediaBundle\Controller\MediaController;
 use Siganushka\MediaBundle\Entity\Media;
+use Siganushka\MediaBundle\EventListener\MediaFileSaveListener;
 use Siganushka\MediaBundle\Form\Extension\ChannelTypeExtension;
 use Siganushka\MediaBundle\Form\Type\MediaChannelType;
 use Siganushka\MediaBundle\Form\Type\MediaFileType;
@@ -14,6 +15,7 @@ use Siganushka\MediaBundle\Form\Type\MediaType;
 use Siganushka\MediaBundle\Form\Type\MediaUrlType;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Storage\FilesystemStorage;
+use Siganushka\MediaBundle\Storage\StorageInterface;
 
 return static function (ContainerConfigurator $configurator): void {
     $configurator->services()
@@ -54,5 +56,10 @@ return static function (ContainerConfigurator $configurator): void {
             ->arg(0, service('url_helper'))
             ->arg(1, param('kernel.project_dir').'/public')
             ->alias(FilesystemStorage::class, 'siganushka_media.storage.filesystem')
+
+        ->set('siganushka_media.listener.media_file_save', MediaFileSaveListener::class)
+            ->arg(0, service(StorageInterface::class))
+            ->arg(1, service('siganushka_media.repository.media'))
+            ->tag('kernel.event_subscriber')
     ;
 };

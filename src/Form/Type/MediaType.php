@@ -40,7 +40,7 @@ class MediaType extends AbstractType
 
         /** @var FormInterface */
         $parent = $form->getParent();
-        $parent->add('media', MediaFileType::class, [
+        $parent->add('file', MediaFileType::class, [
             'label' => 'media.file',
             'constraints' => $constraints,
         ]);

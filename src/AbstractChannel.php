@@ -10,30 +10,25 @@ use Symfony\Component\Validator\Mapping\GenericMetadata;
 abstract class AbstractChannel implements ChannelInterface
 {
     /**
-     * 返回新文件保存路径（包含文件名）.
-     *
-     * 为了避免同一目录下子目录/文件数量过多，使用渠道+年月格式的二级目录存储文件
+     * 为了避免同一目录下子目录/文件数量过多，使用 Channel+Date 格式的二级目录存储文件
      * 考虑到文件在上传阶段已去重，为了保持文件 URL 尽可能短，因此使用 CRC32
-     * 作为文件名加上二级目录之后碰撞概率可以接受
-     *
-     * @param File $media 文件对象
-     *
-     * @return string 新文件保存路径（包含文件名）
+     * 作为文件名加上二级目录之后碰撞概率可以接受.
      */
-    public function getNewFile(File $media): string
+    public function getPathname(File $media): string
     {
-        $directory = str_replace('_', '-', $this->getAlias());
+        return sprintf('%s/%s', str_replace('_', '-', $this->getAlias()), date('ym'));
+    }
 
-        $name = hash_file('CRC32', $media->getRealPath());
-        if (false === $name) {
-            throw new \RuntimeException('Unable to hash file.');
+    public function getFilename(File $media): string
+    {
+        $path = $media->getRealPath();
+        $extension = $media->guessExtension();
+
+        if ($path && $extension && $name = hash_file('CRC32', $path)) {
+            return sprintf('%s.%s', $name, $extension);
         }
 
-        if (null === $extension = $media->guessExtension()) {
-            throw new \RuntimeException('Unable to guess extension.');
-        }
-
-        return sprintf('/%s/%s/%s.%s', $directory, date('ym'), $name, $extension);
+        throw new \RuntimeException('Unable to read file.');
     }
 
     public function getConstraints(): array
