@@ -107,10 +107,7 @@ class MediaController extends AbstractFOSRestController
     protected function viewResponse($data = null, int $statusCode = null, array $headers = []): Response
     {
         $context = new Context();
-        $context->setGroups([
-            'trait_resource', 'trait_sortable', 'trait_enable', 'trait_timestampable',
-            'media',
-        ]);
+        $context->setGroups(['trait_timestampable', 'media']);
 
         $view = View::create($data, $statusCode, $headers);
         $view->setContext($context);

@@ -20,7 +20,8 @@ class Media implements ResourceInterface, TimestampableInterface
     use ResourceTrait;
     use TimestampableTrait;
 
-    public const REFERENCE_KEY = 'ref';
+    public const REFERENCE_FIELD = 'id';
+    public const REFERENCE_QUERY = 'ref';
 
     /**
      * @ORM\Column(type="string", length=32, unique=true, options={"fixed": true})
@@ -112,11 +113,7 @@ class Media implements ResourceInterface, TimestampableInterface
 
     public function getUrl(): ?string
     {
-        if (null === $this->url) {
-            return $this->url;
-        }
-
-        return $this->url.'?'.http_build_query([self::REFERENCE_KEY => $this->hash]);
+        return $this->url;
     }
 
     public function setUrl(?string $url): self
@@ -160,5 +157,17 @@ class Media implements ResourceInterface, TimestampableInterface
         $this->height = $height;
 
         return $this;
+    }
+
+    /**
+     * @Groups({"media"})
+     */
+    public function getReference(): ?string
+    {
+        if (null === $this->url) {
+            return $this->url;
+        }
+
+        return $this->url.'?'.http_build_query([self::REFERENCE_QUERY => $this->{self::REFERENCE_FIELD}]);
     }
 }

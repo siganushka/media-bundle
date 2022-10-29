@@ -70,10 +70,10 @@ class MediaUrlType extends AbstractType
         }
 
         parse_str($queryString, $queries);
-        if (empty($reference = $queries[Media::REFERENCE_KEY] ?? null)) {
+        if (empty($reference = $queries[Media::REFERENCE_QUERY] ?? null)) {
             return null;
         }
 
-        return $this->mediaRepository->findOneBy(['hash' => $reference]);
+        return $this->mediaRepository->findOneBy([Media::REFERENCE_FIELD => $reference]);
     }
 }
