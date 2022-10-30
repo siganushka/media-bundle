@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\DependencyInjection;
 
+use Siganushka\MediaBundle\Storage\FilesystemStorage;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -19,7 +20,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('storage')
-                    ->defaultValue('siganushka_media.storage.filesystem')
+                    ->defaultValue(FilesystemStorage::class)
                     ->cannotBeEmpty()
                 ->end()
         ;

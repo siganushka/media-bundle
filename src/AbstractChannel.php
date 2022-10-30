@@ -34,6 +34,14 @@ abstract class AbstractChannel implements ChannelInterface
         return $metadata->getConstraints();
     }
 
+    public function onPreSave(File $file): void
+    {
+    }
+
+    public function onPostSave(string $mediaUrl): void
+    {
+    }
+
     public function getAlias(): string
     {
         if (preg_match('~([^\\\\]+?)?$~i', static::class, $matches)) {

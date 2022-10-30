@@ -35,13 +35,10 @@ class MediaRepository extends ServiceEntityRepository
         ;
     }
 
-    /**
-     * @param array ...$arguments
-     */
-    public function createNew(...$arguments): Media
+    public function createNew(): Media
     {
         $ref = new \ReflectionClass($this->_entityName);
 
-        return $ref->newInstanceArgs($arguments);
+        return $ref->newInstance();
     }
 }

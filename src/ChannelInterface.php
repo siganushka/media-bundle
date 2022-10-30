@@ -34,4 +34,18 @@ interface ChannelInterface extends AliasableInterface
      * @return array<int, Constraint>
      */
     public function getConstraints(): array;
+
+    /**
+     * 文件保存前置事件回调.
+     *
+     * @param File $file 文件对象
+     */
+    public function onPreSave(File $file): void;
+
+    /**
+     * 文件保存后置事件回调.
+     *
+     * @param string $mediaUrl 文件的 URL
+     */
+    public function onPostSave(string $mediaUrl): void;
 }

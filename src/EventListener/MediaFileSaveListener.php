@@ -22,8 +22,10 @@ class MediaFileSaveListener implements EventSubscriberInterface
 
     public function onMediaFileSave(MediaFileSaveEvent $event): void
     {
-        $channel = $event->getChannel();
         $file = $event->getFile();
+
+        $channel = $event->getChannel();
+        $channel->onPreSave($file);
 
         $path = $file->getRealPath();
         $size = $file->getSize();
@@ -33,6 +35,7 @@ class MediaFileSaveListener implements EventSubscriberInterface
 
         // save to storage
         $mediaUrl = $this->storage->save($channel, $file);
+        $channel->onPostSave($mediaUrl);
 
         $meida = $this->mediaRepository->createNew();
         $meida->setHash($event->getFileHash());
