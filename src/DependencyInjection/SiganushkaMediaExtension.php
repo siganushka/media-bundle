@@ -6,15 +6,18 @@ namespace Siganushka\MediaBundle\DependencyInjection;
 
 use Siganushka\MediaBundle\ChannelInterface;
 use Siganushka\MediaBundle\ChannelRegistry;
+use Siganushka\MediaBundle\Entity\Media;
+use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Storage\FilesystemStorage;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-class SiganushkaMediaExtension extends Extension
+class SiganushkaMediaExtension extends Extension implements PrependExtensionInterface
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
@@ -26,6 +29,9 @@ class SiganushkaMediaExtension extends Extension
 
         $container->setAlias(StorageInterface::class, $config['storage']);
 
+        $mediaRepositoryDef = $container->findDefinition(MediaRepository::class);
+        $mediaRepositoryDef->setArgument('$entityClass', $config['media_class']);
+
         $filesystemStorageDef = $container->findDefinition(FilesystemStorage::class);
         $filesystemStorageDef->setArgument('$publicDir', '%kernel.project_dir%/public');
 
@@ -35,5 +41,26 @@ class SiganushkaMediaExtension extends Extension
         $container->registerForAutoconfiguration(ChannelInterface::class)
             ->addTag('siganushka_media.channel')
         ;
+    }
+
+    public function prepend(ContainerBuilder $container): void
+    {
+        if (!$container->hasExtension('siganushka_generic')) {
+            return;
+        }
+
+        $configs = $container->getExtensionConfig($this->getAlias());
+
+        $configuration = new Configuration();
+        $config = $this->processConfiguration($configuration, $configs);
+
+        $overrideMappings = [];
+        if (Media::class !== $config['media_class']) {
+            $overrideMappings[] = Media::class;
+        }
+
+        $container->prependExtensionConfig('siganushka_generic', [
+            'doctrine' => ['entity_to_superclass' => $overrideMappings],
+        ]);
     }
 }

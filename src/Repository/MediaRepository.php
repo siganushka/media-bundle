@@ -6,7 +6,6 @@ namespace Siganushka\MediaBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\Persistence\ManagerRegistry;
 use Siganushka\MediaBundle\Entity\Media;
 
 /**
@@ -22,11 +21,6 @@ use Siganushka\MediaBundle\Entity\Media;
  */
 class MediaRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Media::class);
-    }
-
     public function createQueryBuilderWithSorted(): QueryBuilder
     {
         return $this->createQueryBuilder('m')
