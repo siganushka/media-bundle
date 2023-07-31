@@ -11,6 +11,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 class MediaType extends AbstractType
@@ -28,6 +29,13 @@ class MediaType extends AbstractType
             ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'formModifier'])
             ->addEventListener(FormEvents::POST_SUBMIT, [$this, 'formModifier'])
         ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'csrf_protection' => false,
+        ]);
     }
 
     public function formModifier(FormEvent $event): void
