@@ -9,6 +9,7 @@ use FOS\RestBundle\Context\Context;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\View\View;
 use Knp\Component\Pager\PaginatorInterface;
+use Siganushka\GenericBundle\Exception\ResourceNotFoundException;
 use Siganushka\MediaBundle\ChannelInterface;
 use Siganushka\MediaBundle\Event\MediaFileSaveEvent;
 use Siganushka\MediaBundle\Form\Type\MediaType;
@@ -84,7 +85,7 @@ class MediaController extends AbstractFOSRestController
     {
         $entity = $this->mediaRepository->find($id);
         if (!$entity) {
-            throw $this->createNotFoundException(sprintf('Resource with value "%d" not found.', $id));
+            throw new ResourceNotFoundException($id);
         }
 
         return $this->viewResponse($entity);
@@ -94,7 +95,7 @@ class MediaController extends AbstractFOSRestController
     {
         $entity = $this->mediaRepository->find($id);
         if (!$entity) {
-            throw $this->createNotFoundException(sprintf('Resource with value "%d" not found.', $id));
+            throw new ResourceNotFoundException($id);
         }
 
         $entityManager->remove($entity);

@@ -49,7 +49,7 @@ class MediaFileSaveListener implements EventSubscriberInterface
         $event->setMedia($meida)->stopPropagation();
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             MediaFileSaveEvent::class => 'onMediaFileSave',
