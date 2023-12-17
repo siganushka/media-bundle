@@ -37,16 +37,16 @@ class MediaFileSaveListener implements EventSubscriberInterface
         $mediaUrl = $this->storage->save($channel, $file);
         $channel->onPostSave($mediaUrl);
 
-        $meida = $this->mediaRepository->createNew();
-        $meida->setHash($event->getFileHash());
-        $meida->setChannel($channel->getAlias());
-        $meida->setName(pathinfo($mediaUrl, \PATHINFO_BASENAME));
-        $meida->setSize($size);
-        $meida->setWidth($width);
-        $meida->setHeight($height);
-        $meida->setUrl($mediaUrl);
+        $media = $this->mediaRepository->createNew();
+        $media->setHash($event->getFileHash());
+        $media->setChannel($channel->getAlias());
+        $media->setName(pathinfo($mediaUrl, \PATHINFO_BASENAME));
+        $media->setSize($size);
+        $media->setWidth($width);
+        $media->setHeight($height);
+        $media->setUrl($mediaUrl);
 
-        $event->setMedia($meida)->stopPropagation();
+        $event->setMedia($media)->stopPropagation();
     }
 
     public static function getSubscribedEvents(): array

@@ -7,7 +7,6 @@ namespace Siganushka\MediaBundle\DependencyInjection;
 use Siganushka\MediaBundle\ChannelInterface;
 use Siganushka\MediaBundle\ChannelRegistry;
 use Siganushka\MediaBundle\Entity\Media;
-use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Storage\FilesystemStorage;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 use Symfony\Component\Config\FileLocator;
@@ -28,9 +27,6 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         $config = $this->processConfiguration($configuration, $configs);
 
         $container->setAlias(StorageInterface::class, $config['storage']);
-
-        $mediaRepositoryDef = $container->findDefinition(MediaRepository::class);
-        $mediaRepositoryDef->setArgument('$entityClass', $config['media_class']);
 
         $filesystemStorageDef = $container->findDefinition(FilesystemStorage::class);
         $filesystemStorageDef->setArgument('$publicDir', '%kernel.project_dir%/public');

@@ -9,6 +9,8 @@ use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Callback;
@@ -21,6 +23,11 @@ class MediaUrlType extends AbstractType
     public function __construct(MediaRepository $mediaRepository)
     {
         $this->mediaRepository = $mediaRepository;
+    }
+
+    public function buildView(FormView $view, FormInterface $form, array $options): void
+    {
+        $view->vars['channel'] = $options['channel']->getAlias();
     }
 
     /**
@@ -41,18 +48,18 @@ class MediaUrlType extends AbstractType
         return TextType::class;
     }
 
-    public function validateMediaUrl(?string $mediaUrl, ExecutionContextInterface $context, ?ChannelInterface $channel): void
+    public function validateMediaUrl(?string $mediaUrl, ExecutionContextInterface $context, ChannelInterface $channel): void
     {
         if (null === $mediaUrl) {
             return;
         }
 
         $media = $this->matchingMedia($mediaUrl);
-        if ($media && (null === $channel || $media->isChannel($channel->getAlias())) && str_starts_with($mediaUrl, $media->getUrl())) {
+        if ($media && $media->isChannel($channel) && str_starts_with($mediaUrl, $media->getUrl())) {
             return;
         }
 
-        $message = $media && $channel && !$media->isChannel($channel->getAlias())
+        $message = $media && !$media->isChannel($channel)
             ? 'This media url channel is not match.'
             : 'This media url is not valid.';
 

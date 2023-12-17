@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Siganushka\MediaBundle\Form\Type;
+namespace Siganushka\MediaBundle\Form;
 
 use Siganushka\MediaBundle\ChannelInterface;
+use Siganushka\MediaBundle\Form\Type\MediaChannelType;
+use Siganushka\MediaBundle\Form\Type\MediaFileType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Event\PostSubmitEvent;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -21,6 +23,7 @@ class MediaType extends AbstractType
         $builder
             ->add('channel', MediaChannelType::class, [
                 'label' => 'media.channel',
+                'placeholder' => 'media.channel.placeholder',
                 'constraints' => new NotBlank(),
             ])
         ;
@@ -47,8 +50,8 @@ class MediaType extends AbstractType
         array_unshift($constraints, new NotBlank());
 
         /** @var FormInterface */
-        $parent = $form->getParent();
-        $parent->add('file', MediaFileType::class, [
+        $form = $form->getParent();
+        $form->add('file', MediaFileType::class, [
             'label' => 'media.file',
             'constraints' => $constraints,
         ]);

@@ -7,10 +7,10 @@ namespace Siganushka\MediaBundle;
 use Siganushka\Contracts\Registry\ServiceRegistry;
 
 /**
- * @method bool             has(string $serviceId)
- * @method ChannelInterface get(string $serviceId)
- * @method array<string,    ChannelInterface>  all()
- * @method array<int,       string> getServiceIds()
+ * @method bool                               has(string $serviceId)
+ * @method ChannelInterface                   get(string $serviceId)
+ * @method array<string,    ChannelInterface> all()
+ * @method array<int,       string>           getServiceIds()
  */
 class ChannelRegistry extends ServiceRegistry
 {

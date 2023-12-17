@@ -25,6 +25,9 @@ class MediaFileType extends AbstractType
 
             return $constraints;
         });
+
+        // disable multiple files
+        $resolver->setDefault('multiple', false);
     }
 
     public function getParent(): string

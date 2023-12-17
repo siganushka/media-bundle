@@ -7,17 +7,16 @@ namespace Siganushka\MediaBundle\Controller;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Context\Context;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
-use FOS\RestBundle\View\View;
 use Knp\Component\Pager\PaginatorInterface;
-use Siganushka\GenericBundle\Exception\ResourceNotFoundException;
 use Siganushka\MediaBundle\ChannelInterface;
 use Siganushka\MediaBundle\Event\MediaFileSaveEvent;
-use Siganushka\MediaBundle\Form\Type\MediaType;
+use Siganushka\MediaBundle\Form\MediaType;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class MediaController extends AbstractFOSRestController
@@ -29,9 +28,12 @@ class MediaController extends AbstractFOSRestController
         $this->mediaRepository = $mediaRepository;
     }
 
+    /**
+     * @Route("/media", methods={"GET"})
+     */
     public function getCollection(Request $request, PaginatorInterface $paginator): Response
     {
-        $queryBuilder = $this->mediaRepository->createQueryBuilderWithSorted();
+        $queryBuilder = $this->mediaRepository->createQueryBuilder('m');
 
         $page = $request->query->getInt('page', 1);
         $size = $request->query->getInt('size', 10);
@@ -41,9 +43,15 @@ class MediaController extends AbstractFOSRestController
         return $this->viewResponse($pagination);
     }
 
+    /**
+     * @Route("/media", methods={"POST"})
+     */
     public function postCollection(Request $request, EventDispatcherInterface $eventDispatcher, EntityManagerInterface $entityManager)
     {
-        $formData = array_replace_recursive($request->request->all(), $request->files->all());
+        $formData = array_replace_recursive(
+            $request->request->all(),
+            $request->files->all(),
+        );
 
         $form = $this->createForm(MediaType::class);
         $form->submit($formData);
@@ -59,7 +67,7 @@ class MediaController extends AbstractFOSRestController
 
         $path = $file->getRealPath();
         if ($path && false === $hash = hash_file('MD5', $path)) {
-            throw new HttpException(400, 'Unable to hash file.');
+            throw new BadRequestHttpException('Unable to hash file.');
         }
 
         $media = $this->mediaRepository->findOneBy(['hash' => $hash]);
@@ -70,9 +78,8 @@ class MediaController extends AbstractFOSRestController
         $event = new MediaFileSaveEvent($channel, $file, $hash);
         $eventDispatcher->dispatch($event);
 
-        $media = $event->getMedia();
-        if (!$media) {
-            throw new HttpException(500, 'Unable to save file.');
+        if (null === $media = $event->getMedia()) {
+            throw new BadRequestHttpException('Unable to save file.');
         }
 
         $entityManager->persist($media);
@@ -81,21 +88,27 @@ class MediaController extends AbstractFOSRestController
         return $this->viewResponse($media);
     }
 
+    /**
+     * @Route("/media/{id<\d+>}", methods={"GET"})
+     */
     public function getItem(int $id): Response
     {
         $entity = $this->mediaRepository->find($id);
         if (!$entity) {
-            throw new ResourceNotFoundException($id);
+            throw $this->createNotFoundException(sprintf('Resource #%d not found.', $id));
         }
 
         return $this->viewResponse($entity);
     }
 
+    /**
+     * @Route("/media/{id<\d+>}", methods={"DELETE"})
+     */
     public function deleteItem(EntityManagerInterface $entityManager, int $id): Response
     {
         $entity = $this->mediaRepository->find($id);
         if (!$entity) {
-            throw new ResourceNotFoundException($id);
+            throw $this->createNotFoundException(sprintf('Resource #%d not found.', $id));
         }
 
         $entityManager->remove($entity);
@@ -107,12 +120,17 @@ class MediaController extends AbstractFOSRestController
 
     protected function viewResponse($data = null, int $statusCode = null, array $headers = []): Response
     {
-        $context = new Context();
-        $context->setGroups(['trait_timestampable', 'media']);
+        $attributes = [
+            'id', 'hash', 'channel', 'name', 'size', 'width', 'height', 'reference',
+            'updatedAt', 'createdAt',
+        ];
 
-        $view = View::create($data, $statusCode, $headers);
+        $context = new Context();
+        $context->setAttribute('attributes', $attributes);
+
+        $view = $this->view($data, $statusCode, $headers);
         $view->setContext($context);
 
-        return $this->getViewHandler()->handle($view);
+        return $this->handleView($view);
     }
 }

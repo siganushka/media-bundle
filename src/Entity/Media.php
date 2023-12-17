@@ -9,8 +9,8 @@ use Siganushka\Contracts\Doctrine\ResourceInterface;
 use Siganushka\Contracts\Doctrine\ResourceTrait;
 use Siganushka\Contracts\Doctrine\TimestampableInterface;
 use Siganushka\Contracts\Doctrine\TimestampableTrait;
+use Siganushka\MediaBundle\ChannelInterface;
 use Siganushka\MediaBundle\Repository\MediaRepository;
-use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=MediaRepository::class)
@@ -30,43 +30,31 @@ class Media implements ResourceInterface, TimestampableInterface
 
     /**
      * @ORM\Column(type="string")
-     *
-     * @Groups({"media"})
      */
     private ?string $channel = null;
 
     /**
      * @ORM\Column(type="string")
-     *
-     * @Groups({"media"})
      */
     private ?string $name = null;
 
     /**
      * @ORM\Column(type="string")
-     *
-     * @Groups({"media"})
      */
     private ?string $url = null;
 
     /**
      * @ORM\Column(type="integer")
-     *
-     * @Groups({"media"})
      */
     private ?int $size = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     *
-     * @Groups({"media"})
      */
     private ?int $width = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     *
-     * @Groups({"media"})
      */
     private ?int $height = null;
 
@@ -94,8 +82,15 @@ class Media implements ResourceInterface, TimestampableInterface
         return $this;
     }
 
-    public function isChannel(string $channel): bool
+    /**
+     * @param string|ChannelInterface $channel
+     */
+    public function isChannel($channel): bool
     {
+        if ($channel instanceof ChannelInterface) {
+            $channel = $channel->getAlias();
+        }
+
         return $this->channel && $this->channel === $channel;
     }
 
@@ -159,9 +154,6 @@ class Media implements ResourceInterface, TimestampableInterface
         return $this;
     }
 
-    /**
-     * @Groups({"media"})
-     */
     public function getReference(): ?string
     {
         if (null === $this->url) {
