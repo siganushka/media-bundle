@@ -154,6 +154,11 @@ class Media implements ResourceInterface, TimestampableInterface
         return $this;
     }
 
+    public function isImage(): bool
+    {
+        return $this->width && $this->height;
+    }
+
     public function getReference(): ?string
     {
         if (null === $this->url) {
