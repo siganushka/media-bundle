@@ -32,7 +32,7 @@ class MediaChannelType extends AbstractType
             'choices' => $this->registry->getServiceIds(),
             'choice_label' => fn (string $choice) => $choice,
             'choice_translation_domain' => false,
-            'invalid_message' => 'This channel is not valid.',
+            'invalid_message' => 'media.channel.invalid',
             'invalid_message_parameters' => fn (Options $options) => ['{{ accepted_values }}' => implode(', ', $options['choices'])],
         ]);
     }

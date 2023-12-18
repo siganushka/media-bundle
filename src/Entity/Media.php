@@ -44,9 +44,9 @@ class Media implements ResourceInterface, TimestampableInterface
     private ?string $url = null;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string")
      */
-    private ?int $size = null;
+    private ?string $size = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -63,7 +63,7 @@ class Media implements ResourceInterface, TimestampableInterface
         return $this->hash;
     }
 
-    public function setHash(?string $hash): self
+    public function setHash(string $hash): self
     {
         $this->hash = $hash;
 
@@ -75,7 +75,7 @@ class Media implements ResourceInterface, TimestampableInterface
         return $this->channel;
     }
 
-    public function setChannel(?string $channel): self
+    public function setChannel(string $channel): self
     {
         $this->channel = $channel;
 
@@ -99,7 +99,7 @@ class Media implements ResourceInterface, TimestampableInterface
         return $this->name;
     }
 
-    public function setName(?string $name): self
+    public function setName(string $name): self
     {
         $this->name = $name;
 
@@ -111,19 +111,19 @@ class Media implements ResourceInterface, TimestampableInterface
         return $this->url;
     }
 
-    public function setUrl(?string $url): self
+    public function setUrl(string $url): self
     {
         $this->url = $url;
 
         return $this;
     }
 
-    public function getSize(): ?int
+    public function getSize(): ?string
     {
         return $this->size;
     }
 
-    public function setSize(?int $size): self
+    public function setSize(string $size): self
     {
         $this->size = $size;
 

@@ -16,7 +16,7 @@ abstract class AbstractChannel implements ChannelInterface
 
     public function getFilename(File $file): string
     {
-        $path = $file->getRealPath();
+        $path = $file->getPathname();
         $extension = $file->guessExtension();
 
         if ($path && $extension && $name = hash_file('CRC32', $path)) {

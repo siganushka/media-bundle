@@ -24,7 +24,7 @@ class MediaType extends AbstractType
             ->add('channel', MediaChannelType::class, [
                 'label' => 'media.channel',
                 'placeholder' => 'media.channel.placeholder',
-                'constraints' => new NotBlank(),
+                'constraints' => new NotBlank(null, 'media.channel.not_blank'),
             ])
         ;
 
@@ -38,6 +38,7 @@ class MediaType extends AbstractType
     {
         $resolver->setDefaults([
             'csrf_protection' => false,
+            'allow_extra_fields' => true,
         ]);
     }
 
@@ -47,7 +48,7 @@ class MediaType extends AbstractType
         $data = $event instanceof PostSubmitEvent ? $form->getData() : $event->getData();
 
         $constraints = $data instanceof ChannelInterface ? $data->getConstraints() : [];
-        array_unshift($constraints, new NotBlank());
+        array_unshift($constraints, new NotBlank(null, 'media.file.not_blank'));
 
         /** @var FormInterface */
         $form = $form->getParent();

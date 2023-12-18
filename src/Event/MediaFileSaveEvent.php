@@ -44,7 +44,7 @@ class MediaFileSaveEvent extends Event
         return $this->media;
     }
 
-    public function setMedia(?Media $media): self
+    public function setMedia(Media $media): self
     {
         $this->media = $media;
 

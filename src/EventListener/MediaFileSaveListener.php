@@ -23,25 +23,28 @@ class MediaFileSaveListener implements EventSubscriberInterface
     public function onMediaFileSave(MediaFileSaveEvent $event): void
     {
         $file = $event->getFile();
-
         $channel = $event->getChannel();
-        $channel->onPreSave($file);
 
-        $path = $file->getRealPath();
+        $path = $file->getPathname();
         $size = $file->getSize();
 
         // try to fetch width & height
         [$width, $height] = @getimagesize($path);
 
+        // pre save hook
+        $channel->onPreSave($file);
+
         // save to storage
         $mediaUrl = $this->storage->save($channel, $file);
+
+        // post save hook
         $channel->onPostSave($mediaUrl);
 
         $media = $this->mediaRepository->createNew();
         $media->setHash($event->getFileHash());
         $media->setChannel($channel->getAlias());
         $media->setName(pathinfo($mediaUrl, \PATHINFO_BASENAME));
-        $media->setSize($size);
+        $media->setSize(self::formatBytes($size));
         $media->setWidth($width);
         $media->setHeight($height);
         $media->setUrl($mediaUrl);
@@ -54,5 +57,17 @@ class MediaFileSaveListener implements EventSubscriberInterface
         return [
             MediaFileSaveEvent::class => 'onMediaFileSave',
         ];
+    }
+
+    public static function formatBytes(int $bytes): string
+    {
+        if ($bytes <= 0) {
+            return '0B';
+        }
+
+        $base = log($bytes, 1024);
+        $suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB'];
+
+        return round(1024 ** ($base - floor($base)), 2).($suffixes[(int) floor($base)] ?? '');
     }
 }

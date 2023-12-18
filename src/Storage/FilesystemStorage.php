@@ -33,7 +33,7 @@ class FilesystemStorage implements StorageInterface
             throw $th;
         }
 
-        $path = $targetFile->getRealPath();
+        $path = $targetFile->getPathname();
         if (str_starts_with($path, $this->publicDir)) {
             $path = substr($path, \strlen($this->publicDir));
         }

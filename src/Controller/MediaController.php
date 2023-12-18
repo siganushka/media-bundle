@@ -65,7 +65,7 @@ class MediaController extends AbstractFOSRestController
         /** @var UploadedFile */
         $file = $form['file']->getData();
 
-        $path = $file->getRealPath();
+        $path = $file->getPathname();
         if ($path && false === $hash = hash_file('MD5', $path)) {
             throw new BadRequestHttpException('Unable to hash file.');
         }

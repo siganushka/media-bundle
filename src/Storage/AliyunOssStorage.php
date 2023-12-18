@@ -34,7 +34,7 @@ class AliyunOssStorage implements StorageInterface
         $object = sprintf('%s/%s', trim($pathname, '/'), $filename);
 
         try {
-            $result = $this->ossClient->uploadFile($this->bucket, $object, $file->getRealPath());
+            $result = $this->ossClient->uploadFile($this->bucket, $object, $file->getPathname());
         } catch (\Throwable $th) {
             // add logger...
             throw $th;

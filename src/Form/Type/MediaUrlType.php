@@ -60,8 +60,8 @@ class MediaUrlType extends AbstractType
         }
 
         $message = $media && !$media->isChannel($channel)
-            ? 'This media url channel is not match.'
-            : 'This media url is not valid.';
+            ? 'media_url.not_match'
+            : 'media_url.invalid';
 
         $context->buildViolation($message)
             ->setParameter('{{ value }}', $mediaUrl)
