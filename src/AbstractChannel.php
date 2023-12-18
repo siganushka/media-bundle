@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Mapping\GenericMetadata;
 
 abstract class AbstractChannel implements ChannelInterface
 {
-    public function getPathname(File $file): string
+    public function getFilepath(File $file): string
     {
         return sprintf('%s/%s', str_replace('_', '-', $this->getAlias()), date('Ym'));
     }

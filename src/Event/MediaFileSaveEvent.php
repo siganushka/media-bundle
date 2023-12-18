@@ -13,15 +13,13 @@ class MediaFileSaveEvent extends Event
 {
     private ChannelInterface $channel;
     private File $file;
-    private string $fileHash;
 
     private ?Media $media = null;
 
-    public function __construct(ChannelInterface $channel, File $file, string $fileHash)
+    public function __construct(ChannelInterface $channel, File $file)
     {
         $this->channel = $channel;
         $this->file = $file;
-        $this->fileHash = $fileHash;
     }
 
     public function getChannel(): ChannelInterface
@@ -32,11 +30,6 @@ class MediaFileSaveEvent extends Event
     public function getFile(): File
     {
         return $this->file;
-    }
-
-    public function getFileHash(): string
-    {
-        return $this->fileHash;
     }
 
     public function getMedia(): ?Media

@@ -17,7 +17,7 @@ interface ChannelInterface extends AliasableInterface
      *
      * @return string 新文件保存路径
      */
-    public function getPathname(File $file): string;
+    public function getFilepath(File $file): string;
 
     /**
      * 返回新文件名（包含后缀）.

@@ -21,7 +21,7 @@ class FilesystemStorage implements StorageInterface
 
     public function save(ChannelInterface $channel, File $file): string
     {
-        $pathname = $channel->getPathname($file);
+        $pathname = $channel->getFilepath($file);
         $filename = $channel->getFilename($file);
 
         $directory = sprintf('%s/%s', $this->publicDir, trim($pathname, '/'));

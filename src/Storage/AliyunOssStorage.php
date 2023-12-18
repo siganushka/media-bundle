@@ -28,7 +28,7 @@ class AliyunOssStorage implements StorageInterface
 
     public function save(ChannelInterface $channel, File $file): string
     {
-        $pathname = $channel->getPathname($file);
+        $pathname = $channel->getFilepath($file);
         $filename = $channel->getFilename($file);
 
         $object = sprintf('%s/%s', trim($pathname, '/'), $filename);

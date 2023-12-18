@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\EventListener;
 
+use Siganushka\MediaBundle\ChannelInterface;
+use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Event\MediaFileSaveEvent;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Storage\StorageInterface;
+use Siganushka\MediaBundle\Utils\FileUtils;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\File\File;
 
 class MediaFileSaveListener implements EventSubscriberInterface
 {
@@ -22,34 +26,46 @@ class MediaFileSaveListener implements EventSubscriberInterface
 
     public function onMediaFileSave(MediaFileSaveEvent $event): void
     {
-        $file = $event->getFile();
         $channel = $event->getChannel();
+        $file = $event->getFile();
 
-        $path = $file->getPathname();
-        $size = $file->getSize();
+        $hash = hash_file('MD5', $file->getPathname());
+        if (false === $hash) {
+            throw new \RuntimeException('Unable to hash file.');
+        }
 
-        // try to fetch width & height
-        [$width, $height] = @getimagesize($path);
+        $media = $this->mediaRepository->findOneByHash($hash);
+        if (null === $media) {
+            $media = $this->saveFile($channel, $file, $hash);
+        }
+
+        $event->setMedia($media)->stopPropagation();
+    }
+
+    public function saveFile(ChannelInterface $channel, File $file, string $hash): Media
+    {
+        $size = FileUtils::getFormattedSize($file);
+        [$width, $height] = FileUtils::getImageSize($file);
 
         // pre save hook
         $channel->onPreSave($file);
 
-        // save to storage
-        $mediaUrl = $this->storage->save($channel, $file);
+        // // save to storage
+        // $mediaUrl = $this->storage->save($channel, $file);
 
         // post save hook
-        $channel->onPostSave($mediaUrl);
+        // $channel->onPostSave($mediaUrl);
 
         $media = $this->mediaRepository->createNew();
-        $media->setHash($event->getFileHash());
+        $media->setHash($hash);
         $media->setChannel($channel->getAlias());
-        $media->setName(pathinfo($mediaUrl, \PATHINFO_BASENAME));
-        $media->setSize(self::formatBytes($size));
+        // $media->setName(pathinfo($mediaUrl, \PATHINFO_BASENAME));
+        // $media->setUrl($mediaUrl);
+        $media->setSize($size);
         $media->setWidth($width);
         $media->setHeight($height);
-        $media->setUrl($mediaUrl);
 
-        $event->setMedia($media)->stopPropagation();
+        return $media;
     }
 
     public static function getSubscribedEvents(): array
@@ -57,17 +73,5 @@ class MediaFileSaveListener implements EventSubscriberInterface
         return [
             MediaFileSaveEvent::class => 'onMediaFileSave',
         ];
-    }
-
-    public static function formatBytes(int $bytes): string
-    {
-        if ($bytes <= 0) {
-            return '0B';
-        }
-
-        $base = log($bytes, 1024);
-        $suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB'];
-
-        return round(1024 ** ($base - floor($base)), 2).($suffixes[(int) floor($base)] ?? '');
     }
 }

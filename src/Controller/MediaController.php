@@ -65,20 +65,11 @@ class MediaController extends AbstractFOSRestController
         /** @var UploadedFile */
         $file = $form['file']->getData();
 
-        $path = $file->getPathname();
-        if ($path && false === $hash = hash_file('MD5', $path)) {
-            throw new BadRequestHttpException('Unable to hash file.');
-        }
-
-        $media = $this->mediaRepository->findOneBy(['hash' => $hash]);
-        if ($media) {
-            return $this->viewResponse($media);
-        }
-
-        $event = new MediaFileSaveEvent($channel, $file, $hash);
+        $event = new MediaFileSaveEvent($channel, $file);
         $eventDispatcher->dispatch($event);
 
-        if (null === $media = $event->getMedia()) {
+        $media = $event->getMedia();
+        if (null === $media) {
             throw new BadRequestHttpException('Unable to save file.');
         }
 
