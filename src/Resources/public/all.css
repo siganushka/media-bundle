@@ -1,0 +1,45 @@
+.media-url-label {
+  padding: 1px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.media-url-label input[type=file] {
+  opacity: 0;
+  position: absolute;
+}
+
+.media-url-label .media-url-bg {
+  font-size: 2em;
+}
+
+.media-url-label .media-url-remove {
+  font-size: 80%;
+  text-decoration: none;
+  text-align: center;
+  position: absolute;
+  right: 1px;
+  bottom: 1px;
+  left: 1px;
+}
+
+.media-url-label .media-url-preview {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.media-url-label .media-url-sp,
+.media-url-label .media-url-remove,
+.media-url-label .media-url-preview,
+.media-url-label.media-url-loading .media-url-bg,
+.media-url-label.media-url-uploaded .media-url-bg {
+  display: none;
+}
+
+.media-url-label.media-url-loading .media-url-sp,
+.media-url-label.media-url-uploaded .media-url-remove,
+.media-url-label.media-url-uploaded .media-url-preview {
+  display: block;
+}

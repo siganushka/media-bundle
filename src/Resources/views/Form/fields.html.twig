@@ -1,35 +1,22 @@
 {% block media_url_widget %}
   <label
     for="{{ id }}_input"
-    class="media-url-label border rounded bg-light"
-    data-target="#{{ id }}"
-    data-channel="{{ channel }}"
-  >
+    style="{{ style }}"
+    class="border rounded bg-light media-url-label
+    {% if errors|length %} border-danger{% endif %}
+    {% if value %} media-url-uploaded{% endif %}">
 
-    <input id="{{ id }}_input" type="file">
+    <input id="{{ id }}_input" type="file" onchange="handleMediaUrlUpload(this, '#{{ id }}', '{{ channel }}')">
 
-    <div class="spinner-border text-secondary" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
+    <i class="bi bi-image text-secondary media-url-bg"></i>
+    <i class="spinner-border text-secondary media-url-sp"></i>
 
-    <a href="javascript:;" class="media-url-remove">&times;</a>
+    <a href="javascript:;" class="bg-black text-light opacity-75 py-1 rounded-bottom media-url-remove"
+      onclick="handleMediaUrlRemove(this, '#{{ id }}')">删除</a>
 
-    <img src="{{ value }}" />
+    <img src="{{ value }}" class="rounded media-url-preview" />
   </label>
 
   {# display to input hidden #}
   {{ form_widget(form, { type: 'hidden' }) }}
-
-  <style>
-    .media-url-label { width: 100px; height: 100px; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; }
-    .media-url-label > input[type=file] { display: none; }
-    .media-url-label > img { max-width: 100%; max-height: 100%; }
-    .media-url-label > .spinner-border { display: none; }
-    .media-url-label > .media-url-remove { color: #999; font-size: 14px; line-height: 1; width: 16px; height: 16px; background-color: #dee2e6; text-align: center; border-top-right-radius: .375rem; text-decoration: none; display: none; position: absolute; top: 1px; right: 1px; }
-
-    .media-url-loading > img { display: none; }
-
-    .media-url-loading > .spinner-border,
-    .media-url-uploaded > .media-url-remove { display: block; }
-  </style>
 {% endblock %}

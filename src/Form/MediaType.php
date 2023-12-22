@@ -23,7 +23,7 @@ class MediaType extends AbstractType
         $builder
             ->add('channel', MediaChannelType::class, [
                 'label' => 'media.channel',
-                'placeholder' => 'media.channel.placeholder',
+                'placeholder' => 'generic.choice',
                 'constraints' => new NotBlank(null, 'media.channel.not_blank'),
             ])
         ;

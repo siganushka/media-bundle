@@ -28,6 +28,7 @@ class MediaUrlType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['channel'] = $options['channel']->getAlias();
+        $view->vars['style'] = $options['style'];
     }
 
     /**
@@ -41,6 +42,14 @@ class MediaUrlType extends AbstractType
 
             return $constraints;
         });
+
+        $resolver->setDefault('width', '100px');
+        $resolver->setDefault('height', '100px');
+        $resolver->setDefault('style', fn (Options $options): string => sprintf('width: %s; height: %s', $options['width'], $options['height']));
+
+        $resolver->setAllowedTypes('width', 'string');
+        $resolver->setAllowedTypes('height', 'string');
+        $resolver->setAllowedTypes('style', 'string');
     }
 
     public function getParent(): string
