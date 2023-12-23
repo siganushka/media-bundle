@@ -6,14 +6,14 @@ namespace Siganushka\MediaBundle\EventListener;
 
 use Siganushka\MediaBundle\ChannelInterface;
 use Siganushka\MediaBundle\Entity\Media;
-use Siganushka\MediaBundle\Event\MediaFileSaveEvent;
+use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 use Siganushka\MediaBundle\Utils\FileUtils;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\File\File;
 
-class MediaFileSaveListener implements EventSubscriberInterface
+class MediaSaveListener implements EventSubscriberInterface
 {
     private StorageInterface $storage;
     private MediaRepository $mediaRepository;
@@ -24,7 +24,7 @@ class MediaFileSaveListener implements EventSubscriberInterface
         $this->mediaRepository = $mediaRepository;
     }
 
-    public function onMediaFileSave(MediaFileSaveEvent $event): void
+    public function onMediaSave(MediaSaveEvent $event): void
     {
         $channel = $event->getChannel();
         $file = $event->getFile();
@@ -71,7 +71,7 @@ class MediaFileSaveListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            MediaFileSaveEvent::class => 'onMediaFileSave',
+            MediaSaveEvent::class => 'onMediaSave',
         ];
     }
 }

@@ -9,7 +9,7 @@ use Siganushka\MediaBundle\Entity\Media;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Contracts\EventDispatcher\Event;
 
-class MediaFileSaveEvent extends Event
+class MediaSaveEvent extends Event
 {
     private ChannelInterface $channel;
     private File $file;

@@ -9,7 +9,7 @@ use FOS\RestBundle\Context\Context;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Knp\Component\Pager\PaginatorInterface;
 use Siganushka\MediaBundle\ChannelInterface;
-use Siganushka\MediaBundle\Event\MediaFileSaveEvent;
+use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Siganushka\MediaBundle\Form\MediaUploadType;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -65,7 +65,7 @@ class MediaController extends AbstractFOSRestController
         /** @var UploadedFile */
         $file = $form['file']->getData();
 
-        $event = new MediaFileSaveEvent($channel, $file);
+        $event = new MediaSaveEvent($channel, $file);
         $eventDispatcher->dispatch($event);
 
         $media = $event->getMedia();
