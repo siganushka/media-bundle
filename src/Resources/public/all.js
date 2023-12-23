@@ -29,13 +29,13 @@ const handleMediaUrlUpload = function (event, target, channel) {
     $label.addClass('media-url-uploaded')
   })
   .fail(function(err) {
-    const message = $.isPlainObject(err.responseJSON)
-      ? err.responseJSON.message
-      : err.statusText
-    alert(message)
+    alert(err.responseJSON.message || err.statusText)
   })
   .always(function() {
     $label.removeClass('media-url-loading')
+    // reset input file
+    $(event).wrap('<form>').closest('form').get(0).reset()
+    $(event).unwrap()
   })
 }
 
