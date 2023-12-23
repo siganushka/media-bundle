@@ -1,5 +1,5 @@
-media.channel.not_blank: 类型不能为空。
-media.channel.invalid: 类型无效 (有效值为 {{ accepted_values }})。
+media.channel.not_blank: 文件类型 channel 不能为空。
+media.channel.invalid: 文件类型 channel 无效 (有效值为 {{ accepted_values }})。
 media.file.not_blank: 文件不能为空。
 media_url.invalid: 文件地址无效。
 media_url.not_match: 文件地址类型不匹配。
