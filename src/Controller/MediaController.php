@@ -57,7 +57,7 @@ class MediaController extends AbstractFOSRestController
         $form->submit($formData);
 
         if (!$form->isValid()) {
-            return $this->viewResponse($form);
+            throw new BadRequestHttpException($form->getErrors(true, true)->current()->getMessage());
         }
 
         /** @var ChannelInterface */
@@ -70,7 +70,7 @@ class MediaController extends AbstractFOSRestController
 
         $media = $event->getMedia();
         if (null === $media) {
-            throw new BadRequestHttpException('Unable to save file.');
+            throw new \RuntimeException('Unable to save file.');
         }
 
         $entityManager->persist($media);
