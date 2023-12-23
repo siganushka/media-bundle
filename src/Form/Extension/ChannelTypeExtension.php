@@ -8,7 +8,7 @@ use Siganushka\MediaBundle\ChannelInterface;
 use Siganushka\MediaBundle\ChannelRegistry;
 use Siganushka\MediaBundle\Form\DataTransformer\ChannelToAliasTransformer;
 use Siganushka\MediaBundle\Form\Type\MediaFileType;
-use Siganushka\MediaBundle\Form\Type\MediaUrlType;
+use Siganushka\MediaBundle\Form\Type\MediaType;
 use Siganushka\MediaBundle\Media\Generic;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\OptionsResolver\Options;
@@ -16,11 +16,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ChannelTypeExtension extends AbstractTypeExtension
 {
-    private ChannelToAliasTransformer $channelToAliasTransformer;
+    private ChannelToAliasTransformer $transformer;
 
     public function __construct(ChannelRegistry $registry)
     {
-        $this->channelToAliasTransformer = new ChannelToAliasTransformer($registry);
+        $this->transformer = new ChannelToAliasTransformer($registry);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -34,7 +34,7 @@ class ChannelTypeExtension extends AbstractTypeExtension
                     return $channel;
                 }
 
-                return $this->channelToAliasTransformer->reverseTransform($channel);
+                return $this->transformer->reverseTransform($channel);
             })
         ;
     }
@@ -43,7 +43,7 @@ class ChannelTypeExtension extends AbstractTypeExtension
     {
         return [
             MediaFileType::class,
-            MediaUrlType::class,
+            MediaType::class,
         ];
     }
 }

@@ -24,8 +24,8 @@ const handleMediaUrlUpload = function (event, target, channel) {
     }
   })
   .done(function(res) {
-    $target.val(res.reference)
-    $preview.attr('src', res.reference)
+    $target.val(res.hash)
+    $preview.attr('src', res.url)
     $label.addClass('media-url-uploaded')
   })
   .fail(function(err) {

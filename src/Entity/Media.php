@@ -14,17 +14,17 @@ use Siganushka\MediaBundle\Repository\MediaRepository;
 
 /**
  * @ORM\Entity(repositoryClass=MediaRepository::class)
+ * @ORM\Table(uniqueConstraints={
+ *  @ORM\UniqueConstraint(columns={"hash", "channel"})
+ * })
  */
 class Media implements ResourceInterface, TimestampableInterface
 {
     use ResourceTrait;
     use TimestampableTrait;
 
-    public const REFERENCE_FIELD = 'id';
-    public const REFERENCE_QUERY = 'ref';
-
     /**
-     * @ORM\Column(type="string", length=32, unique=true, options={"fixed": true})
+     * @ORM\Column(type="string", length=32, options={"fixed": true})
      */
     private ?string $hash = null;
 
@@ -157,14 +157,5 @@ class Media implements ResourceInterface, TimestampableInterface
     public function isImage(): bool
     {
         return $this->width && $this->height;
-    }
-
-    public function getReference(): ?string
-    {
-        if (null === $this->url) {
-            return $this->url;
-        }
-
-        return $this->url.'?'.http_build_query([self::REFERENCE_QUERY => $this->{self::REFERENCE_FIELD}]);
     }
 }

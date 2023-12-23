@@ -1,4 +1,4 @@
-{% block media_url_widget %}
+{% block media_widget %}
   <label
     for="{{ id }}_input"
     style="{{ style }}"
@@ -14,7 +14,7 @@
     <a href="javascript:;" class="bg-black text-light opacity-75 py-1 rounded-bottom media-url-remove"
       onclick="handleMediaUrlRemove(this, '#{{ id }}')">删除</a>
 
-    <img src="{{ value }}" class="rounded media-url-preview" />
+    <img src="{{ data.url|default('') }}" class="rounded media-url-preview" />
   </label>
 
   {# display to input hidden #}

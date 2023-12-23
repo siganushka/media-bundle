@@ -10,7 +10,7 @@ use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Knp\Component\Pager\PaginatorInterface;
 use Siganushka\MediaBundle\ChannelInterface;
 use Siganushka\MediaBundle\Event\MediaFileSaveEvent;
-use Siganushka\MediaBundle\Form\MediaType;
+use Siganushka\MediaBundle\Form\MediaUploadType;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -53,7 +53,7 @@ class MediaController extends AbstractFOSRestController
             $request->files->all(),
         );
 
-        $form = $this->createForm(MediaType::class);
+        $form = $this->createForm(MediaUploadType::class);
         $form->submit($formData);
 
         if (!$form->isValid()) {
@@ -112,7 +112,8 @@ class MediaController extends AbstractFOSRestController
     protected function viewResponse($data = null, int $statusCode = null, array $headers = []): Response
     {
         $attributes = [
-            'id', 'hash', 'channel', 'name', 'size', 'width', 'height', 'image', 'reference',
+            'id',
+            'hash', 'channel', 'name', 'url', 'size', 'width', 'height', 'image',
             'updatedAt', 'createdAt',
         ];
 
