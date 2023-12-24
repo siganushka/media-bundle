@@ -11,7 +11,7 @@ abstract class AbstractChannel implements ChannelInterface
 {
     public function getFilepath(File $file): string
     {
-        return sprintf('%s/%s', str_replace('_', '-', $this->getAlias()), date('Ym'));
+        return sprintf('%s/%s', str_replace('_', '-', (string) $this), date('Ym'));
     }
 
     public function getFilename(File $file): string
@@ -49,6 +49,11 @@ abstract class AbstractChannel implements ChannelInterface
         }
 
         return str_replace('\\', '_', strtolower(static::class));
+    }
+
+    public function __toString(): string
+    {
+        return $this->getAlias();
     }
 
     protected function loadConstraints(GenericMetadata $metadata): void

@@ -33,7 +33,7 @@ class MediaType extends AbstractType
 
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
-        $view->vars['channel'] = $options['channel']->getAlias();
+        $view->vars['channel'] = (string) $options['channel'];
         $view->vars['style'] = $options['style'];
     }
 

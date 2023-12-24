@@ -75,9 +75,12 @@ class Media implements ResourceInterface, TimestampableInterface
         return $this->channel;
     }
 
-    public function setChannel(string $channel): self
+    /**
+     * @param string|ChannelInterface $channel
+     */
+    public function setChannel($channel): self
     {
-        $this->channel = $channel;
+        $this->channel = (string) $channel;
 
         return $this;
     }
@@ -88,7 +91,7 @@ class Media implements ResourceInterface, TimestampableInterface
     public function isChannel($channel): bool
     {
         if ($channel instanceof ChannelInterface) {
-            $channel = $channel->getAlias();
+            $channel = (string) $channel;
         }
 
         return $this->channel && $this->channel === $channel;
