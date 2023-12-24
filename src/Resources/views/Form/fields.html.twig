@@ -4,7 +4,7 @@
     style="{{ style }}"
     class="border rounded bg-light media-url-label
     {% if errors|length %} border-danger{% endif %}
-    {% if value %} media-url-uploaded{% endif %}">
+    {% if value and valid %} media-url-uploaded{% endif %}">
 
     <input id="{{ id }}_input" type="file" onchange="handleMediaUrlUpload(this, '#{{ id }}', '{{ channel }}')">
 

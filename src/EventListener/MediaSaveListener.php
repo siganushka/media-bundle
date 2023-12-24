@@ -34,7 +34,7 @@ class MediaSaveListener implements EventSubscriberInterface
             throw new \RuntimeException('Unable to hash file.');
         }
 
-        $media = $this->mediaRepository->findOneBy(['hash' => $hash, 'channel' => (string) $channel]);
+        $media = $this->mediaRepository->findOneBy(['hash' => $hash, 'channel' => $channel]);
         if (null === $media) {
             $media = $this->saveFile($channel, $file, $hash);
         }
