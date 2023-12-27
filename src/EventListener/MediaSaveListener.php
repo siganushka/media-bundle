@@ -28,13 +28,9 @@ class MediaSaveListener implements EventSubscriberInterface
     {
         $channel = $event->getChannel();
         $file = $event->getFile();
+        $hash = $event->getHash();
 
-        $hash = hash_file('MD5', $file->getPathname());
-        if (false === $hash) {
-            throw new \RuntimeException('Unable to hash file.');
-        }
-
-        $media = $this->mediaRepository->findOneBy(['hash' => $hash, 'channel' => $channel]);
+        $media = $this->mediaRepository->findOneByHash($hash);
         if (null === $media) {
             $media = $this->saveFile($channel, $file, $hash);
         }
@@ -42,7 +38,7 @@ class MediaSaveListener implements EventSubscriberInterface
         $event->setMedia($media)->stopPropagation();
     }
 
-    public function saveFile(ChannelInterface $channel, File $file, string $hash): Media
+    protected function saveFile(ChannelInterface $channel, File $file, string $hash): Media
     {
         $size = FileUtils::getFormattedSize($file);
         [$width, $height] = FileUtils::getImageSize($file);

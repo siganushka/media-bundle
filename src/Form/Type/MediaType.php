@@ -4,49 +4,32 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\Form\Type;
 
+use Doctrine\Persistence\ManagerRegistry;
+use Siganushka\GenericBundle\Form\DataTransformer\EntityToIdentifierTransformer;
 use Siganushka\MediaBundle\Entity\Media;
-use Siganushka\MediaBundle\Repository\MediaRepository;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\CallbackTransformer;
-use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\Util\FormUtil;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Callback;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class MediaType extends AbstractType
 {
-    private MediaRepository $mediaRepository;
+    private ManagerRegistry $registry;
 
-    public function __construct(MediaRepository $mediaRepository)
+    public function __construct(ManagerRegistry $registry)
     {
-        $this->mediaRepository = $mediaRepository;
+        $this->registry = $registry;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         // using addViewTransformer to transformer object for view
-        $builder->addViewTransformer(new CallbackTransformer(
-            fn ($value) => $value instanceof Media ? $value->getHash() : null,
-            function ($value) use ($options) {
-                if (FormUtil::isEmpty($value)) {
-                    return;
-                }
-
-                $media = $this->mediaRepository->findOneBy(['hash' => $value, 'channel' => $options['channel']]);
-                if ($media) {
-                    return $media;
-                }
-
-                $exception = new TransformationFailedException(sprintf('An object with identifier key "hash" and value "%s" does not exist!', (string) $value));
-                $exception->setInvalidMessage($options['mismatch_message']);
-
-                throw $exception;
-            }
-        ));
+        $builder->addViewTransformer(new EntityToIdentifierTransformer($this->registry, Media::class, 'hash'));
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options): void
@@ -56,6 +39,13 @@ class MediaType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
+        $resolver->setNormalizer('constraints', function (Options $options, $constraints): array {
+            $constraints = \is_object($constraints) ? [$constraints] : (array) $constraints;
+            $constraints[] = new Callback([$this, 'validate'], null, $options);
+
+            return $constraints;
+        });
+
         $resolver->setDefaults([
             'style' => fn (Options $options) => sprintf('width: %s; height: %s', $options['width'], $options['height']),
             'width' => '100px',
@@ -72,5 +62,14 @@ class MediaType extends AbstractType
     public function getParent(): string
     {
         return TextType::class;
+    }
+
+    public function validate(?Media $media, ExecutionContextInterface $context, Options $options): void
+    {
+        if ($media && !$media->isChannel($options['channel'])) {
+            $context->buildViolation($options['mismatch_message'])
+                ->addViolation()
+            ;
+        }
     }
 }

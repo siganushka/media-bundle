@@ -15,7 +15,7 @@ use Siganushka\MediaBundle\Repository\MediaRepository;
 /**
  * @ORM\Entity(repositoryClass=MediaRepository::class)
  * @ORM\Table(uniqueConstraints={
- *  @ORM\UniqueConstraint(columns={"hash", "channel"})
+ *  @ORM\UniqueConstraint(columns={"hash"})
  * })
  */
 class Media implements ResourceInterface, TimestampableInterface

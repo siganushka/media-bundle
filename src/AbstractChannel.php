@@ -11,15 +11,15 @@ abstract class AbstractChannel implements ChannelInterface
 {
     public function getFilepath(File $file): string
     {
-        return sprintf('%s/%s', str_replace('_', '-', (string) $this), date('Ym'));
+        return sprintf('%s/%s', str_replace('_', '-', $this->getAlias()), date('Ym'));
     }
 
     public function getFilename(File $file): string
     {
-        $path = $file->getPathname();
+        $name = hash_file('CRC32', $file->getPathname());
         $extension = $file->guessExtension();
 
-        if ($path && $extension && $name = hash_file('CRC32', $path)) {
+        if ($name && $extension) {
             return sprintf('%s.%s', $name, $extension);
         }
 

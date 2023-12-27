@@ -2,19 +2,16 @@
   <label
     for="{{ id }}_input"
     style="{{ style }}"
-    class="border rounded bg-light media-url-label
+    class="border rounded bg-light media-label
     {% if errors|length %} border-danger{% endif %}
-    {% if value and valid %} media-url-uploaded{% endif %}">
+    {% if value and valid %} media-uploaded{% endif %}"
+    onclick="handleMediaUpload(event, '#{{ id }}', '{{ channel }}')">
 
-    <input id="{{ id }}_input" type="file" onchange="handleMediaUrlUpload(this, '#{{ id }}', '{{ channel }}')">
+    <i class="spinner-border text-secondary media-sp"></i>
+    <i class="bi bi-image text-secondary media-bg"></i>
+    <i class="bi bi-trash media-rm" onclick="handleMediaRemove(event, '#{{ id }}')"></i>
 
-    <i class="bi bi-image text-secondary media-url-bg"></i>
-    <i class="spinner-border text-secondary media-url-sp"></i>
-
-    <a href="javascript:;" class="bg-black text-light opacity-75 py-1 rounded-bottom media-url-remove"
-      onclick="handleMediaUrlRemove(this, '#{{ id }}')">删除</a>
-
-    <img src="{{ data.url|default('') }}" class="rounded media-url-preview" />
+    <img src="{{ data.url|default('') }}" class="rounded media-preview" />
   </label>
 
   {# display to input hidden #}

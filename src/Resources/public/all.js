@@ -1,54 +1,56 @@
-const handleMediaUrlUpload = function (event, target, channel) {
-  if (!event.files.length) {
+const handleMediaUpload = function (event, target, channel) {
+  const $label = $(event.currentTarget)
+  if ($label.hasClass('media-uploaded') || $label.hasClass('media-loading')) {
     return false
   }
 
   const $target = $(target)
-  const $label = $(event).closest('.media-url-label')
-  const $preview = $label.children('.media-url-preview')
+  const $preview = $label.children('.media-preview')
 
-  const formData = new FormData()
-    formData.append('channel', channel)
-    formData.append('file', event.files[0])
-
-  $.ajax({
-    url: '/api/media',
-    type: 'POST',
-    data: formData,
-    processData: false,
-    contentType: false,
-    beforeSend: function() {
-      $label
-        .removeClass('media-url-uploaded')
-        .addClass('media-url-loading')
+  const $file = $('<input>', { type: 'file' }).click()
+  $file.on('change', function (event) {
+    const files = event.target.files
+    if (!files.length) {
+      return false
     }
-  })
-  .done(function(res) {
-    $target.val(res.hash)
-    $preview.attr('src', res.url)
-    $label.addClass('media-url-uploaded')
-  })
-  .fail(function(err) {
-    alert(err.responseJSON.message || err.statusText)
-  })
-  .always(function() {
-    $label.removeClass('media-url-loading')
-    // reset input file
-    $(event).wrap('<form>').closest('form').get(0).reset()
-    $(event).unwrap()
+
+    const formData = new FormData()
+    formData.append('channel', channel)
+    formData.append('file', files[0])
+
+    $.ajax({
+      url: '/api/media',
+      type: 'POST',
+      data: formData,
+      processData: false,
+      contentType: false,
+      beforeSend: function() {
+        $label.addClass('media-loading')
+      }
+    })
+    .done(function(res) {
+      $target.val(res.hash)
+      $preview.attr('src', res.url)
+      $label.addClass('media-uploaded')
+    })
+    .fail(function(err) {
+      alert(err.responseJSON.message || err.statusText)
+    })
+    .always(function() {
+      $label.removeClass('media-loading')
+    })
   })
 }
 
-const handleMediaUrlRemove = function (event, target) {
-  if (!confirm('确定删除码？')) {
-    return false
+const handleMediaRemove = function (event, target) {
+  event.stopPropagation()
+  if (confirm('确定删除码？')) {
+    const $target = $(target)
+    const $label = $(event.currentTarget).closest('.media-label')
+    const $preview = $label.children('.media-preview')
+
+    $target.removeAttr('value')
+    $preview.removeAttr('src')
+    $label.removeClass('media-uploaded')
   }
-
-  const $target = $(target)
-  const $label = $(event).closest('.media-url-label')
-  const $preview = $label.children('.media-url-preview')
-
-  $target.val('')
-  $preview.attr('src', '')
-  $label.removeClass('media-url-uploaded')
 }

@@ -32,19 +32,18 @@ class ChannelTypeExtension extends AbstractTypeExtension
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver
-            ->define('channel')
-            ->default(Generic::class)
-            ->allowedTypes('null', 'string', ChannelInterface::class)
-            ->normalize(function (Options $options, $channel): ChannelInterface {
-                if ($channel instanceof ChannelInterface) {
-                    return $channel;
-                }
+        $channelNormalizer = function (Options $options, $channel): ?ChannelInterface {
+            if ($channel instanceof ChannelInterface) {
+                return $channel;
+            }
 
-                return $this->transformer->reverseTransform($channel)
-                    ?? $this->transformer->reverseTransform(Generic::class);
-            })
-        ;
+            return $this->transformer->reverseTransform($channel)
+                ?? $this->transformer->reverseTransform(Generic::class);
+        };
+
+        $resolver->setDefault('channel', Generic::class);
+        $resolver->setAllowedTypes('channel', ['null', 'string', ChannelInterface::class]);
+        $resolver->setNormalizer('channel', $channelNormalizer);
     }
 
     public static function getExtendedTypes(): iterable

@@ -8,11 +8,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Context\Context;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Knp\Component\Pager\PaginatorInterface;
-use Siganushka\MediaBundle\ChannelInterface;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Siganushka\MediaBundle\Form\MediaUploadType;
 use Siganushka\MediaBundle\Repository\MediaRepository;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -60,9 +58,7 @@ class MediaController extends AbstractFOSRestController
             throw new BadRequestHttpException($form->getErrors(true, true)->current()->getMessage());
         }
 
-        /** @var ChannelInterface */
         $channel = $form['channel']->getData();
-        /** @var UploadedFile */
         $file = $form['file']->getData();
 
         $event = new MediaSaveEvent($channel, $file);
@@ -112,8 +108,7 @@ class MediaController extends AbstractFOSRestController
     protected function viewResponse($data = null, int $statusCode = null, array $headers = []): Response
     {
         $attributes = [
-            'id',
-            'hash', 'channel', 'name', 'url', 'size', 'width', 'height', 'image',
+            'id', 'hash', 'name', 'url', 'size', 'width', 'height', 'image',
             'updatedAt', 'createdAt',
         ];
 
