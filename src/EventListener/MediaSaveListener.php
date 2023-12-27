@@ -55,7 +55,6 @@ class MediaSaveListener implements EventSubscriberInterface
         $media = $this->mediaRepository->createNew();
         $media->setHash($hash);
         $media->setChannel($channel);
-        $media->setName(pathinfo($mediaUrl, \PATHINFO_BASENAME));
         $media->setUrl($mediaUrl);
         $media->setSize($size);
         $media->setWidth($width);

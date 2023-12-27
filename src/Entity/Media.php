@@ -36,11 +36,6 @@ class Media implements ResourceInterface, TimestampableInterface
     /**
      * @ORM\Column(type="string")
      */
-    private ?string $name = null;
-
-    /**
-     * @ORM\Column(type="string")
-     */
     private ?string $url = null;
 
     /**
@@ -95,18 +90,6 @@ class Media implements ResourceInterface, TimestampableInterface
         }
 
         return $this->channel && $this->channel === $channel;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
     }
 
     public function getUrl(): ?string
