@@ -11,22 +11,13 @@ use Symfony\Component\Validator\Constraint;
 interface ChannelInterface extends AliasableInterface, \Stringable
 {
     /**
-     * 返回新文件保存路径（不包含文件名）.
+     * 返回新文件名存储名称.
      *
      * @param File $file 文件对象
      *
-     * @return string 新文件保存路径
+     * @return string 新文件名存储名称
      */
-    public function getFilepath(File $file): string;
-
-    /**
-     * 返回新文件名（包含后缀）.
-     *
-     * @param File $file 文件对象
-     *
-     * @return string 新文件名
-     */
-    public function getFilename(File $file): string;
+    public function getTargetName(File $file): string;
 
     /**
      * 返回文件验证类型集合.

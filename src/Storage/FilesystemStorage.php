@@ -12,22 +12,22 @@ class FilesystemStorage implements StorageInterface
 {
     private UrlHelper $urlHelper;
     private string $publicDir;
+    private string $uploadDir;
 
-    public function __construct(UrlHelper $urlHelper, string $publicDir)
+    public function __construct(UrlHelper $urlHelper, string $publicDir, string $uploadDir)
     {
         $this->urlHelper = $urlHelper;
         $this->publicDir = $publicDir;
+        $this->uploadDir = $uploadDir;
     }
 
     public function save(ChannelInterface $channel, File $file): string
     {
-        $pathname = $channel->getFilepath($file);
-        $filename = $channel->getFilename($file);
-
-        $directory = sprintf('%s/%s', $this->publicDir, trim($pathname, '/'));
+        $filename = sprintf('%s/%s/%s', $this->publicDir, $this->uploadDir, $channel->getTargetName($file));
+        $pathinfo = pathinfo($filename);
 
         try {
-            $targetFile = $file->move($directory, $filename);
+            $targetFile = $file->move($pathinfo['dirname'], $pathinfo['basename']);
         } catch (\Throwable $th) {
             // add logger...
             throw $th;

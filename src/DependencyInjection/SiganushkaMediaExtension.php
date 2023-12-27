@@ -30,6 +30,7 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
 
         $filesystemStorageDef = $container->findDefinition(FilesystemStorage::class);
         $filesystemStorageDef->setArgument('$publicDir', '%kernel.project_dir%/public');
+        $filesystemStorageDef->setArgument('$uploadDir', 'uploads');
 
         $channelRegistryDef = $container->findDefinition(ChannelRegistry::class);
         $channelRegistryDef->setArgument('$channels', new TaggedIteratorArgument('siganushka_media.channel'));

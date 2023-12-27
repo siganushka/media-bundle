@@ -4,26 +4,23 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle;
 
+use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Mapping\GenericMetadata;
 
 abstract class AbstractChannel implements ChannelInterface
 {
-    public function getFilepath(File $file): string
+    public function getTargetName(File $file): string
     {
-        return sprintf('%s/%s', str_replace('_', '-', $this->getAlias()), date('Ym'));
-    }
-
-    public function getFilename(File $file): string
-    {
-        $name = hash_file('CRC32', $file->getPathname());
         $extension = $file->guessExtension();
-
-        if ($name && $extension) {
-            return sprintf('%s.%s', $name, $extension);
+        if (!$extension) {
+            throw new \RuntimeException('Unable to access file.');
         }
 
-        throw new \RuntimeException('Unable to read file.');
+        $event = new MediaSaveEvent($this, $file);
+        $hash = $event->getHash();
+
+        return sprintf('%02s/%07s.%s', mb_substr($hash, 0, 2), mb_substr($hash, 2, 7), $extension);
     }
 
     public function getConstraints(): array

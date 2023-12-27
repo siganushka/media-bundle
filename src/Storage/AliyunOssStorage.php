@@ -28,10 +28,7 @@ class AliyunOssStorage implements StorageInterface
 
     public function save(ChannelInterface $channel, File $file): string
     {
-        $pathname = $channel->getFilepath($file);
-        $filename = $channel->getFilename($file);
-
-        $object = sprintf('%s/%s', trim($pathname, '/'), $filename);
+        $object = $channel->getTargetName($file);
 
         try {
             $result = $this->ossClient->uploadFile($this->bucket, $object, $file->getPathname());
