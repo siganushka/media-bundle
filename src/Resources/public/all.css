@@ -15,6 +15,7 @@
 .media-label .media-sp,
 .media-label .media-bg,
 .media-label .media-rm {
+  color: rgba(33, 37, 41, 0.4);
   position: absolute;
   z-index: 1;
 }
@@ -24,8 +25,9 @@
 }
 
 .media-label .media-rm {
+  color: rgba(33, 37, 41, 0.6);
   border-radius: 100%;
-  background-color: rgba(255, 255, 255, .5);
+  background-color: rgba(255, 255, 255, .6);
   padding: 0 4px;
 }
 
@@ -41,6 +43,10 @@
   display: none;
 }
 
+.media-label:hover .media-bg {
+  color: rgba(33, 37, 41, 0.6);
+}
+
 .media-loading .media-sp,
 .media-uploaded:hover .media-rm {
   display: block;
@@ -48,5 +54,5 @@
 
 .media-loading .media-preview,
 .media-uploaded:hover .media-preview {
-  opacity: .5;
+  opacity: .8;
 }

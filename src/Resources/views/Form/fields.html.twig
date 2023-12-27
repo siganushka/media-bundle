@@ -3,12 +3,12 @@
     for="{{ id }}_input"
     style="{{ style }}"
     class="border rounded bg-light media-label
-    {% if errors|length %} border-danger{% endif %}
-    {% if value and valid %} media-uploaded{% endif %}"
+    {%- if errors|length %} border-danger{% endif %}
+    {%- if value %} media-uploaded{% endif %}"
     onclick="handleMediaUpload(event, '#{{ id }}', '{{ channel }}')">
 
-    <i class="spinner-border text-secondary media-sp"></i>
-    <i class="bi bi-image text-secondary media-bg"></i>
+    <i class="spinner-border media-sp"></i>
+    <i class="bi bi-image media-bg"></i>
     <i class="bi bi-trash media-rm" onclick="handleMediaRemove(event, '#{{ id }}')"></i>
 
     <img src="{{ data.url|default('') }}" class="rounded media-preview" />
