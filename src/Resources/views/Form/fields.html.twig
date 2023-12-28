@@ -1,13 +1,12 @@
 {% block media_widget %}
   <div
     style="{{ style }}"
-    class="border rounded bg-light media-wrap
+    class="border rounded bg-white focus-ring media-wrap
     {%- if errors|length %} border-danger{% endif %}
     {%- if value %} media-uploaded{% endif %}"
     onclick="handleMediaUpload(event, '#{{ id }}', '{{ channel }}', '{{ accept }}')">
 
     <i class="spinner-border media-sp"></i>
-    <i class="bi bi-image media-bg"></i>
     <i class="bi bi-trash media-rm" onclick="handleMediaRemove(event, '#{{ id }}')"></i>
 
     <img src="{{ data.url|default('') }}" class="rounded media-preview" />
