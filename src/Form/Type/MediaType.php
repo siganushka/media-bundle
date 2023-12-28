@@ -48,17 +48,13 @@ class MediaType extends AbstractType
         });
 
         $resolver->setDefaults([
-            'style' => fn (Options $options) => sprintf('width: %s; height: %s', $options['width'], $options['height']),
-            'width' => '100px',
-            'height' => '100px',
+            'style' => 'min-width: 100px; min-height: 100px',
             'mismatch_message' => 'media.mismatch',
             // https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept
             'accept' => '*',
         ]);
 
         $resolver->setAllowedTypes('style', 'string');
-        $resolver->setAllowedTypes('width', 'string');
-        $resolver->setAllowedTypes('height', 'string');
         $resolver->setAllowedTypes('accept', 'string');
         $resolver->setAllowedTypes('mismatch_message', 'string');
     }
