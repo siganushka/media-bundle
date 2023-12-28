@@ -1,7 +1,7 @@
 {% block media_widget %}
   <div
     style="{{ style }}"
-    class="border rounded bg-white focus-ring media-wrap
+    class="border rounded bg-white media-wrap
     {%- if errors|length %} border-danger{% endif %}
     {%- if value %} media-uploaded{% endif %}"
     onclick="handleMediaUpload(event, '#{{ id }}', '{{ channel }}', '{{ accept }}')">
