@@ -1,8 +1,7 @@
 {% block media_widget %}
-  <label
-    for="{{ id }}_input"
+  <div
     style="{{ style }}"
-    class="border rounded bg-light media-label
+    class="border rounded bg-light media-wrap
     {%- if errors|length %} border-danger{% endif %}
     {%- if value %} media-uploaded{% endif %}"
     onclick="handleMediaUpload(event, '#{{ id }}', '{{ channel }}', '{{ accept }}')">
@@ -12,7 +11,7 @@
     <i class="bi bi-trash media-rm" onclick="handleMediaRemove(event, '#{{ id }}')"></i>
 
     <img src="{{ data.url|default('') }}" class="rounded media-preview" />
-  </label>
+  </div>
 
   {# display to input hidden #}
   {{ form_widget(form, { type: 'hidden' }) }}

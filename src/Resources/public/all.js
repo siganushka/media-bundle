@@ -1,10 +1,10 @@
-const handleMediaUpload = function (event, target, channel, accept) {
+const handleMediaUpload = function (event, input, channel, accept) {
   const $label = $(event.currentTarget)
   if ($label.hasClass('media-uploaded') || $label.hasClass('media-loading')) {
     return false
   }
 
-  const $target = $(target)
+  const $input = $(input)
   const $preview = $label.children('.media-preview')
 
   const $file = $('<input>', { type: 'file', accept }).click()
@@ -29,7 +29,7 @@ const handleMediaUpload = function (event, target, channel, accept) {
       }
     })
     .done(function(res) {
-      $target.val(res.hash)
+      $input.val(res.hash)
       $preview.attr('src', res.url)
       $label.addClass('media-uploaded')
     })
@@ -42,14 +42,14 @@ const handleMediaUpload = function (event, target, channel, accept) {
   })
 }
 
-const handleMediaRemove = function (event, target) {
+const handleMediaRemove = function (event, input) {
   event.stopPropagation()
   if (confirm('确定删除码？')) {
-    const $target = $(target)
-    const $label = $(event.currentTarget).closest('.media-label')
+    const $input = $(input)
+    const $label = $(event.currentTarget).closest('.media-wrap')
     const $preview = $label.children('.media-preview')
 
-    $target.removeAttr('value')
+    $input.removeAttr('value')
     $preview.removeAttr('src')
     $label.removeClass('media-uploaded')
   }
