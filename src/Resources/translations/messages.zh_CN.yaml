@@ -1,2 +1,6 @@
 media.channel: 文件类型
 media.file: 选择文件
+
+media.name: 名称
+media.size: 大小
+media.pixel: 尺寸

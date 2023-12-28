@@ -1,4 +1,4 @@
-const handleMediaUpload = function (event, target, channel) {
+const handleMediaUpload = function (event, target, channel, accept) {
   const $label = $(event.currentTarget)
   if ($label.hasClass('media-uploaded') || $label.hasClass('media-loading')) {
     return false
@@ -7,7 +7,7 @@ const handleMediaUpload = function (event, target, channel) {
   const $target = $(target)
   const $preview = $label.children('.media-preview')
 
-  const $file = $('<input>', { type: 'file' }).click()
+  const $file = $('<input>', { type: 'file', accept }).click()
   $file.on('change', function (event) {
     const files = event.target.files
     if (!files.length) {

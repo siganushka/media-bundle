@@ -5,7 +5,7 @@
     class="border rounded bg-light media-label
     {%- if errors|length %} border-danger{% endif %}
     {%- if value %} media-uploaded{% endif %}"
-    onclick="handleMediaUpload(event, '#{{ id }}', '{{ channel }}')">
+    onclick="handleMediaUpload(event, '#{{ id }}', '{{ channel }}', '{{ accept }}')">
 
     <i class="spinner-border media-sp"></i>
     <i class="bi bi-image media-bg"></i>

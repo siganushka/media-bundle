@@ -35,6 +35,7 @@ class MediaType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['style'] = $options['style'];
+        $view->vars['accept'] = $options['accept'];
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -51,11 +52,14 @@ class MediaType extends AbstractType
             'width' => '100px',
             'height' => '100px',
             'mismatch_message' => 'media.mismatch',
+            // https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept
+            'accept' => '*',
         ]);
 
         $resolver->setAllowedTypes('style', 'string');
         $resolver->setAllowedTypes('width', 'string');
         $resolver->setAllowedTypes('height', 'string');
+        $resolver->setAllowedTypes('accept', 'string');
         $resolver->setAllowedTypes('mismatch_message', 'string');
     }
 
