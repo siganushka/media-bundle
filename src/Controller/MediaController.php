@@ -108,7 +108,7 @@ class MediaController extends AbstractFOSRestController
     protected function viewResponse($data = null, int $statusCode = null, array $headers = []): Response
     {
         $attributes = [
-            'id', 'hash', 'channel', 'url', 'size', 'width', 'height', 'image',
+            'id', 'hash', 'channel', 'name', 'url', 'size', 'width', 'height', 'image',
             'updatedAt', 'createdAt',
         ];
 
