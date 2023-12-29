@@ -18,4 +18,11 @@ interface StorageInterface
      * @return string 文件的 URL
      */
     public function save(ChannelInterface $channel, File $file): string;
+
+    /**
+     * 从文件系统删除文件.
+     *
+     * @param string $url 文件地址
+     */
+    public function delete(string $url): void;
 }

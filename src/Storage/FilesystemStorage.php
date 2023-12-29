@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Siganushka\MediaBundle\Storage;
 
 use Siganushka\MediaBundle\ChannelInterface;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\UrlHelper;
 
@@ -39,5 +40,22 @@ class FilesystemStorage implements StorageInterface
         }
 
         return $this->urlHelper->getAbsoluteUrl($path);
+    }
+
+    public function delete(string $url): void
+    {
+        $path = parse_url($url, \PHP_URL_PATH);
+        if (!$path) {
+            throw new \RuntimeException('Unable parse file.');
+        }
+
+        $file = sprintf('%s%s', $this->publicDir, $path);
+        if (is_dir($file)) {
+            // delete file only (not include directory)
+            throw new \RuntimeException(sprintf('File %s invalid.', $file));
+        }
+
+        $fs = new Filesystem();
+        $fs->remove($file);
     }
 }

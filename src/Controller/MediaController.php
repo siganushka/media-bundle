@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\Controller;
 
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Context\Context;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -98,8 +99,12 @@ class MediaController extends AbstractFOSRestController
             throw $this->createNotFoundException(sprintf('Resource #%d not found.', $id));
         }
 
-        $entityManager->remove($entity);
-        $entityManager->flush();
+        try {
+            $entityManager->remove($entity);
+            $entityManager->flush();
+        } catch (ForeignKeyConstraintViolationException $th) {
+            throw new BadRequestHttpException('Unable to delete resource.');
+        }
 
         // 204 no content response
         return $this->viewResponse(null, Response::HTTP_NO_CONTENT);

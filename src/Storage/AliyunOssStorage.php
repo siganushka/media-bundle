@@ -43,4 +43,14 @@ class AliyunOssStorage implements StorageInterface
 
         throw new \LogicException('Invalid response.');
     }
+
+    public function delete(string $url): void
+    {
+        $object = parse_url($url, \PHP_URL_PATH);
+        if (!$object) {
+            throw new \RuntimeException('Unable parse file.');
+        }
+
+        $this->ossClient->deleteObject($this->bucket, ltrim($object, '/'));
+    }
 }

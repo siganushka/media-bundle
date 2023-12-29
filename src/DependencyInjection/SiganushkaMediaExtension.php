@@ -6,6 +6,7 @@ namespace Siganushka\MediaBundle\DependencyInjection;
 
 use Siganushka\MediaBundle\ChannelInterface;
 use Siganushka\MediaBundle\ChannelRegistry;
+use Siganushka\MediaBundle\Doctrine\EventListener\MediaRemoveListener;
 use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Storage\FilesystemStorage;
 use Siganushka\MediaBundle\Storage\StorageInterface;
@@ -27,6 +28,11 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         $config = $this->processConfiguration($configuration, $configs);
 
         $container->setAlias(StorageInterface::class, $config['storage']);
+
+        $mediaRemoveListenerDef = $container->findDefinition(MediaRemoveListener::class);
+        $mediaRemoveListenerDef
+            ->addTag('doctrine.orm.entity_listener', ['event' => 'postRemove', 'entity' => Media::class])
+        ;
 
         $filesystemStorageDef = $container->findDefinition(FilesystemStorage::class);
         $filesystemStorageDef->setArgument('$publicDir', '%kernel.project_dir%/public');
