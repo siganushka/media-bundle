@@ -1,6 +1,8 @@
 const handleMediaUpload = function (event, input, channel, accept) {
   const $label = $(event.currentTarget)
-  if ($label.hasClass('media-uploaded') || $label.hasClass('media-loading')) {
+  if ($label.hasClass('media-success')
+    || $label.hasClass('media-loading')
+    || $label.hasClass('media-disabled')) {
     return false
   }
 
@@ -31,7 +33,7 @@ const handleMediaUpload = function (event, input, channel, accept) {
     .done(function(res) {
       $input.val(res.hash)
       $preview.attr('src', res.url)
-      $label.addClass('media-uploaded')
+      $label.addClass('media-success')
     })
     .fail(function(err) {
       alert(err.responseJSON.message || err.statusText)
@@ -51,6 +53,6 @@ const handleMediaRemove = function (event, input) {
 
     $input.removeAttr('value')
     $preview.removeAttr('src')
-    $label.removeClass('media-uploaded')
+    $label.removeClass('media-success')
   }
 }
