@@ -25,16 +25,16 @@
 
 .media-wrap .media-sp,
 .media-wrap .media-rm {
-  color: rgba(33, 37, 41, 0.4);
+  color: rgba(33, 37, 41, .5);
   position: absolute;
   z-index: 1;
 }
 
 .media-wrap .media-rm {
-  color: rgba(33, 37, 41, 0.6);
+  color: rgba(33, 37, 41, .7);
   font-size: 120%;
   border-radius: 100%;
-  background-color: rgba(255, 255, 255, .6);
+  background-color: rgba(255, 255, 255, .7);
   padding: 1px 6px;
 }
 
@@ -53,9 +53,11 @@
   display: block;
 }
 
-.media-wrap:is(.media-disabled),
+.media-wrap:is(.media-disabled) {
+  opacity: .5;
+}
 .media-wrap:is(.media-success):not(.media-disabled):hover .media-preview {
-  opacity: .6;
+  opacity: .7;
 }
 
 
