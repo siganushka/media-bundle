@@ -31,8 +31,8 @@ const handleMediaUpload = function (event, input, channel, accept) {
       }
     })
     .done(function(res) {
+      $preview.html(res.image ? `<img src="${res.url}" />` : `<small>${res.name}</small>`)
       $input.val(res.ref)
-      $preview.attr('src', res.url)
       $label.addClass('media-success')
     })
     .fail(function(err) {
@@ -51,8 +51,8 @@ const handleMediaRemove = function (event, input) {
     const $label = $(event.currentTarget).closest('.media-wrap')
     const $preview = $label.children('.media-preview')
 
+    $preview.empty()
     $input.removeAttr('value')
-    $preview.removeAttr('src')
     $label.removeClass('media-success')
   }
 }

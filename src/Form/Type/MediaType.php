@@ -35,8 +35,18 @@ class MediaType extends AbstractType
 
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
+        // Guesses HTML accept from channel constraints (twig only)
+        // @see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept
+        // @see https://www.iana.org/assignments/media-types/media-types.xhtml
+        $accept = [];
+        foreach ($options['channel']->getConstraints() as $constraint) {
+            if ($constraint instanceof File && $constraint->mimeTypes) {
+                $accept = array_merge($accept, (array) $constraint->mimeTypes);
+            }
+        }
+
         $view->vars['style'] = $options['style'];
-        $view->vars['accept'] = $options['accept'];
+        $view->vars['accept'] = \count($accept) ? implode(',', $accept) : '*';
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -48,26 +58,10 @@ class MediaType extends AbstractType
             return $constraints;
         });
 
-        // Setting accept from channel constraints
-        $accept = function (Options $options): string {
-            foreach ($options['channel']->getConstraints() as $constraint) {
-                if ($constraint instanceof File) {
-                    return implode(',', (array) $constraint->mimeTypes);
-                }
-            }
+        $resolver->setDefault('style', null);
+        $resolver->setDefault('mismatch_message', 'media.mismatch');
 
-            return '*';
-        };
-
-        $resolver->setDefaults([
-            'mismatch_message' => 'media.mismatch',
-            'style' => 'min-width: 100px; min-height: 100px',
-            // @see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept
-            'accept' => $accept,
-        ]);
-
-        $resolver->setAllowedTypes('style', 'string');
-        $resolver->setAllowedTypes('accept', 'string');
+        $resolver->setAllowedTypes('style', ['null', 'string']);
         $resolver->setAllowedTypes('mismatch_message', 'string');
     }
 

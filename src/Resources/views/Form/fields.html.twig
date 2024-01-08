@@ -1,20 +1,26 @@
 {% block media_widget %}
-  <div id="{{ id }}_div">
-    <div
-      style="{{ style }}"
-      class="border rounded bg-white media-wrap
-      {%- if errors|length %} border-danger{% endif %}
-      {%- if value %} media-success{% endif %}
-      {%- if disabled %} media-disabled{% endif %}"
-      onclick="handleMediaUpload(event, '#{{ id }}', '{{ channel }}', '{{ accept }}')">
+<div id="{{ id }}_div">
+  <div
+    style="{{ style }}"
+    class="border rounded bg-white media-wrap
+    {%- if errors|length %} border-danger{% endif %}
+    {%- if value %} media-success{% endif %}
+    {%- if disabled %} media-disabled{% endif %}"
+    onclick="handleMediaUpload(event, '#{{ id }}', '{{ channel }}', '{{ accept }}')">
 
-      <i class="spinner-border media-sp"></i>
-      <i class="bi bi-trash media-rm" onclick="handleMediaRemove(event, '#{{ id }}')"></i>
+    <i class="spinner-border media-sp"></i>
+    <i class="bi bi-trash media-rm" onclick="handleMediaRemove(event, '#{{ id }}')"></i>
 
-      <img src="{{ data.url|default('') }}" class="rounded media-preview" />
+    <div class="media-preview">
+    {%- if data and data.image %}
+      <img src="{{ data.url }}" />
+    {% elseif data and data.name %}
+      <small>{{ data.name }}</small>
+    {% endif -%}
     </div>
-
-    {# display to input hidden #}
-    {{ form_widget(form, { type: 'hidden' }) }}
   </div>
+
+  {# display to input hidden #}
+  {{ form_widget(form, { type: 'hidden' }) }}
+</div>
 {% endblock %}
