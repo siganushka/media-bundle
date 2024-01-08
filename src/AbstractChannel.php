@@ -21,9 +21,9 @@ abstract class AbstractChannel implements ChannelInterface
 
         // Like Git commit ID
         $event = new MediaSaveEvent($this, $file);
-        $hash = mb_substr($event->getHash(), 0, 7);
+        $ref = mb_substr($event->getRef(), 0, 7);
 
-        return sprintf('%s/%07s.%s', $channel, $hash, $extension);
+        return sprintf('%s/%07s.%s', $channel, $ref, $extension);
     }
 
     public function getConstraints(): array

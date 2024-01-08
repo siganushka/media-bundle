@@ -29,17 +29,17 @@ class MediaSaveListener implements EventSubscriberInterface
     {
         $channel = $event->getChannel();
         $file = $event->getFile();
-        $hash = $event->getHash();
+        $ref = $event->getRef();
 
-        $media = $this->mediaRepository->findOneByHash($hash);
+        $media = $this->mediaRepository->findOneByRef($ref);
         if (null === $media) {
-            $media = $this->saveFile($channel, $file, $hash);
+            $media = $this->saveFile($channel, $file, $ref);
         }
 
         $event->setMedia($media)->stopPropagation();
     }
 
-    protected function saveFile(ChannelInterface $channel, File $file, string $hash): Media
+    protected function saveFile(ChannelInterface $channel, File $file, string $ref): Media
     {
         try {
             [$width, $height] = FileUtils::getImageSize($file);
@@ -60,7 +60,7 @@ class MediaSaveListener implements EventSubscriberInterface
         $channel->onPostSave($mediaUrl);
 
         $media = $this->mediaRepository->createNew();
-        $media->setHash($hash);
+        $media->setRef($ref);
         $media->setChannel($channel);
         $media->setName($name);
         $media->setUrl($mediaUrl);

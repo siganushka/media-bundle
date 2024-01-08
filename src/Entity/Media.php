@@ -15,7 +15,7 @@ use Siganushka\MediaBundle\Repository\MediaRepository;
 /**
  * @ORM\Entity(repositoryClass=MediaRepository::class)
  * @ORM\Table(uniqueConstraints={
- *  @ORM\UniqueConstraint(columns={"hash"})
+ *  @ORM\UniqueConstraint(columns={"ref"})
  * })
  */
 class Media implements ResourceInterface, TimestampableInterface
@@ -26,7 +26,12 @@ class Media implements ResourceInterface, TimestampableInterface
     /**
      * @ORM\Column(type="string", length=32, options={"fixed": true})
      */
-    private ?string $hash = null;
+    private ?string $ref = null;
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    private ?string $url = null;
 
     /**
      * @ORM\Column(type="string")
@@ -37,11 +42,6 @@ class Media implements ResourceInterface, TimestampableInterface
      * @ORM\Column(type="string")
      */
     private ?string $name = null;
-
-    /**
-     * @ORM\Column(type="string")
-     */
-    private ?string $url = null;
 
     /**
      * @ORM\Column(type="string")
@@ -58,14 +58,26 @@ class Media implements ResourceInterface, TimestampableInterface
      */
     private ?int $height = null;
 
-    public function getHash(): ?string
+    public function getRef(): ?string
     {
-        return $this->hash;
+        return $this->ref;
     }
 
-    public function setHash(string $hash): self
+    public function setRef(string $ref): self
     {
-        $this->hash = $hash;
+        $this->ref = $ref;
+
+        return $this;
+    }
+
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+
+    public function setUrl(string $url): self
+    {
+        $this->url = $url;
 
         return $this;
     }
@@ -105,18 +117,6 @@ class Media implements ResourceInterface, TimestampableInterface
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getUrl(): ?string
-    {
-        return $this->url;
-    }
-
-    public function setUrl(string $url): self
-    {
-        $this->url = $url;
 
         return $this;
     }

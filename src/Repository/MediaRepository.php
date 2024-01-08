@@ -24,8 +24,8 @@ class MediaRepository extends GenericEntityRepository
         parent::__construct($registry, Media::class);
     }
 
-    public function findOneByHash(string $hash): ?Media
+    public function findOneByRef(string $ref): ?Media
     {
-        return $this->findOneBy(['hash' => $hash]);
+        return $this->findOneBy(['ref' => $ref]);
     }
 }

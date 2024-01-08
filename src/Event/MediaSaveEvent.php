@@ -32,7 +32,7 @@ class MediaSaveEvent extends Event
         return $this->file;
     }
 
-    public function getHash(): string
+    public function getRef(): string
     {
         $hash = hash_file('MD5', $this->file->getPathname());
         if (!$hash) {

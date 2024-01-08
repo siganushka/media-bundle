@@ -77,26 +77,26 @@ class MediaController extends AbstractFOSRestController
     }
 
     /**
-     * @Route("/media/{id<\d+>}", methods={"GET"})
+     * @Route("/media/{ref<\w{32}>}", methods={"GET"})
      */
-    public function getItem(int $id): Response
+    public function getItem(string $ref): Response
     {
-        $entity = $this->mediaRepository->find($id);
+        $entity = $this->mediaRepository->findOneByRef($ref);
         if (!$entity) {
-            throw $this->createNotFoundException(sprintf('Resource #%d not found.', $id));
+            throw $this->createNotFoundException(sprintf('Resource #%s not found.', $ref));
         }
 
         return $this->viewResponse($entity);
     }
 
     /**
-     * @Route("/media/{id<\d+>}", methods={"DELETE"})
+     * @Route("/media/{ref<\w{32}>}", methods={"DELETE"})
      */
-    public function deleteItem(EntityManagerInterface $entityManager, int $id): Response
+    public function deleteItem(EntityManagerInterface $entityManager, string $ref): Response
     {
-        $entity = $this->mediaRepository->find($id);
+        $entity = $this->mediaRepository->findOneByRef($ref);
         if (!$entity) {
-            throw $this->createNotFoundException(sprintf('Resource #%d not found.', $id));
+            throw $this->createNotFoundException(sprintf('Resource #%s not found.', $ref));
         }
 
         try {
@@ -113,7 +113,7 @@ class MediaController extends AbstractFOSRestController
     protected function viewResponse($data = null, int $statusCode = null, array $headers = []): Response
     {
         $attributes = [
-            'id', 'hash', 'channel', 'name', 'url', 'size', 'width', 'height', 'image',
+            'ref', 'url', 'channel', 'name', 'size', 'width', 'height', 'image',
             'updatedAt', 'createdAt',
         ];
 

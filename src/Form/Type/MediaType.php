@@ -29,7 +29,7 @@ class MediaType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         // using addViewTransformer to transformer object for view
-        $builder->addViewTransformer(new EntityToIdentifierTransformer($this->registry, Media::class, 'hash'));
+        $builder->addViewTransformer(new EntityToIdentifierTransformer($this->registry, Media::class, 'ref'));
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options): void

@@ -31,7 +31,7 @@ const handleMediaUpload = function (event, input, channel, accept) {
       }
     })
     .done(function(res) {
-      $input.val(res.hash)
+      $input.val(res.ref)
       $preview.attr('src', res.url)
       $label.addClass('media-success')
     })
