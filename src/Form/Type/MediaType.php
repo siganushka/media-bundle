@@ -15,6 +15,7 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Callback;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class MediaType extends AbstractType
@@ -47,11 +48,22 @@ class MediaType extends AbstractType
             return $constraints;
         });
 
+        // Setting accept from channel constraints
+        $accept = function (Options $options): string {
+            foreach ($options['channel']->getConstraints() as $constraint) {
+                if ($constraint instanceof File) {
+                    return implode(',', (array) $constraint->mimeTypes);
+                }
+            }
+
+            return '*';
+        };
+
         $resolver->setDefaults([
-            'style' => 'min-width: 100px; min-height: 100px',
             'mismatch_message' => 'media.mismatch',
-            // https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept
-            'accept' => '*',
+            'style' => 'min-width: 100px; min-height: 100px',
+            // @see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept
+            'accept' => $accept,
         ]);
 
         $resolver->setAllowedTypes('style', 'string');
