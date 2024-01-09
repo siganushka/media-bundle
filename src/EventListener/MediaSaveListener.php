@@ -9,7 +9,6 @@ use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Storage\StorageInterface;
-use Siganushka\MediaBundle\Utils\FileUtils;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -41,12 +40,7 @@ class MediaSaveListener implements EventSubscriberInterface
 
     protected function saveFile(ChannelInterface $channel, File $file, string $hash): Media
     {
-        try {
-            [$width, $height] = FileUtils::getImageSize($file);
-        } catch (\Throwable $th) {
-            $width = $height = null;
-        }
-
+        [$width, $height] = @getimagesize($file->getPathname());
         $name = $file instanceof UploadedFile ? $file->getClientOriginalName() : $file->getFilename();
         $extension = $file->guessExtension();
         $mimeType = $file->getMimeType();

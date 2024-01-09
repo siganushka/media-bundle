@@ -25,7 +25,7 @@ class Media implements ResourceInterface, TimestampableInterface
     use TimestampableTrait;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", length=40, options={"fixed": true})
      */
     private ?string $hash = null;
 

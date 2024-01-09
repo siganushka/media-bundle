@@ -77,7 +77,7 @@ class MediaController extends AbstractFOSRestController
     }
 
     /**
-     * @Route("/media/{hash<\w>}", methods={"GET"})
+     * @Route("/media/{hash}", methods={"GET"})
      */
     public function getItem(string $hash): Response
     {
@@ -90,7 +90,7 @@ class MediaController extends AbstractFOSRestController
     }
 
     /**
-     * @Route("/media/{hash<\w>}", methods={"DELETE"})
+     * @Route("/media/{hash}", methods={"DELETE"})
      */
     public function deleteItem(EntityManagerInterface $entityManager, string $hash): Response
     {
