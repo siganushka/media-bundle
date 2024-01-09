@@ -17,13 +17,11 @@ abstract class AbstractChannel implements ChannelInterface
             throw new \RuntimeException('Unable to access file.');
         }
 
-        $channel = str_replace('_', '-', $this->getAlias());
+        $event = new MediaSaveEvent($this, $file);
+        $hash = $event->getHash();
 
         // Like Git commit ID
-        $event = new MediaSaveEvent($this, $file);
-        $ref = mb_substr($event->getRef(), 0, 7);
-
-        return sprintf('%s/%07s.%s', $channel, $ref, $extension);
+        return sprintf('%02s/%07s.%s', mb_substr($hash, 0, 2), mb_substr($hash, 2, 7), $extension);
     }
 
     public function getConstraints(): array

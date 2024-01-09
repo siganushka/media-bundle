@@ -29,17 +29,17 @@ class MediaSaveListener implements EventSubscriberInterface
     {
         $channel = $event->getChannel();
         $file = $event->getFile();
-        $ref = $event->getRef();
+        $hash = $event->getHash();
 
-        $media = $this->mediaRepository->findOneByRef($ref);
+        $media = $this->mediaRepository->findOneByHash($hash);
         if (null === $media) {
-            $media = $this->saveFile($channel, $file, $ref);
+            $media = $this->saveFile($channel, $file, $hash);
         }
 
         $event->setMedia($media)->stopPropagation();
     }
 
-    protected function saveFile(ChannelInterface $channel, File $file, string $ref): Media
+    protected function saveFile(ChannelInterface $channel, File $file, string $hash): Media
     {
         try {
             [$width, $height] = FileUtils::getImageSize($file);
@@ -48,7 +48,9 @@ class MediaSaveListener implements EventSubscriberInterface
         }
 
         $name = $file instanceof UploadedFile ? $file->getClientOriginalName() : $file->getFilename();
-        $size = FileUtils::getFormattedSize($file);
+        $extension = $file->guessExtension();
+        $mimeType = $file->getMimeType();
+        $bytes = $file->getSize();
 
         // pre save hook
         $channel->onPreSave($file);
@@ -60,11 +62,12 @@ class MediaSaveListener implements EventSubscriberInterface
         $channel->onPostSave($mediaUrl);
 
         $media = $this->mediaRepository->createNew();
-        $media->setRef($ref);
-        $media->setChannel($channel);
-        $media->setName($name);
+        $media->setHash($hash);
         $media->setUrl($mediaUrl);
-        $media->setSize($size);
+        $media->setName($name);
+        $media->setExtension($extension);
+        $media->setMimeType($mimeType);
+        $media->setBytes($bytes);
         $media->setWidth($width);
         $media->setHeight($height);
 

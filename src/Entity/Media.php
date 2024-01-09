@@ -9,13 +9,14 @@ use Siganushka\Contracts\Doctrine\ResourceInterface;
 use Siganushka\Contracts\Doctrine\ResourceTrait;
 use Siganushka\Contracts\Doctrine\TimestampableInterface;
 use Siganushka\Contracts\Doctrine\TimestampableTrait;
-use Siganushka\MediaBundle\ChannelInterface;
 use Siganushka\MediaBundle\Repository\MediaRepository;
+
+use function Symfony\Component\String\u;
 
 /**
  * @ORM\Entity(repositoryClass=MediaRepository::class)
  * @ORM\Table(uniqueConstraints={
- *  @ORM\UniqueConstraint(columns={"ref"})
+ *  @ORM\UniqueConstraint(columns={"hash"})
  * })
  */
 class Media implements ResourceInterface, TimestampableInterface
@@ -24,9 +25,9 @@ class Media implements ResourceInterface, TimestampableInterface
     use TimestampableTrait;
 
     /**
-     * @ORM\Column(type="string", length=32, options={"fixed": true})
+     * @ORM\Column(type="string")
      */
-    private ?string $ref = null;
+    private ?string $hash = null;
 
     /**
      * @ORM\Column(type="string")
@@ -36,17 +37,22 @@ class Media implements ResourceInterface, TimestampableInterface
     /**
      * @ORM\Column(type="string")
      */
-    private ?string $channel = null;
-
-    /**
-     * @ORM\Column(type="string")
-     */
     private ?string $name = null;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $size = null;
+    private ?string $extension = null;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private ?string $mimeType = null;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private ?int $bytes = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -58,14 +64,14 @@ class Media implements ResourceInterface, TimestampableInterface
      */
     private ?int $height = null;
 
-    public function getRef(): ?string
+    public function getHash(): ?string
     {
-        return $this->ref;
+        return $this->hash;
     }
 
-    public function setRef(string $ref): self
+    public function setHash(string $hash): self
     {
-        $this->ref = $ref;
+        $this->hash = $hash;
 
         return $this;
     }
@@ -82,33 +88,6 @@ class Media implements ResourceInterface, TimestampableInterface
         return $this;
     }
 
-    public function getChannel(): ?string
-    {
-        return $this->channel;
-    }
-
-    /**
-     * @param string|ChannelInterface $channel
-     */
-    public function setChannel($channel): self
-    {
-        $this->channel = (string) $channel;
-
-        return $this;
-    }
-
-    /**
-     * @param string|ChannelInterface $channel
-     */
-    public function isChannel($channel): bool
-    {
-        if ($channel instanceof ChannelInterface) {
-            $channel = (string) $channel;
-        }
-
-        return $this->channel && $this->channel === $channel;
-    }
-
     public function getName(): ?string
     {
         return $this->name;
@@ -121,14 +100,38 @@ class Media implements ResourceInterface, TimestampableInterface
         return $this;
     }
 
-    public function getSize(): ?string
+    public function getExtension(): ?string
     {
-        return $this->size;
+        return $this->extension;
     }
 
-    public function setSize(string $size): self
+    public function setExtension(?string $extension): self
     {
-        $this->size = $size;
+        $this->extension = $extension;
+
+        return $this;
+    }
+
+    public function getMimeType(): ?string
+    {
+        return $this->mimeType;
+    }
+
+    public function setMimeType(?string $mimeType): self
+    {
+        $this->mimeType = $mimeType;
+
+        return $this;
+    }
+
+    public function getBytes(): ?int
+    {
+        return $this->bytes;
+    }
+
+    public function setBytes(?int $bytes): self
+    {
+        $this->bytes = $bytes;
 
         return $this;
     }
@@ -159,6 +162,6 @@ class Media implements ResourceInterface, TimestampableInterface
 
     public function isImage(): bool
     {
-        return $this->width && $this->height;
+        return u($this->mimeType)->startsWith('image');
     }
 }

@@ -31,9 +31,9 @@ class MediaNormalizer implements NormalizerInterface, CacheableSupportsMethodInt
         }
 
         $url = $object->getUrl();
-        $ref = $object->getRef();
+        $hash = $object->getHash();
 
-        return $url && $ref ? sprintf('%s?ref=%32s', $url, $ref) : null;
+        return $url && $hash ? sprintf('%s?hash=%s', $url, $hash) : null;
     }
 
     public function supportsNormalization($data, string $format = null, array $context = []): bool

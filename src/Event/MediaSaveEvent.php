@@ -32,14 +32,17 @@ class MediaSaveEvent extends Event
         return $this->file;
     }
 
-    public function getRef(): string
+    /**
+     * @throws \RuntimeException Fail to hash file
+     */
+    public function getHash(): string
     {
-        $hash = hash_file('MD5', $this->file->getPathname());
-        if (!$hash) {
-            throw new \RuntimeException('Unable to access file.');
+        $hash = sha1_file($this->file->getPathname());
+        if (false === $hash) {
+            throw new \RuntimeException('Unable to hash file.');
         }
 
-        return hash('MD5', sprintf('%32s%s', $hash, (string) $this->channel));
+        return $hash;
     }
 
     public function getMedia(): ?Media
