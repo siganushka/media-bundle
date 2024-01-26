@@ -37,7 +37,7 @@ class MediaSaveEvent extends Event
      */
     public function getHash(): string
     {
-        $hash = sha1_file($this->file->getPathname());
+        $hash = md5_file($this->file->getPathname());
         if (false === $hash) {
             throw new \RuntimeException('Unable to hash file.');
         }

@@ -5,6 +5,6 @@ media.file: 文件
 media.name: 名称
 media.extension: 后缀
 media.mimeType: 类型
-media.bytes: 字节
+media.bytes: 大小
 media.pixel: 尺寸
 media.image: 图象
