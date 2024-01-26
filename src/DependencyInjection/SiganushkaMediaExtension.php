@@ -8,7 +8,7 @@ use Siganushka\MediaBundle\ChannelInterface;
 use Siganushka\MediaBundle\ChannelRegistry;
 use Siganushka\MediaBundle\Doctrine\EventListener\MediaRemoveListener;
 use Siganushka\MediaBundle\Entity\Media;
-use Siganushka\MediaBundle\Storage\FilesystemStorage;
+use Siganushka\MediaBundle\Storage\LocalStorage;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument;
@@ -34,9 +34,9 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
             ->addTag('doctrine.orm.entity_listener', ['event' => 'postRemove', 'entity' => Media::class])
         ;
 
-        $filesystemStorageDef = $container->findDefinition(FilesystemStorage::class);
-        $filesystemStorageDef->setArgument('$publicDir', '%kernel.project_dir%/public');
-        $filesystemStorageDef->setArgument('$uploadDir', 'uploads');
+        $localStorageDef = $container->findDefinition(LocalStorage::class);
+        $localStorageDef->setArgument('$publicDir', '%kernel.project_dir%/public');
+        $localStorageDef->setArgument('$uploadDir', 'uploads');
 
         $channelRegistryDef = $container->findDefinition(ChannelRegistry::class);
         $channelRegistryDef->setArgument('$channels', new TaggedIteratorArgument('siganushka_media.channel'));

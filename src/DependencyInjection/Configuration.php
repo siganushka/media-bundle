@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Siganushka\MediaBundle\DependencyInjection;
 
 use Siganushka\MediaBundle\Entity\Media;
-use Siganushka\MediaBundle\Storage\FilesystemStorage;
+use Siganushka\MediaBundle\Storage\LocalStorage;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -34,7 +34,7 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->scalarNode('storage')
-                    ->defaultValue(FilesystemStorage::class)
+                    ->defaultValue(LocalStorage::class)
                     ->cannotBeEmpty()
                 ->end()
         ;

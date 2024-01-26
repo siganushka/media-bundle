@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace Siganushka\MediaBundle\Storage;
 
 use Siganushka\MediaBundle\ChannelInterface;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\UrlHelper;
 
-class FilesystemStorage implements StorageInterface
+class LocalStorage implements StorageInterface
 {
     private UrlHelper $urlHelper;
     private string $publicDir;
@@ -55,7 +54,8 @@ class FilesystemStorage implements StorageInterface
             throw new \RuntimeException(sprintf('File %s invalid.', $file));
         }
 
-        $fs = new Filesystem();
-        $fs->remove($file);
+        if (file_exists($file)) {
+            @unlink($file);
+        }
     }
 }
