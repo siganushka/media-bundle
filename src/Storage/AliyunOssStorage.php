@@ -47,7 +47,7 @@ class AliyunOssStorage implements StorageInterface
     public function delete(string $url): void
     {
         $object = parse_url($url, \PHP_URL_PATH);
-        if (!$object) {
+        if (null === $object || false === $object) {
             throw new \RuntimeException('Unable parse file.');
         }
 

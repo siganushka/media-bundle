@@ -44,7 +44,7 @@ class LocalStorage implements StorageInterface
     public function delete(string $url): void
     {
         $path = parse_url($url, \PHP_URL_PATH);
-        if (!$path) {
+        if (null === $path || false === $path) {
             throw new \RuntimeException('Unable parse file.');
         }
 

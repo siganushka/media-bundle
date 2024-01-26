@@ -13,7 +13,7 @@ abstract class AbstractChannel implements ChannelInterface
     public function getTargetName(File $file): string
     {
         $extension = $file->guessExtension();
-        if (!$extension) {
+        if (null === $extension) {
             throw new \RuntimeException('Unable to access file.');
         }
 
