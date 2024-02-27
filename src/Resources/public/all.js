@@ -1,16 +1,18 @@
-const handleMediaUpload = function (event, input, channel, accept) {
-  const $label = $(event.currentTarget)
-  if ($label.hasClass('media-success')
-    || $label.hasClass('media-loading')
-    || $label.hasClass('media-disabled')) {
+const handleMediaUpload = (el, input, channel, accept) => {
+  if (el.classList.contains('media-success')
+    || el.classList.contains('media-loading')
+    || el.classList.contains('media-disabled')) {
     return false
   }
 
-  const $input = $(input)
-  const $preview = $label.children('.media-preview')
+  const view = el.querySelector('.media-view')
+  const data = document.getElementById(input)
+  const file = document.createElement('input')
+        file.setAttribute('type', 'file')
+        file.setAttribute('accept', accept)
+        file.click()
 
-  const $file = $('<input>', { type: 'file', accept }).click()
-  $file.on('change', function (event) {
+  file.addEventListener('change', (event) => {
     const files = event.target.files
     if (!files.length) {
       return false
@@ -20,39 +22,38 @@ const handleMediaUpload = function (event, input, channel, accept) {
     formData.append('channel', channel)
     formData.append('file', files[0])
 
-    $.ajax({
-      url: '/api/media',
-      type: 'POST',
-      data: formData,
-      processData: false,
-      contentType: false,
-      beforeSend: function() {
-        $label.addClass('media-loading')
+    // Add loading before send
+    el.classList.add('media-loading')
+
+    // @see https://github.com/JakeChampion/fetch
+    fetch('/api/media', {
+      method: 'POST',
+      body: formData,
+    }).then(async response => {
+      const json = await response.json()
+      if (response.status >= 200 && response.status < 300) {
+        view.innerHTML = json.image ? `<img src="${json.url}" />` : `<small>${json.name}</small>`
+        data.value = json.hash
+        el.classList.add('media-success')
+      } else {
+        throw new Error(json.message || response.statusText)
       }
+    }).catch(err => {
+      alert(err)
+    }).finally(() => {
+      el.classList.remove('media-loading')
     })
-    .done(function(res) {
-      $preview.html(res.image ? `<img src="${res.url}" />` : `<small>${res.name}</small>`)
-      $input.val(res.hash)
-      $label.addClass('media-success')
-    })
-    .fail(function(err) {
-      alert(err.responseJSON.message || err.statusText)
-    })
-    .always(function() {
-      $label.removeClass('media-loading')
-    })
-  })
+  }, false)
 }
 
-const handleMediaRemove = function (event, input) {
-  event.stopPropagation()
-  if (confirm('确定删除码？')) {
-    const $input = $(input)
-    const $label = $(event.currentTarget).closest('.media-wrap')
-    const $preview = $label.children('.media-preview')
+const handleMediaRemove = (el, input) => {
+  if (false === confirm('Are you sure?')) return false
 
-    $preview.empty()
-    $input.removeAttr('value')
-    $label.removeClass('media-success')
-  }
+  const wrap = el.closest('.media-wrap')
+  const view = wrap.querySelector('.media-view')
+  const data = document.getElementById(input)
+
+  wrap.classList.remove('media-success')
+  view.replaceChildren()
+  data.removeAttribute('value')
 }

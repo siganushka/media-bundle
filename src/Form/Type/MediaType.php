@@ -48,7 +48,7 @@ class MediaType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefault('style', null);
+        $resolver->setDefault('style', 'width: 100px; height: 100px');
         $resolver->setAllowedTypes('style', ['null', 'string']);
     }
 

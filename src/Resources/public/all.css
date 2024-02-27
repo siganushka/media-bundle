@@ -1,6 +1,4 @@
 .media-wrap {
-  width: 100px;
-  height: 100px;
   padding: 1px;
   position: relative;
   overflow: hidden;
@@ -46,18 +44,18 @@
   display: none;
 }
 
-.media-wrap .media-preview {
+.media-wrap .media-view {
   line-height: 1;
   text-align: center;
 }
 
-.media-wrap .media-preview img {
+.media-wrap .media-view img {
   max-width: 100%;
   max-height: 100%;
-  border-radius: 0.375rem;
+  border-radius: 0.25rem;
 }
 
-.media-wrap .media-preview small {
+.media-wrap .media-view small {
   color: #538ee6;
   font-size: 10px;
   word-wrap: break-word;
@@ -73,7 +71,7 @@
   opacity: .5;
 }
 
-.media-wrap:is(.media-success):not(.media-disabled):hover .media-preview {
+.media-wrap:is(.media-success):not(.media-disabled):hover .media-view {
   opacity: .7;
 }
 
