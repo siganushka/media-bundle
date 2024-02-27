@@ -40,19 +40,19 @@ class Media implements ResourceInterface, TimestampableInterface
     private ?string $name = null;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="string")
      */
     private ?string $extension = null;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="string")
      */
     private ?string $mimeType = null;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="integer")
      */
-    private ?int $bytes = null;
+    private ?int $size = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -105,7 +105,7 @@ class Media implements ResourceInterface, TimestampableInterface
         return $this->extension;
     }
 
-    public function setExtension(?string $extension): self
+    public function setExtension(string $extension): self
     {
         $this->extension = $extension;
 
@@ -117,21 +117,21 @@ class Media implements ResourceInterface, TimestampableInterface
         return $this->mimeType;
     }
 
-    public function setMimeType(?string $mimeType): self
+    public function setMimeType(string $mimeType): self
     {
         $this->mimeType = $mimeType;
 
         return $this;
     }
 
-    public function getBytes(): ?int
+    public function getSize(): ?int
     {
-        return $this->bytes;
+        return $this->size;
     }
 
-    public function setBytes(?int $bytes): self
+    public function setSize(int $size): self
     {
-        $this->bytes = $bytes;
+        $this->size = $size;
 
         return $this;
     }

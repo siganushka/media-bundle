@@ -44,7 +44,10 @@ class MediaSaveListener implements EventSubscriberInterface
         $name = $file instanceof UploadedFile ? $file->getClientOriginalName() : $file->getFilename();
         $extension = $file->guessExtension();
         $mimeType = $file->getMimeType();
-        $bytes = $file->getSize();
+        $size = $file->getSize();
+        if (false === $size || null === $extension || null === $mimeType) {
+            throw new \RuntimeException('Unable to access file.');
+        }
 
         // pre save hook
         $channel->onPreSave($file);
@@ -61,7 +64,7 @@ class MediaSaveListener implements EventSubscriberInterface
         $media->setName($name);
         $media->setExtension($extension);
         $media->setMimeType($mimeType);
-        $media->setBytes($bytes);
+        $media->setSize($size);
         $media->setWidth($width);
         $media->setHeight($height);
 
