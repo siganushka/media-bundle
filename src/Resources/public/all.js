@@ -46,8 +46,8 @@ const handleMediaUpload = (el, input, channel, accept) => {
   }, false)
 }
 
-const handleMediaRemove = (el, input) => {
-  if (false === confirm('Are you sure?')) return false
+const handleMediaRemove = (el, input, confirmationText) => {
+  if (false === confirm(confirmationText)) return false
 
   const wrap = el.closest('.media-wrap')
   const view = wrap.querySelector('.media-view')

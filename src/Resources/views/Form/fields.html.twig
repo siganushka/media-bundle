@@ -9,7 +9,7 @@
     onclick="handleMediaUpload(this, '{{ id }}', '{{ channel }}', '{{ accept }}')">
 
     <i class="spinner-border media-sp"></i>
-    <i class="bi bi-trash media-rm" onclick="event.stopPropagation(); handleMediaRemove(this, '{{ id }}')"></i>
+    <i class="bi bi-trash media-rm" onclick="event.stopPropagation(); handleMediaRemove(this, '{{ id }}', '{{ 'generic.remove_confirmation'|trans }}')"></i>
 
     <div class="media-view">
     {%- if data and data.image -%}
