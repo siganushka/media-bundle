@@ -33,7 +33,7 @@ class ChannelToAliasTransformer implements DataTransformerInterface
             throw new TransformationFailedException(sprintf('Expected a %s.', ChannelInterface::class));
         }
 
-        return (string) $value;
+        return $value->getAlias();
     }
 
     /**

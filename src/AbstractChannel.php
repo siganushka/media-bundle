@@ -49,11 +49,6 @@ abstract class AbstractChannel implements ChannelInterface
         return str_replace('\\', '_', strtolower(static::class));
     }
 
-    public function __toString(): string
-    {
-        return $this->getAlias();
-    }
-
     protected function loadConstraints(GenericMetadata $metadata): void
     {
     }

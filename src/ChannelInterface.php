@@ -8,7 +8,7 @@ use Siganushka\Contracts\Registry\AliasableInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraint;
 
-interface ChannelInterface extends AliasableInterface, \Stringable
+interface ChannelInterface extends AliasableInterface
 {
     /**
      * 返回新文件名存储名称.
