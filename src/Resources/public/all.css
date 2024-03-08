@@ -1,4 +1,6 @@
 .media-wrap {
+  width: 100px;
+  height: 100px;
   padding: 1px;
   position: relative;
   overflow: hidden;
