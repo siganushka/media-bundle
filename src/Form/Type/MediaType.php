@@ -60,17 +60,11 @@ class MediaType extends AbstractType implements DataTransformerInterface
         return TextType::class;
     }
 
-    /**
-     * @param ?string $value
-     */
     public function transform($value): ?string
     {
         return $value;
     }
 
-    /**
-     * @param ?string $value
-     */
     public function reverseTransform($value): ?string
     {
         if (null === $value) {

@@ -1,11 +1,12 @@
 {% block media_widget %}
 <div id="{{ id }}_div">
   <div
-    class="border rounded bg-white media-wrap
-    {%- if errors|length %} border-danger{% endif %}
-    {%- if value %} media-success{% endif %}
+    class="border rounded bg-white focus-ring media-wrap
+    {%- if errors|length %} border-danger focus-ring-danger{% endif %}
+    {%- if value %} media-uploaded{% endif %}
     {%- if disabled %} media-disabled{% endif %}"
     {% if style %}style="{{ style }}"{% endif %}
+    tabindex="0"
     onclick="handleMediaUpload(this, '{{ id }}', '{{ channel }}', '{{ accept }}')">
 
     <i class="spinner-border media-sp"></i>

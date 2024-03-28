@@ -1,5 +1,5 @@
 const handleMediaUpload = (el, input, channel, accept) => {
-  if (el.classList.contains('media-success')
+  if (el.classList.contains('media-uploaded')
     || el.classList.contains('media-loading')
     || el.classList.contains('media-disabled')) {
     return false
@@ -34,9 +34,9 @@ const handleMediaUpload = (el, input, channel, accept) => {
       if (response.status >= 200 && response.status < 300) {
         view.innerHTML = json.image ? `<img src="${json.url}" />` : `<small>${json.name}</small>`
         data.value = json.hash
-        el.classList.add('media-success')
+        el.classList.add('media-uploaded')
       } else {
-        throw new Error(json.message || response.statusText)
+        throw new Error(json.detail || json.message || response.statusText)
       }
     }).catch(err => {
       alert(err)
@@ -53,7 +53,7 @@ const handleMediaRemove = (el, input, confirmationText) => {
   const view = wrap.querySelector('.media-view')
   const data = document.getElementById(input)
 
-  wrap.classList.remove('media-success')
+  wrap.classList.remove('media-uploaded')
   view.replaceChildren()
   data.removeAttribute('value')
 }
