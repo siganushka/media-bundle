@@ -28,18 +28,33 @@ class MediaSaveListener implements EventSubscriberInterface
     {
         $channel = $event->getChannel();
         $file = $event->getFile();
-        $hash = $event->getHash();
 
-        $media = $this->mediaRepository->findOneByHash($hash);
-        if (null === $media) {
-            $media = $this->saveFile($channel, $file, $hash);
-        }
+        // pre save hook
+        $channel->onPreSave($file);
 
+        // save file if not exists
+        $media = $this->saveFile($channel, $file);
+
+        // stop propagation for event
         $event->setMedia($media)->stopPropagation();
     }
 
-    protected function saveFile(ChannelInterface $channel, File $file, string $hash): Media
+    protected function saveFile(ChannelInterface $channel, File $file): Media
     {
+        $hash = md5_file($file->getPathname());
+        if (false === $hash) {
+            throw new \RuntimeException('Unable to hash file.');
+        }
+
+        $media = $this->mediaRepository->findOneByHash($hash);
+        if ($media instanceof Media) {
+            return $media;
+        }
+
+        // [important] Clears file status cache before access file
+        clearstatcache(true, $file->getPathname());
+
+        // create media after pre save hook
         [$width, $height] = @getimagesize($file->getPathname());
         $name = $file instanceof UploadedFile ? $file->getClientOriginalName() : $file->getFilename();
         $extension = $file->guessExtension();
@@ -49,18 +64,8 @@ class MediaSaveListener implements EventSubscriberInterface
             throw new \RuntimeException('Unable to access file.');
         }
 
-        // pre save hook
-        $channel->onPreSave($file);
-
-        // save to storage
-        $mediaUrl = $this->storage->save($channel, $file);
-
-        // post save hook
-        $channel->onPostSave($mediaUrl);
-
         $media = $this->mediaRepository->createNew();
         $media->setHash($hash);
-        $media->setUrl($mediaUrl);
         $media->setName($name);
         $media->setExtension($extension);
         $media->setMimeType($mimeType);
@@ -68,7 +73,13 @@ class MediaSaveListener implements EventSubscriberInterface
         $media->setWidth($width);
         $media->setHeight($height);
 
-        return $media;
+        // save to storage
+        $mediaUrl = $this->storage->save($channel, $file);
+
+        // post save hook
+        $channel->onPostSave($mediaUrl);
+
+        return $media->setUrl($mediaUrl);
     }
 
     public static function getSubscribedEvents(): array

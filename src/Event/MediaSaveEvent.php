@@ -32,19 +32,6 @@ class MediaSaveEvent extends Event
         return $this->file;
     }
 
-    /**
-     * @throws \RuntimeException Fail to hash file
-     */
-    public function getHash(): string
-    {
-        $hash = md5_file($this->file->getPathname());
-        if (false === $hash) {
-            throw new \RuntimeException('Unable to hash file.');
-        }
-
-        return $hash;
-    }
-
     public function getMedia(): ?Media
     {
         return $this->media;
