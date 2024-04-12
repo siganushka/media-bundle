@@ -117,7 +117,7 @@ class MediaController extends AbstractFOSRestController
     protected function viewResponse($data = null, int $statusCode = null, array $headers = []): Response
     {
         $attributes = [
-            'hash', 'url', 'name', 'extension', 'mimeType', 'size', 'width', 'height', 'image',
+            'hash', 'url', 'name', 'extension', 'mimeType', 'size', 'sizeStr', 'width', 'height', 'image',
             'updatedAt', 'createdAt',
         ];
 

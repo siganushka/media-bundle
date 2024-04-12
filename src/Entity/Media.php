@@ -9,6 +9,7 @@ use Siganushka\Contracts\Doctrine\ResourceInterface;
 use Siganushka\Contracts\Doctrine\ResourceTrait;
 use Siganushka\Contracts\Doctrine\TimestampableInterface;
 use Siganushka\Contracts\Doctrine\TimestampableTrait;
+use Siganushka\GenericBundle\Utils\FileUtils;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 
 use function Symfony\Component\String\u;
@@ -127,6 +128,11 @@ class Media implements ResourceInterface, TimestampableInterface
     public function getSize(): ?int
     {
         return $this->size;
+    }
+
+    public function getSizeStr(): ?string
+    {
+        return null === $this->size ? null : FileUtils::formatBytes($this->size);
     }
 
     public function setSize(int $size): self
