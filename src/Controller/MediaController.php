@@ -6,26 +6,29 @@ namespace Siganushka\MediaBundle\Controller;
 
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\RestBundle\Context\Context;
-use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Knp\Component\Pager\PaginatorInterface;
 use Siganushka\MediaBundle\ChannelInterface;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Siganushka\MediaBundle\Form\MediaUploadType;
 use Siganushka\MediaBundle\Repository\MediaRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-class MediaController extends AbstractFOSRestController
+class MediaController extends AbstractController
 {
+    protected SerializerInterface $serializer;
     protected MediaRepository $mediaRepository;
 
-    public function __construct(MediaRepository $mediaRepository)
+    public function __construct(SerializerInterface $serializer, MediaRepository $mediaRepository)
     {
+        $this->serializer = $serializer;
         $this->mediaRepository = $mediaRepository;
     }
 
@@ -41,13 +44,13 @@ class MediaController extends AbstractFOSRestController
 
         $pagination = $paginator->paginate($queryBuilder, $page, $size);
 
-        return $this->viewResponse($pagination);
+        return $this->createResponse($pagination);
     }
 
     /**
      * @Route("/media", methods={"POST"})
      */
-    public function postCollection(Request $request, EventDispatcherInterface $eventDispatcher, EntityManagerInterface $entityManager)
+    public function postCollection(Request $request, EventDispatcherInterface $eventDispatcher, EntityManagerInterface $entityManager): Response
     {
         $formData = array_replace_recursive(
             $request->request->all(),
@@ -77,7 +80,7 @@ class MediaController extends AbstractFOSRestController
         $entityManager->persist($media);
         $entityManager->flush();
 
-        return $this->viewResponse($media);
+        return $this->createResponse($media);
     }
 
     /**
@@ -90,7 +93,7 @@ class MediaController extends AbstractFOSRestController
             throw $this->createNotFoundException(sprintf('Resource #%s not found.', $hash));
         }
 
-        return $this->viewResponse($entity);
+        return $this->createResponse($entity);
     }
 
     /**
@@ -111,22 +114,21 @@ class MediaController extends AbstractFOSRestController
         }
 
         // 204 no content response
-        return $this->viewResponse(null, Response::HTTP_NO_CONTENT);
+        return $this->createResponse(null, Response::HTTP_NO_CONTENT);
     }
 
-    protected function viewResponse($data = null, int $statusCode = null, array $headers = []): Response
+    /**
+     * @param mixed $data
+     */
+    protected function createResponse($data = null, int $statusCode = Response::HTTP_OK, array $headers = []): Response
     {
         $attributes = [
-            'hash', 'url', 'name', 'extension', 'mimeType', 'size', 'sizeStr', 'width', 'height', 'image',
-            'updatedAt', 'createdAt',
+            'hash', 'url', 'name', 'extension', 'mimeType', 'size', 'sizeStr',
+            'width', 'height', 'image', 'updatedAt', 'createdAt',
         ];
 
-        $context = new Context();
-        $context->setAttribute('attributes', $attributes);
+        $json = $this->serializer->serialize($data, 'json', compact('attributes'));
 
-        $view = $this->view($data, $statusCode, $headers);
-        $view->setContext($context);
-
-        return $this->handleView($view);
+        return JsonResponse::fromJsonString($json, $statusCode, $headers);
     }
 }

@@ -14,7 +14,6 @@
     "require": {
         "php": ">=7.4",
         "doctrine/doctrine-bundle": "^2.7",
-        "friendsofsymfony/rest-bundle": "^3.4",
         "knplabs/knp-paginator-bundle": "^5.9",
         "siganushka/doctrine-contracts": "dev-main",
         "siganushka/generic-bundle": "dev-main",
