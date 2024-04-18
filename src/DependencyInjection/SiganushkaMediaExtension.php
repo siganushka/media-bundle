@@ -6,6 +6,7 @@ namespace Siganushka\MediaBundle\DependencyInjection;
 
 use Siganushka\MediaBundle\ChannelInterface;
 use Siganushka\MediaBundle\ChannelRegistry;
+use Siganushka\MediaBundle\Command\MigrateCommand;
 use Siganushka\MediaBundle\Doctrine\EventListener\MediaRemoveListener;
 use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Storage\LocalStorage;
@@ -33,6 +34,9 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         $mediaRemoveListenerDef
             ->addTag('doctrine.orm.entity_listener', ['event' => 'postRemove', 'entity' => Media::class])
         ;
+
+        $migrateCommandDef = $container->findDefinition(MigrateCommand::class);
+        $migrateCommandDef->setArgument('$publicDir', '%kernel.project_dir%/public');
 
         $localStorageDef = $container->findDefinition(LocalStorage::class);
         $localStorageDef->setArgument('$publicDir', '%kernel.project_dir%/public');
