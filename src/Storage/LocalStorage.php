@@ -54,7 +54,7 @@ class LocalStorage implements StorageInterface
             throw new \RuntimeException(sprintf('File %s invalid.', $file));
         }
 
-        if (file_exists($file)) {
+        if (is_file($file)) {
             @unlink($file);
         }
     }

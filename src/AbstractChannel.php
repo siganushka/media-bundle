@@ -11,18 +11,17 @@ abstract class AbstractChannel implements ChannelInterface
 {
     public function getTargetName(File $file): string
     {
-        $extension = $file->guessExtension();
-        if (null === $extension) {
-            throw new \RuntimeException('Unable to access file.');
-        }
-
         $hash = md5_file($file->getPathname());
         if (false === $hash) {
             throw new \RuntimeException('Unable to hash file.');
         }
 
         // Like Git commit ID
-        return sprintf('%02s/%07s.%s', mb_substr($hash, 0, 2), mb_substr($hash, 2, 7), $extension);
+        return sprintf('%02s/%07s.%s',
+            mb_substr($hash, 0, 2),
+            mb_substr($hash, 2, 7),
+            $file->guessExtension() ?? $file->getExtension()
+        );
     }
 
     public function getConstraints(): array

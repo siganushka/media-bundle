@@ -37,6 +37,11 @@ class AliyunOssStorage implements StorageInterface
             throw $th;
         }
 
+        // Delete file after save.
+        if ($file->isFile()) {
+            @unlink($file->getPathname());
+        }
+
         if (isset($result['info']['url'])) {
             return $result['info']['url'];
         }

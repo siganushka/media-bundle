@@ -54,13 +54,12 @@ class MediaSaveListener implements EventSubscriberInterface
         // [important] Clears file status cache before access file
         clearstatcache(true, $file->getPathname());
 
-        // create media after pre save hook
         [$width, $height] = @getimagesize($file->getPathname());
         $name = $file instanceof UploadedFile ? $file->getClientOriginalName() : $file->getFilename();
-        $extension = $file->guessExtension();
+        $extension = $file->guessExtension() ?? $file->getExtension();
         $mimeType = $file->getMimeType();
         $size = $file->getSize();
-        if (false === $size || null === $extension || null === $mimeType) {
+        if (false === $size || null === $mimeType) {
             throw new \RuntimeException('Unable to access file.');
         }
 
