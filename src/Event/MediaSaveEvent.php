@@ -68,13 +68,20 @@ class MediaSaveEvent extends Event
     }
 
     /**
-     * Create event from base64 file content.
+     * Create event from data urls file content.
+     *
+     * @see https://en.wikipedia.org/wiki/Data_URI_scheme
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URLs
      */
-    public static function createFromBase64(ChannelInterface $channel, string $base64, string $fileName = null): self
+    public static function createFromDataUri(ChannelInterface $channel, string $dataUri, string $fileName = null): self
     {
-        [$_, $content] = array_pad(explode(',', $base64), 3, null);
+        if (!preg_match('/^data:([a-z0-9][a-z0-9\!\#\$\&\-\^\_\+\.]{0,126}\/[a-z0-9][a-z0-9\!\#\$\&\-\^\_\+\.]{0,126}(;[a-z0-9\-]+\=[a-z0-9\-]+)?)?(;base64)?,[a-z0-9\!\$\&\\\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i', $dataUri)) {
+            throw new \InvalidArgumentException('Invalid data uri file.');
+        }
+
+        [$_, $content] = array_pad(explode(',', $dataUri), 3, null);
         if (null === $content) {
-            throw new \InvalidArgumentException('Invalid file base64 data.');
+            throw new \InvalidArgumentException('Invalid data uri file.');
         }
 
         return self::createFromContent($channel, base64_decode($content), $fileName);

@@ -13,12 +13,12 @@ use Siganushka\MediaBundle\ChannelRegistry;
 use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Siganushka\MediaBundle\Exception\UnsupportedChannelException;
-use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
@@ -45,19 +45,35 @@ class MigrateCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('channel-alias', InputArgument::OPTIONAL, 'Which channel to migrate to?')
-            ->addArgument('entity-class', InputArgument::OPTIONAL, 'The entity class name that to migrate.')
-            ->addArgument('entity-field', InputArgument::OPTIONAL, 'The entity field name that to migrate.')
+            ->addArgument('entity-class', InputArgument::OPTIONAL, 'Which entity do you want to migrate?')
+            ->addArgument('from-field', InputArgument::OPTIONAL, 'Which field do you want to migrate from?')
+            ->addArgument('to-field', InputArgument::OPTIONAL, 'Which field do you want to migrate to?')
+            ->addArgument('channel-alias', InputArgument::OPTIONAL, 'Which channel to use?')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $entitiesMapping = $this->getEntities();
+        $entities = $this->getEntities();
 
+        /** @psalm-var class-string */
+        $entityClass = $this->getArgumentForAsk('entity-class', $input, $output, array_keys($entities));
+        $fromField = $this->getArgumentForAsk('from-field', $input, $output, $entities[$entityClass] ?? []);
+        $toField = $this->getArgumentForAsk('to-field', $input, $output, $entities[$entityClass] ?? []);
         $channelAlias = $this->getArgumentForAsk('channel-alias', $input, $output, $this->channelRegistry->getServiceIds());
-        $entityClass = $this->getArgumentForAsk('entity-class', $input, $output, array_keys($entitiesMapping));
-        $entityField = $this->getArgumentForAsk('entity-field', $input, $output, $entitiesMapping[$entityClass] ?? []);
+
+        $objectManager = $this->managerRegistry->getManagerForClass($entityClass);
+        if (null === $objectManager) {
+            throw new \InvalidArgumentException(sprintf('Unable to get manager from entity class "%s".', $entityClass));
+        }
+
+        if (!\in_array($fromField, $entities[$entityClass] ?? [])) {
+            throw new \InvalidArgumentException(sprintf('The "from-field" "%s" is not mapped for "%s".', $fromField, $entityClass));
+        }
+
+        if (!\in_array($toField, $entities[$entityClass] ?? [])) {
+            throw new \InvalidArgumentException(sprintf('The "to-field" "%s" is not mapped for "%s".', $toField, $entityClass));
+        }
 
         try {
             $channel = $this->channelRegistry->get($channelAlias);
@@ -65,38 +81,44 @@ class MigrateCommand extends Command
             throw new UnsupportedChannelException($this->channelRegistry, $channelAlias);
         }
 
-        $objectManager = $this->managerRegistry->getManagerForClass($entityClass);
-        if (null === $objectManager) {
-            throw new \InvalidArgumentException(sprintf('Invalid entity class "%s" for object manager.', $entityClass));
-        }
-
         /** @var ObjectRepository */
         $repository = $objectManager->getRepository($entityClass);
         $result = $repository->findAll();
 
-        $successfully = 0;
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
+        $successfully = 0;
         foreach ($result as $entity) {
             try {
-                $value = $propertyAccessor->getValue($entity, $entityField);
+                $toValue = $propertyAccessor->getValue($entity, $toField);
             } catch (\Throwable $th) {
-                throw new \InvalidArgumentException(sprintf('The field "%s" is not mapped for "%s".', $entityField, $entityClass));
+                $toValue = null;
             }
 
-            if (!\is_string($value)) {
-                $output->writeln(sprintf('<comment>[Skip] %s::%s (%s) Invalid file like.</comment>', $entityClass, $entityField, $value));
+            if ($toValue instanceof Media) {
+                $output->writeln(sprintf('<comment>[Skip] Execute migrate from %s::%s => %s is already migrated.</comment>', $entityClass, $fromField, $toField));
                 continue;
             }
 
             try {
-                $event = $this->createMediaSaveEvent($channel, $value);
+                $fromValue = $propertyAccessor->getValue($entity, $fromField);
             } catch (\Throwable $th) {
-                $output->writeln(sprintf('<comment>[Skip] %s::%s (%s) Unable to create event (%s).</comment>', $entityClass, $entityField, $value, $th->getMessage()));
+                $fromValue = null;
+            }
+
+            if (!\is_string($fromValue)) {
+                $output->writeln(sprintf('<comment>[Skip] Execute migrate from %s::%s(%s) Invalid file like.</comment>', $entityClass, $fromField, $fromValue));
+                continue;
+            }
+
+            try {
+                $event = $this->createMediaSaveEvent($channel, $fromValue);
+            } catch (\Throwable $th) {
+                $output->writeln(sprintf('<comment>[Skip] Execute migrate from %s::%s(%s) Unable to create event (%s).</comment>', $entityClass, $fromField, $fromValue, $th->getMessage()));
                 continue;
             }
 
             if (null === $event) {
-                $output->writeln(sprintf('<comment>[Skip] %s::%s (%s) Invalid file like.</comment>', $entityClass, $entityField, $value));
+                $output->writeln(sprintf('<comment>[Skip] Execute migrate from %s::%s(%s) Invalid file like.</comment>', $entityClass, $fromField, $fromValue));
                 continue;
             }
 
@@ -104,13 +126,20 @@ class MigrateCommand extends Command
 
             $media = $event->getMedia();
             if (!$media instanceof Media) {
-                $output->writeln(sprintf('<comment>[Skip] %s::%s (%s) Unable to migrate.</comment>', $entityClass, $entityField, $value));
+                $output->writeln(sprintf('<comment>[Skip] Execute migrate from %s::%s(%s) Unable to migrate.</comment>', $entityClass, $fromField, $fromValue));
+                continue;
+            }
+
+            try {
+                $propertyAccessor->setValue($entity, $toField, $media);
+            } catch (\Throwable $th) {
+                $output->writeln(sprintf('<comment>[Skip] Execute migrate from %s::%s(%s) => %s cannot be set with new data.</comment>', $entityClass, $fromField, $fromValue, $toField));
                 continue;
             }
 
             $objectManager->persist($media);
 
-            $output->writeln(sprintf('<info>%s::%s (%s) migrate successfully.</info>', $entityClass, $entityField, $value));
+            $output->writeln(sprintf('<info>Execute migrate from %s::%s(%s) => %s(%s) successfully.</info>', $entityClass, $fromField, $fromValue, $toField, $media->getUrl()));
             ++$successfully;
         }
 
@@ -133,7 +162,7 @@ class MigrateCommand extends Command
         $question->setAutocompleterValues($autocompleterValues);
         $question->setMaxAttempts(3);
 
-        return (new ConsoleStyle($input, $output))->askQuestion($question);
+        return (new SymfonyStyle($input, $output))->askQuestion($question);
     }
 
     protected function createMediaSaveEvent(ChannelInterface $channel, string $value): ?MediaSaveEvent
@@ -157,7 +186,7 @@ class MigrateCommand extends Command
             foreach ($factory->getAllMetadata() as $metadata) {
                 $name = $metadata->getName();
                 if (Media::class !== $name) {
-                    $entities[$name] = $metadata->getFieldNames();
+                    $entities[$name] = array_keys($metadata->reflFields);
                 }
             }
         }
