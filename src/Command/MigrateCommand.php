@@ -113,7 +113,8 @@ class MigrateCommand extends Command
                 $toValue = null;
             }
 
-            if ($toValue instanceof Media) {
+            // Media or subclass of Media
+            if (is_a($toValue, Media::class, true)) {
                 $output->writeln(sprintf('<comment>%s already migrated.</comment>', $message));
                 continue;
             }
