@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\Command;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\Mapping\ClassMetadataFactory;
-use Doctrine\Persistence\ObjectRepository;
+use Siganushka\Contracts\Doctrine\ResourceInterface;
 use Siganushka\Contracts\Registry\Exception\ServiceNonExistingException;
 use Siganushka\MediaBundle\ChannelInterface;
 use Siganushka\MediaBundle\ChannelRegistry;
@@ -45,25 +46,26 @@ class MigrateCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('entity-class', InputArgument::OPTIONAL, 'Which entity do you want to migrate?')
+            ->addArgument('entity-class', InputArgument::OPTIONAL, 'Which entity do you want to migrate (fully-qualified class name)?')
             ->addArgument('from-field', InputArgument::OPTIONAL, 'Which field do you want to migrate from?')
             ->addArgument('to-field', InputArgument::OPTIONAL, 'Which field do you want to migrate to?')
             ->addArgument('channel-alias', InputArgument::OPTIONAL, 'Which channel to use?')
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $entities = $this->getEntities();
 
         /** @psalm-var class-string */
-        $entityClass = $this->getArgumentForAsk('entity-class', $input, $output, array_keys($entities));
+        $entityClass = $this->getArgumentForAsk('entity-class', $input, $output, array_keys($entities), false);
         $fromField = $this->getArgumentForAsk('from-field', $input, $output, $entities[$entityClass] ?? []);
         $toField = $this->getArgumentForAsk('to-field', $input, $output, $entities[$entityClass] ?? []);
         $channelAlias = $this->getArgumentForAsk('channel-alias', $input, $output, $this->channelRegistry->getServiceIds());
 
-        $objectManager = $this->managerRegistry->getManagerForClass($entityClass);
-        if (null === $objectManager) {
+        /** @var EntityManagerInterface|null */
+        $entityManager = $this->managerRegistry->getManagerForClass($entityClass);
+        if (null === $entityManager) {
             throw new \InvalidArgumentException(sprintf('Unable to get manager from entity class "%s".', $entityClass));
         }
 
@@ -81,13 +83,30 @@ class MigrateCommand extends Command
             throw new UnsupportedChannelException($this->channelRegistry, $channelAlias);
         }
 
-        /** @var ObjectRepository */
-        $repository = $objectManager->getRepository($entityClass);
-        $result = $repository->findAll();
+        $queryBuilder = $entityManager->getRepository($entityClass)
+            ->createQueryBUilder('t')
+            // ->where(sprintf('t.%s IS NULL', $toField))
+            // ->setMaxResults(10)
+        ;
+
+        $query = $queryBuilder->getQuery();
+        /** @var array<int, object> */
+        $result = $query->getResult();
 
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
         $successfully = 0;
         foreach ($result as $entity) {
+            $identifier = is_a($entity, ResourceInterface::class, true)
+                ? $propertyAccessor->getValue($entity, 'id')
+                : $successfully;
+
+            $message = sprintf('#%d Execute migrate from %s::%s -> %s',
+                $identifier,
+                $entityClass,
+                $fromField,
+                $toField,
+            );
+
             try {
                 $toValue = $propertyAccessor->getValue($entity, $toField);
             } catch (\Throwable $th) {
@@ -95,7 +114,7 @@ class MigrateCommand extends Command
             }
 
             if ($toValue instanceof Media) {
-                $output->writeln(sprintf('<comment>[Skip] Execute migrate from %s::%s => %s is already migrated.</comment>', $entityClass, $fromField, $toField));
+                $output->writeln(sprintf('<comment>%s already migrated.</comment>', $message));
                 continue;
             }
 
@@ -106,50 +125,48 @@ class MigrateCommand extends Command
             }
 
             if (!\is_string($fromValue)) {
-                $output->writeln(sprintf('<comment>[Skip] Execute migrate from %s::%s(%s) Invalid file like.</comment>', $entityClass, $fromField, $fromValue));
+                $output->writeln(sprintf('<comment>%s invalid value.</comment>', $message));
                 continue;
             }
 
             try {
                 $event = $this->createMediaSaveEvent($channel, $fromValue);
             } catch (\Throwable $th) {
-                $output->writeln(sprintf('<comment>[Skip] Execute migrate from %s::%s(%s) Unable to create event (%s).</comment>', $entityClass, $fromField, $fromValue, $th->getMessage()));
-                continue;
-            }
-
-            if (null === $event) {
-                $output->writeln(sprintf('<comment>[Skip] Execute migrate from %s::%s(%s) Invalid file like.</comment>', $entityClass, $fromField, $fromValue));
-                continue;
-            }
-
-            $this->eventDispatcher->dispatch($event);
-
-            $media = $event->getMedia();
-            if (!$media instanceof Media) {
-                $output->writeln(sprintf('<comment>[Skip] Execute migrate from %s::%s(%s) Unable to migrate.</comment>', $entityClass, $fromField, $fromValue));
+                $output->writeln(sprintf('<comment>%s unable to create event (%s).</comment>', $message, $th->getMessage()));
                 continue;
             }
 
             try {
-                $propertyAccessor->setValue($entity, $toField, $media);
+                $this->eventDispatcher->dispatch($event);
             } catch (\Throwable $th) {
-                $output->writeln(sprintf('<comment>[Skip] Execute migrate from %s::%s(%s) => %s cannot be set with new data.</comment>', $entityClass, $fromField, $fromValue, $toField));
+                $output->writeln(sprintf('<comment>%s unable to migrate.</comment>', $message));
                 continue;
             }
 
-            $objectManager->persist($media);
+            $media = $event->getMedia();
+            if (!$media instanceof Media) {
+                $output->writeln(sprintf('<comment>%s unable to migrate.</comment>', $message));
+                continue;
+            }
 
-            $output->writeln(sprintf('<info>Execute migrate from %s::%s(%s) => %s(%s) successfully.</info>', $entityClass, $fromField, $fromValue, $toField, $media->getUrl()));
+            $propertyAccessor->setValue($entity, $toField, $media);
+
+            $entityManager->persist($media);
+            $entityManager->flush();
+
+            $output->writeln(sprintf('<info>%s is successfully.</info>', $message));
             ++$successfully;
         }
 
-        $objectManager->flush();
-        $output->writeln(sprintf('<info>A total of %d record was migrated.</info>', $successfully));
+        // Clear entity manager
+        $entityManager->clear();
+
+        $output->writeln(sprintf('<info>A total of %d items was migrated.</info>', $successfully));
 
         return Command::SUCCESS;
     }
 
-    protected function getArgumentForAsk(string $name, InputInterface $input, OutputInterface $output, ?iterable $autocompleterValues = []): string
+    protected function getArgumentForAsk(string $name, InputInterface $input, OutputInterface $output, array $autocompleterValues = [], bool $appendAutocompleterValuesToDesc = true): string
     {
         $value = $input->getArgument($name);
         if (null !== $value) {
@@ -157,23 +174,27 @@ class MigrateCommand extends Command
         }
 
         $argument = $this->getDefinition()->getArgument($name);
+        $description = $argument->getDescription();
+        if ($appendAutocompleterValuesToDesc) {
+            $description .= sprintf(' (%s)', implode(' | ', $autocompleterValues));
+        }
 
-        $question = new Question($argument->getDescription());
+        $question = new Question($description);
         $question->setAutocompleterValues($autocompleterValues);
         $question->setMaxAttempts(3);
 
         return (new SymfonyStyle($input, $output))->askQuestion($question);
     }
 
-    protected function createMediaSaveEvent(ChannelInterface $channel, string $value): ?MediaSaveEvent
+    protected function createMediaSaveEvent(ChannelInterface $channel, string $value): MediaSaveEvent
     {
-        $path = sprintf('%s/%s', rtrim($this->publicDir), ltrim($value));
+        $path = sprintf('%s/%s', $this->publicDir, ltrim($value, '/'));
         if (is_file($path)) {
             return MediaSaveEvent::createFromPath($channel, $path);
         } elseif (str_starts_with($value, 'http://') || str_starts_with($value, 'https://')) {
             return MediaSaveEvent::createFromUrl($channel, $value);
         } else {
-            return null;
+            throw new \InvalidArgumentException('invalid file like');
         }
     }
 
@@ -185,12 +206,13 @@ class MigrateCommand extends Command
             $factory = $em->getMetadataFactory();
             foreach ($factory->getAllMetadata() as $metadata) {
                 $name = $metadata->getName();
-                if (Media::class !== $name) {
+                if (!is_a($name, Media::class, true)) {
                     $entities[$name] = array_keys($metadata->reflFields);
                 }
             }
         }
 
+        // Sort by class name
         ksort($entities);
 
         return $entities;
