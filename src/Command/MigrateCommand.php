@@ -26,7 +26,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class MigrateCommand extends Command
 {
     protected static $defaultName = 'siganushka:media:migrate';
-    protected static $defaultDescription = 'Migrate existing data to SiganushkaMediaBundle.';
+    protected static $defaultDescription = 'Migrate existing media data to SiganushkaMediaBundle.';
 
     private EventDispatcherInterface $eventDispatcher;
     private ManagerRegistry $managerRegistry;

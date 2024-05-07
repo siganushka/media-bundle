@@ -29,6 +29,7 @@ const handleMediaUpload = (el, input, channel, accept) => {
     fetch('/api/media', {
       method: 'POST',
       body: formData,
+      headers: { Accept: 'application/json' },
     }).then(async response => {
       const json = await response.json()
       if (response.status >= 200 && response.status < 300) {
