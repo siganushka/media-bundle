@@ -32,8 +32,8 @@ class MediaSaveEventTest extends TestCase
 
     public function testCreateFromUrl(): void
     {
-        $event = MediaSaveEvent::createFromUrl($this->channel, 'https://www.php.net/images/logos/php-logo.png');
-        static::assertSame('php-logo.png', $event->getFile()->getFilename());
+        $event = MediaSaveEvent::createFromUrl($this->channel, 'https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png');
+        static::assertSame('GitHub-Mark-ea2971cee799.png', $event->getFile()->getFilename());
         static::assertNotFalse(@getimagesize($event->getFile()->getPathname()));
 
         // Delete file after tests.

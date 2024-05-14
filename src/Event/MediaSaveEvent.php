@@ -56,13 +56,23 @@ class MediaSaveEvent extends Event
 
     /**
      * Create event from remote file url.
+     *
+     * @see https://www.jianshu.com/p/42e0c4304b60
      */
     public static function createFromUrl(ChannelInterface $channel, string $url): self
     {
-        $content = file_get_contents($url);
+        $curl = curl_init();
+        curl_setopt($curl, \CURLOPT_URL, $url);
+        curl_setopt($curl, \CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($curl, \CURLOPT_RETURNTRANSFER, true);
+
+        $content = curl_exec($curl);
         if (false === $content) {
-            throw new \RuntimeException('Unable to save file.');
+            throw new \RuntimeException(curl_error($curl));
         }
+
+        // Close curl resource.
+        curl_close($curl);
 
         return self::createFromContent($channel, $content, pathinfo($url, \PATHINFO_BASENAME));
     }
