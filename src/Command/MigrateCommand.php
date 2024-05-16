@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Siganushka\MediaBundle\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\Mapping\ClassMetadataFactory;
 use Siganushka\Contracts\Doctrine\ResourceInterface;
@@ -207,8 +208,12 @@ class MigrateCommand extends Command
             $factory = $em->getMetadataFactory();
             foreach ($factory->getAllMetadata() as $metadata) {
                 $name = $metadata->getName();
-                if (!is_a($name, Media::class, true)) {
-                    $entities[$name] = array_keys($metadata->reflFields);
+                if (is_a($name, Media::class, true)) {
+                    continue;
+                }
+
+                if ($metadata instanceof ClassMetadataInfo) {
+                    $entities[$name] = array_keys($metadata->getReflectionProperties());
                 }
             }
         }

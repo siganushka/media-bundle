@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle;
 
+use Siganushka\Contracts\Registry\Exception\ServiceNonExistingException;
 use Siganushka\Contracts\Registry\ServiceRegistry;
 
 /**
@@ -17,5 +18,16 @@ class ChannelRegistry extends ServiceRegistry
     public function __construct(iterable $channels = [])
     {
         parent::__construct(ChannelInterface::class, $channels);
+    }
+
+    public function getByClass(string $class): ChannelInterface
+    {
+        foreach ($this->all() as $channel) {
+            if ($class === \get_class($channel)) {
+                return $channel;
+            }
+        }
+
+        throw new ServiceNonExistingException($this, $class);
     }
 }

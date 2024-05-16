@@ -67,7 +67,7 @@ class MediaSaveEvent extends Event
         curl_setopt($curl, \CURLOPT_RETURNTRANSFER, true);
 
         $content = curl_exec($curl);
-        if (false === $content) {
+        if (!\is_string($content)) {
             throw new \RuntimeException(curl_error($curl));
         }
 

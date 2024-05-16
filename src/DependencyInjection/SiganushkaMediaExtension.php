@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\DependencyInjection;
 
-use Siganushka\MediaBundle\ChannelInterface;
 use Siganushka\MediaBundle\ChannelRegistry;
 use Siganushka\MediaBundle\Command\MigrateCommand;
 use Siganushka\MediaBundle\Doctrine\EventListener\MediaRemoveListener;
@@ -44,10 +43,6 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
 
         $channelRegistryDef = $container->findDefinition(ChannelRegistry::class);
         $channelRegistryDef->setArgument('$channels', new TaggedIteratorArgument('siganushka_media.channel'));
-
-        $container->registerForAutoconfiguration(ChannelInterface::class)
-            ->addTag('siganushka_media.channel')
-        ;
     }
 
     public function prepend(ContainerBuilder $container): void

@@ -14,7 +14,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\File;
 
 class MediaType extends AbstractType implements DataTransformerInterface
 {
@@ -29,24 +28,13 @@ class MediaType extends AbstractType implements DataTransformerInterface
     {
         $builder->addViewTransformer($this, true);
 
-        // using addViewTransformer to transformer object for view
+        // Using addViewTransformer to transformer object for view
         $builder->addViewTransformer(new EntityToIdentifierTransformer($this->registry, Media::class, 'hash'), true);
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
-        // Guesses HTML accept from channel constraints (twig only)
-        // @see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept
-        // @see https://www.iana.org/assignments/media-types/media-types.xhtml
-        $accept = [];
-        foreach ($options['channel']->getConstraints() as $constraint) {
-            if ($constraint instanceof File && $constraint->mimeTypes) {
-                $accept = array_merge($accept, (array) $constraint->mimeTypes);
-            }
-        }
-
         $view->vars['style'] = $options['style'];
-        $view->vars['accept'] = \count($accept) ? implode(',', $accept) : '*';
     }
 
     public function configureOptions(OptionsResolver $resolver): void

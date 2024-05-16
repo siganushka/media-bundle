@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\Form;
 
-use Siganushka\MediaBundle\ChannelInterface;
 use Siganushka\MediaBundle\Form\Type\MediaChannelType;
 use Siganushka\MediaBundle\Form\Type\MediaFileType;
 use Symfony\Component\Form\AbstractType;
@@ -36,16 +35,14 @@ class MediaUploadType extends AbstractType
     public function formModifier(FormEvent $event): void
     {
         $form = $event->getForm();
-        $data = $event instanceof PostSubmitEvent ? $form->getData() : $event->getData();
-
-        $constraints = $data instanceof ChannelInterface ? $data->getConstraints() : [];
-        array_unshift($constraints, new NotBlank(null, 'media.file.not_blank'));
+        $channel = $event instanceof PostSubmitEvent ? $form->getData() : $event->getData();
 
         /** @var FormInterface */
         $form = $form->getParent();
         $form->add('file', MediaFileType::class, [
             'label' => 'media.file',
-            'constraints' => $constraints,
+            'channel' => $channel,
+            'constraints' => new NotBlank(null, 'media.file.not_blank'),
         ]);
     }
 }
