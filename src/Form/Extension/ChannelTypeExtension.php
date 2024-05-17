@@ -58,13 +58,6 @@ class ChannelTypeExtension extends AbstractTypeExtension
 
             return $this->registry->getByClass($channel);
         });
-
-        $resolver->setNormalizer('constraints', function (Options $options, $constraints): array {
-            $constraints = \is_object($constraints) ? [$constraints] : (array) $constraints;
-            array_push($constraints, ...$options['channel']->getConstraints());
-
-            return $constraints;
-        });
     }
 
     public static function getExtendedTypes(): iterable
