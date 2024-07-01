@@ -11,13 +11,8 @@ use Siganushka\MediaBundle\Storage\StorageInterface;
 
 class MediaRemoveListener
 {
-    private LoggerInterface $logger;
-    private StorageInterface $storage;
-
-    public function __construct(LoggerInterface $logger, StorageInterface $storage)
+    public function __construct(private LoggerInterface $logger, private StorageInterface $storage)
     {
-        $this->logger = $logger;
-        $this->storage = $storage;
     }
 
     public function postRemove(Media $entity, PostRemoveEventArgs $args): void

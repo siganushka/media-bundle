@@ -15,13 +15,8 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class MediaSaveListener implements EventSubscriberInterface
 {
-    private StorageInterface $storage;
-    private MediaRepository $mediaRepository;
-
-    public function __construct(StorageInterface $storage, MediaRepository $mediaRepository)
+    public function __construct(private StorageInterface $storage, private MediaRepository $mediaRepository)
     {
-        $this->storage = $storage;
-        $this->mediaRepository = $mediaRepository;
     }
 
     public function onMediaSave(MediaSaveEvent $event): void
@@ -54,7 +49,10 @@ class MediaSaveListener implements EventSubscriberInterface
         // [important] Clears file status cache before access file
         clearstatcache(true, $file->getPathname());
 
-        [$width, $height] = @getimagesize($file->getPathname());
+        $imagesize = @getimagesize($file->getPathname());
+        $width = \is_array($imagesize) ? $imagesize[0] : null;
+        $height = \is_array($imagesize) ? $imagesize[1] : null;
+
         $name = $file instanceof UploadedFile ? $file->getClientOriginalName() : $file->getFilename();
         $extension = $file->guessExtension() ?? $file->getExtension();
         $mimeType = $file->getMimeType();

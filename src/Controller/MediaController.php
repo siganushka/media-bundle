@@ -12,6 +12,7 @@ use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Siganushka\MediaBundle\Form\MediaUploadType;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,13 +20,13 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class MediaController extends AbstractController
 {
-    protected MediaRepository $mediaRepository;
-
-    public function __construct(MediaRepository $mediaRepository)
+    public function __construct(protected MediaRepository $mediaRepository)
     {
-        $this->mediaRepository = $mediaRepository;
     }
 
     /**
@@ -57,15 +58,16 @@ class MediaController extends AbstractController
         $form->submit($formData);
 
         if (!$form->isValid()) {
-            throw new BadRequestHttpException($form->getErrors(true, true)->current()->getMessage());
+            $error = $form->getErrors(true, true)->current();
+            if ($error instanceof FormError) {
+                throw new BadRequestHttpException($error->getMessage());
+            }
         }
 
-        /** @var ChannelInterface */
-        $channel = $form['channel']->getData();
-        /** @var UploadedFile */
-        $file = $form['file']->getData();
+        /** @var array{ channel: ChannelInterface, file: UploadedFile } */
+        $data = $form->getData();
 
-        $event = new MediaSaveEvent($channel, $file);
+        $event = new MediaSaveEvent($data['channel'], $data['file']);
         $eventDispatcher->dispatch($event);
 
         $media = $event->getMedia();

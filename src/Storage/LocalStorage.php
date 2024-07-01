@@ -10,15 +10,8 @@ use Symfony\Component\HttpFoundation\UrlHelper;
 
 class LocalStorage implements StorageInterface
 {
-    private UrlHelper $urlHelper;
-    private string $publicDir;
-    private string $uploadDir;
-
-    public function __construct(UrlHelper $urlHelper, string $publicDir, string $uploadDir)
+    public function __construct(private UrlHelper $urlHelper, private string $publicDir, private string $uploadDir)
     {
-        $this->urlHelper = $urlHelper;
-        $this->publicDir = $publicDir;
-        $this->uploadDir = $uploadDir;
     }
 
     public function save(ChannelInterface $channel, File $file): string

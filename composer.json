@@ -12,22 +12,22 @@
         }
     ],
     "require": {
-        "php": ">=7.4",
-        "doctrine/doctrine-bundle": "^2.7",
-        "knplabs/knp-paginator-bundle": "^5.9",
+        "php": ">=8.1",
+        "doctrine/doctrine-bundle": "^2.8",
+        "knplabs/knp-paginator-bundle": "^6.3",
         "siganushka/doctrine-contracts": "dev-main",
         "siganushka/generic-bundle": "dev-main",
         "siganushka/registry-contracts": "dev-main",
-        "symfony/form": "^5.4|^6.0",
-        "symfony/framework-bundle": "^5.4|^6.0",
-        "symfony/polyfill-php80": "^1.28",
-        "symfony/serializer": "^5.4|^6.0",
-        "symfony/validator": "^5.4|^6.0"
+        "symfony/form": "^6.4|^7.0",
+        "symfony/framework-bundle": "^6.4|^7.0",
+        "symfony/serializer": "^6.4|^7.0",
+        "symfony/validator": "^6.4|^7.0"
     },
     "require-dev": {
-        "aliyuncs/oss-sdk-php": "^2.6",
-        "symfony/phpunit-bridge": "^6.0",
-        "vimeo/psalm": "^5.0"
+        "aliyuncs/oss-sdk-php": "^2.7",
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "symfony/phpunit-bridge": "^6.4|^7.0",
+        "vimeo/psalm": "dev-master"
     },
     "autoload": {
         "psr-4": {

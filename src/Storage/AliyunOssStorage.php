@@ -14,16 +14,14 @@ use Symfony\Component\HttpFoundation\File\File;
 class AliyunOssStorage implements StorageInterface
 {
     private OssClient $ossClient;
-    private string $bucket;
 
-    public function __construct(string $accessKeyId, string $accessKeySecret, string $endpoint, string $bucket)
+    public function __construct(string $accessKeyId, string $accessKeySecret, string $endpoint, private string $bucket)
     {
         if (!class_exists(OssClient::class)) {
             throw new \LogicException(sprintf('The "%s" class requires the "aliyuncs/oss-sdk-php" component. Try running "composer require aliyuncs/oss-sdk-php".', self::class));
         }
 
         $this->ossClient = new OssClient($accessKeyId, $accessKeySecret, $endpoint);
-        $this->bucket = $bucket;
     }
 
     public function save(ChannelInterface $channel, File $file): string

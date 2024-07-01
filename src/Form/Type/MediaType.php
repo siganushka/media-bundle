@@ -15,13 +15,13 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @implements DataTransformerInterface<string, mixed>
+ */
 class MediaType extends AbstractType implements DataTransformerInterface
 {
-    private ManagerRegistry $registry;
-
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(private ManagerRegistry $registry)
     {
-        $this->registry = $registry;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -60,7 +60,7 @@ class MediaType extends AbstractType implements DataTransformerInterface
         }
 
         $queryString = parse_url($value, \PHP_URL_QUERY);
-        if (null === $queryString) {
+        if (!\is_string($queryString)) {
             return $value;
         }
 

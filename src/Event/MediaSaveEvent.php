@@ -11,15 +11,10 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class MediaSaveEvent extends Event
 {
-    private ChannelInterface $channel;
-    private File $file;
-
     private ?Media $media = null;
 
-    final public function __construct(ChannelInterface $channel, File $file)
+    final public function __construct(private readonly ChannelInterface $channel, private readonly File $file)
     {
-        $this->channel = $channel;
-        $this->file = $file;
     }
 
     public function getChannel(): ChannelInterface
@@ -61,7 +56,10 @@ class MediaSaveEvent extends Event
      */
     public static function createFromUrl(ChannelInterface $channel, string $url): self
     {
-        $curl = curl_init();
+        if (false === $curl = curl_init()) {
+            throw new \RuntimeException('failed to initialize');
+        }
+
         curl_setopt($curl, \CURLOPT_URL, $url);
         curl_setopt($curl, \CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($curl, \CURLOPT_RETURNTRANSFER, true);

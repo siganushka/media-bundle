@@ -23,7 +23,7 @@ class ChannelRegistry extends ServiceRegistry
     public function getByClass(string $class): ChannelInterface
     {
         foreach ($this->all() as $channel) {
-            if ($class === \get_class($channel)) {
+            if ($class === $channel::class) {
                 return $channel;
             }
         }

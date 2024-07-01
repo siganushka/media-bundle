@@ -12,11 +12,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class MediaChannelType extends AbstractType
 {
-    private ChannelRegistry $registry;
-
-    public function __construct(ChannelRegistry $registry)
+    public function __construct(private ChannelRegistry $registry)
     {
-        $this->registry = $registry;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

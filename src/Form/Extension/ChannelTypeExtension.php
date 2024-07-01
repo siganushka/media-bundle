@@ -18,11 +18,8 @@ use Symfony\Component\Validator\Constraints\File;
 
 class ChannelTypeExtension extends AbstractTypeExtension
 {
-    private ChannelRegistry $registry;
-
-    public function __construct(ChannelRegistry $registry)
+    public function __construct(private ChannelRegistry $registry)
     {
-        $this->registry = $registry;
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options): void
@@ -46,7 +43,7 @@ class ChannelTypeExtension extends AbstractTypeExtension
         $resolver->setDefault('channel', Generic::class);
         $resolver->setAllowedTypes('channel', ['null', 'string', ChannelInterface::class]);
 
-        $resolver->setNormalizer('channel', function (Options $options, $channel): ChannelInterface {
+        $resolver->setNormalizer('channel', function (Options $options, string|ChannelInterface|null $channel): ChannelInterface {
             if ($channel instanceof ChannelInterface) {
                 return $channel;
             }

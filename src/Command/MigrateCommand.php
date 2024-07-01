@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Siganushka\MediaBundle\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\Mapping\ClassMetadataFactory;
 use Siganushka\Contracts\Doctrine\ResourceInterface;
@@ -15,6 +15,7 @@ use Siganushka\MediaBundle\ChannelRegistry;
 use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Siganushka\MediaBundle\Exception\UnsupportedChannelException;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,23 +25,18 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
+#[AsCommand(
+    name: 'siganushka:media:migrate',
+    description: 'Migrate existing media data to SiganushkaMediaBundle.',
+)]
 class MigrateCommand extends Command
 {
-    protected static $defaultName = 'siganushka:media:migrate';
-    protected static $defaultDescription = 'Migrate existing media data to SiganushkaMediaBundle.';
-
-    private EventDispatcherInterface $eventDispatcher;
-    private ManagerRegistry $managerRegistry;
-    private ChannelRegistry $channelRegistry;
-    private string $publicDir;
-
-    public function __construct(EventDispatcherInterface $eventDispatcher, ManagerRegistry $managerRegistry, ChannelRegistry $channelRegistry, string $publicDir)
+    public function __construct(
+        private EventDispatcherInterface $eventDispatcher,
+        private ManagerRegistry $managerRegistry,
+        private ChannelRegistry $channelRegistry,
+        private string $publicDir)
     {
-        $this->eventDispatcher = $eventDispatcher;
-        $this->managerRegistry = $managerRegistry;
-        $this->channelRegistry = $channelRegistry;
-        $this->publicDir = $publicDir;
-
         parent::__construct();
     }
 
@@ -212,7 +208,7 @@ class MigrateCommand extends Command
                     continue;
                 }
 
-                if ($metadata instanceof ClassMetadataInfo) {
+                if ($metadata instanceof ClassMetadata) {
                     $entities[$name] = array_keys($metadata->getReflectionProperties());
                 }
             }

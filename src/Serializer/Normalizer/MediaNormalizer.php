@@ -6,25 +6,16 @@ namespace Siganushka\MediaBundle\Serializer\Normalizer;
 
 use Siganushka\MediaBundle\Entity\Media;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
-use Symfony\Component\Serializer\Normalizer\CacheableSupportsMethodInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
-class MediaNormalizer implements NormalizerInterface, CacheableSupportsMethodInterface
+class MediaNormalizer implements NormalizerInterface
 {
-    private NormalizerInterface $normalizer;
-
-    public function __construct(ObjectNormalizer $normalizer)
+    public function __construct(private ObjectNormalizer $normalizer)
     {
-        $this->normalizer = $normalizer;
     }
 
-    /**
-     * @param Media|mixed $object
-     *
-     * @return \ArrayObject|array|scalar|null
-     */
-    public function normalize($object, string $format = null, array $context = [])
+    public function normalize($object, string $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
     {
         if (\array_key_exists(AbstractNormalizer::ATTRIBUTES, $context)) {
             return $this->normalizer->normalize($object, $format, $context);
@@ -33,7 +24,7 @@ class MediaNormalizer implements NormalizerInterface, CacheableSupportsMethodInt
         $url = $object->getUrl();
         $hash = $object->getHash();
 
-        return (null === $url || null === $hash) ? null : sprintf('%s?hash=%s', $url, $hash);
+        return \is_string($url) && \is_string($hash) ? sprintf('%s?hash=%s', $url, $hash) : null;
     }
 
     public function supportsNormalization($data, string $format = null, array $context = []): bool
@@ -41,8 +32,10 @@ class MediaNormalizer implements NormalizerInterface, CacheableSupportsMethodInt
         return $data instanceof Media;
     }
 
-    public function hasCacheableSupportsMethod(): bool
+    public function getSupportedTypes(?string $format): array
     {
-        return true;
+        return [
+            Media::class => true,
+        ];
     }
 }

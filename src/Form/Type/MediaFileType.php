@@ -14,7 +14,7 @@ class MediaFileType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setNormalizer('constraints', function (Options $options, $constraints): array {
+        $resolver->setNormalizer('constraints', function (Options $options, mixed $constraints): array {
             $constraints = \is_object($constraints) ? [$constraints] : (array) $constraints;
 
             $channel = $options['channel'] ?? null;
