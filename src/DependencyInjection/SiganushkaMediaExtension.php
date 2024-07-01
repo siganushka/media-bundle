@@ -8,6 +8,7 @@ use Siganushka\MediaBundle\ChannelRegistry;
 use Siganushka\MediaBundle\Command\MigrateCommand;
 use Siganushka\MediaBundle\Doctrine\EventListener\MediaRemoveListener;
 use Siganushka\MediaBundle\Entity\Media;
+use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Storage\LocalStorage;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 use Symfony\Component\Config\FileLocator;
@@ -26,6 +27,9 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
 
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
+
+        $mediaRepositoryDef = $container->findDefinition(MediaRepository::class);
+        $mediaRepositoryDef->setArgument('$entityClass', $config['media_class']);
 
         $container->setAlias(StorageInterface::class, $config['storage']);
 

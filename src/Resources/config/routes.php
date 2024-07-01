@@ -9,7 +9,6 @@ use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 return static function (RoutingConfigurator $routes): void {
     $ref = new \ReflectionClass(SiganushkaMediaBundle::class);
-    $path = \dirname($ref->getFileName());
 
-    $routes->import($path.'/Controller', 'annotation');
+    $routes->import(\dirname($ref->getFileName()).'/Controller', 'attribute');
 };

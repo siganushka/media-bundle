@@ -6,14 +6,13 @@ namespace Siganushka\MediaBundle\Serializer\Normalizer;
 
 use Siganushka\MediaBundle\Entity\Media;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
-class MediaNormalizer implements NormalizerInterface
+class MediaNormalizer implements NormalizerInterface, NormalizerAwareInterface
 {
-    public function __construct(private ObjectNormalizer $normalizer)
-    {
-    }
+    use NormalizerAwareTrait;
 
     public function normalize($object, string $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
     {

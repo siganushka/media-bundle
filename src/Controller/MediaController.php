@@ -6,8 +6,10 @@ namespace Siganushka\MediaBundle\Controller;
 
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Siganushka\MediaBundle\ChannelInterface;
+use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Siganushka\MediaBundle\Form\MediaUploadType;
 use Siganushka\MediaBundle\Repository\MediaRepository;
@@ -23,15 +25,14 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 /**
  * @psalm-suppress PropertyNotSetInConstructor
  */
+#[Route('/media')]
 class MediaController extends AbstractController
 {
     public function __construct(protected MediaRepository $mediaRepository)
     {
     }
 
-    /**
-     * @Route("/media", methods={"GET"})
-     */
+    #[Route(methods: 'GET')]
     public function getCollection(Request $request, PaginatorInterface $paginator): Response
     {
         $queryBuilder = $this->mediaRepository->createQueryBuilder('m');
@@ -44,9 +45,7 @@ class MediaController extends AbstractController
         return $this->createResponse($pagination);
     }
 
-    /**
-     * @Route("/media", methods={"POST"})
-     */
+    #[Route(methods: 'POST')]
     public function postCollection(Request $request, EventDispatcherInterface $eventDispatcher, EntityManagerInterface $entityManager): Response
     {
         $formData = array_replace_recursive(
@@ -81,9 +80,7 @@ class MediaController extends AbstractController
         return $this->createResponse($media);
     }
 
-    /**
-     * @Route("/media/{hash}", methods={"GET"})
-     */
+    #[Route('/{hash}', methods: 'GET')]
     public function getItem(string $hash): Response
     {
         $entity = $this->mediaRepository->findOneByHash($hash);
@@ -94,9 +91,7 @@ class MediaController extends AbstractController
         return $this->createResponse($entity);
     }
 
-    /**
-     * @Route("/media/{hash}", methods={"DELETE"})
-     */
+    #[Route('/{hash}', methods: 'DELETE')]
     public function deleteItem(EntityManagerInterface $entityManager, string $hash): Response
     {
         $entity = $this->mediaRepository->findOneByHash($hash);
@@ -115,10 +110,7 @@ class MediaController extends AbstractController
         return $this->createResponse(null, Response::HTTP_NO_CONTENT);
     }
 
-    /**
-     * @param mixed $data
-     */
-    protected function createResponse($data = null, int $statusCode = Response::HTTP_OK, array $headers = []): Response
+    protected function createResponse(PaginationInterface|Media|null $data, int $statusCode = Response::HTTP_OK, array $headers = []): Response
     {
         $attributes = [
             'hash', 'url', 'name', 'extension', 'mimeType', 'size', 'sizeStr',

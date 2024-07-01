@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\Repository;
 
-use Doctrine\Persistence\ManagerRegistry;
 use Siganushka\GenericBundle\Repository\GenericEntityRepository;
 use Siganushka\MediaBundle\Entity\Media;
 
@@ -19,11 +18,6 @@ use Siganushka\MediaBundle\Entity\Media;
  */
 class MediaRepository extends GenericEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Media::class);
-    }
-
     public function findOneByHash(string $hash): ?Media
     {
         return $this->findOneBy(['hash' => $hash]);

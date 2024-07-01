@@ -14,55 +14,35 @@ use Siganushka\MediaBundle\Repository\MediaRepository;
 
 use function Symfony\Component\String\u;
 
-/**
- * @ORM\Entity(repositoryClass=MediaRepository::class)
- * @ORM\Table(uniqueConstraints={
- *  @ORM\UniqueConstraint(columns={"hash"})
- * })
- */
+#[ORM\Entity(repositoryClass: MediaRepository::class)]
+#[ORM\UniqueConstraint(columns: ['hash'])]
 class Media implements ResourceInterface, TimestampableInterface
 {
     use ResourceTrait;
     use TimestampableTrait;
 
-    /**
-     * @ORM\Column(type="string", length=32, options={"fixed": true})
-     */
+    #[ORM\Column(length: 32, options: ['fixed' => true])]
     private ?string $hash = null;
 
-    /**
-     * @ORM\Column(type="string")
-     */
+    #[ORM\Column]
     private ?string $url = null;
 
-    /**
-     * @ORM\Column(type="string")
-     */
+    #[ORM\Column]
     private ?string $name = null;
 
-    /**
-     * @ORM\Column(type="string")
-     */
+    #[ORM\Column]
     private ?string $extension = null;
 
-    /**
-     * @ORM\Column(type="string")
-     */
+    #[ORM\Column]
     private ?string $mimeType = null;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column]
     private ?int $size = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(nullable: true)]
     private ?int $width = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(nullable: true)]
     private ?int $height = null;
 
     public function getHash(): ?string
@@ -70,7 +50,7 @@ class Media implements ResourceInterface, TimestampableInterface
         return $this->hash;
     }
 
-    public function setHash(string $hash): self
+    public function setHash(string $hash): static
     {
         $this->hash = $hash;
 
@@ -82,7 +62,7 @@ class Media implements ResourceInterface, TimestampableInterface
         return $this->url;
     }
 
-    public function setUrl(string $url): self
+    public function setUrl(string $url): static
     {
         $this->url = $url;
 
@@ -94,7 +74,7 @@ class Media implements ResourceInterface, TimestampableInterface
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -106,7 +86,7 @@ class Media implements ResourceInterface, TimestampableInterface
         return $this->extension;
     }
 
-    public function setExtension(string $extension): self
+    public function setExtension(string $extension): static
     {
         $this->extension = $extension;
 
@@ -118,7 +98,7 @@ class Media implements ResourceInterface, TimestampableInterface
         return $this->mimeType;
     }
 
-    public function setMimeType(string $mimeType): self
+    public function setMimeType(string $mimeType): static
     {
         $this->mimeType = $mimeType;
 
@@ -135,7 +115,7 @@ class Media implements ResourceInterface, TimestampableInterface
         return null === $this->size ? null : FileUtils::formatBytes($this->size);
     }
 
-    public function setSize(int $size): self
+    public function setSize(int $size): static
     {
         $this->size = $size;
 
@@ -147,7 +127,7 @@ class Media implements ResourceInterface, TimestampableInterface
         return $this->width;
     }
 
-    public function setWidth(?int $width): self
+    public function setWidth(?int $width): static
     {
         $this->width = $width;
 
@@ -159,7 +139,7 @@ class Media implements ResourceInterface, TimestampableInterface
         return $this->height;
     }
 
-    public function setHeight(?int $height): self
+    public function setHeight(?int $height): static
     {
         $this->height = $height;
 
