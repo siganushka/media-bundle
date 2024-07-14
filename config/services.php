@@ -14,14 +14,14 @@ return static function (ContainerConfigurator $container): void {
     ;
 
     $ref = new \ReflectionClass(SiganushkaMediaBundle::class);
-    $services->load($ref->getNamespaceName().'\\', '../../')
+    $services->load($ref->getNamespaceName().'\\', '../src/')
         ->exclude([
-            '../../DependencyInjection/',
-            '../../Entity/',
-            '../../Event/',
-            '../../Exception/',
-            '../../Resources/',
-            '../../Storage/AliyunOssStorage.php',
-            '../../SiganushkaMediaBundle.php',
+            '../src/DependencyInjection/',
+            '../src/Entity/',
+            '../src/Event/',
+            '../src/Exception/',
+            '../src/Resources/',
+            '../src/Storage/AliyunOssStorage.php',
+            '../src/SiganushkaMediaBundle.php',
         ]);
 };

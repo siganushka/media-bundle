@@ -15,4 +15,9 @@ class SiganushkaMediaBundle extends Bundle
             ->addTag('siganushka_media.channel')
         ;
     }
+
+    public function getPath(): string
+    {
+        return \dirname(__DIR__);
+    }
 }
