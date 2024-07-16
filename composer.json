@@ -24,10 +24,7 @@
         "symfony/validator": "^6.4|^7.0"
     },
     "require-dev": {
-        "aliyuncs/oss-sdk-php": "^2.7",
-        "friendsofphp/php-cs-fixer": "^3.0",
-        "symfony/phpunit-bridge": "^6.4|^7.0",
-        "vimeo/psalm": "dev-master"
+        "aliyuncs/oss-sdk-php": "^2.7"
     },
     "autoload": {
         "psr-4": {
@@ -41,5 +38,12 @@
     },
     "config": {
         "sort-packages": true
+    },
+    "scripts": {
+        "tools:run": [
+            "tools/vendor/bin/php-cs-fixer fix",
+            "tools/vendor/bin/simple-phpunit --debug",
+            "tools/vendor/bin/psalm --show-info=true --no-cache"
+        ]
     }
 }

@@ -1,0 +1,7 @@
+{
+    "require": {
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "symfony/phpunit-bridge": "^6.4|^7.0",
+        "vimeo/psalm": "dev-master"
+    }
+}
