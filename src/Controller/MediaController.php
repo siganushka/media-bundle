@@ -85,7 +85,7 @@ class MediaController extends AbstractController
     {
         $entity = $this->mediaRepository->findOneByHash($hash);
         if (!$entity) {
-            throw $this->createNotFoundException(sprintf('Resource #%s not found.', $hash));
+            throw $this->createNotFoundException(\sprintf('Resource #%s not found.', $hash));
         }
 
         return $this->createResponse($entity);
@@ -96,7 +96,7 @@ class MediaController extends AbstractController
     {
         $entity = $this->mediaRepository->findOneByHash($hash);
         if (!$entity) {
-            throw $this->createNotFoundException(sprintf('Resource #%s not found.', $hash));
+            throw $this->createNotFoundException(\sprintf('Resource #%s not found.', $hash));
         }
 
         try {

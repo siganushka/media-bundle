@@ -26,7 +26,7 @@ class MediaNormalizer implements NormalizerInterface
         $url = $object->getUrl();
         $hash = $object->getHash();
 
-        return \is_string($url) && \is_string($hash) ? sprintf('%s?hash=%s', $url, $hash) : null;
+        return \is_string($url) && \is_string($hash) ? \sprintf('%s?hash=%s', $url, $hash) : null;
     }
 
     public function supportsNormalization($data, string $format = null, array $context = []): bool

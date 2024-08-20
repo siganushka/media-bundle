@@ -100,7 +100,7 @@ class MediaSaveEvent extends Event
      */
     public static function createFromContent(ChannelInterface $channel, string $content, string $fileName = null): self
     {
-        $file = sprintf('%s/%s', sys_get_temp_dir(), $fileName ?? uniqid());
+        $file = \sprintf('%s/%s', sys_get_temp_dir(), $fileName ?? uniqid());
 
         file_put_contents($file, $content);
         if (!is_file($file)) {

@@ -63,15 +63,15 @@ class MigrateCommand extends Command
         /** @var EntityManagerInterface|null */
         $entityManager = $this->managerRegistry->getManagerForClass($entityClass);
         if (null === $entityManager) {
-            throw new \InvalidArgumentException(sprintf('Unable to get manager from entity class "%s".', $entityClass));
+            throw new \InvalidArgumentException(\sprintf('Unable to get manager from entity class "%s".', $entityClass));
         }
 
         if (!\in_array($fromField, $entities[$entityClass] ?? [])) {
-            throw new \InvalidArgumentException(sprintf('The "from-field" "%s" is not mapped for "%s".', $fromField, $entityClass));
+            throw new \InvalidArgumentException(\sprintf('The "from-field" "%s" is not mapped for "%s".', $fromField, $entityClass));
         }
 
         if (!\in_array($toField, $entities[$entityClass] ?? [])) {
-            throw new \InvalidArgumentException(sprintf('The "to-field" "%s" is not mapped for "%s".', $toField, $entityClass));
+            throw new \InvalidArgumentException(\sprintf('The "to-field" "%s" is not mapped for "%s".', $toField, $entityClass));
         }
 
         try {
@@ -97,7 +97,7 @@ class MigrateCommand extends Command
                 ? $propertyAccessor->getValue($entity, 'id')
                 : $successfully;
 
-            $message = sprintf('#%d Execute migrate from %s::%s -> %s',
+            $message = \sprintf('#%d Execute migrate from %s::%s -> %s',
                 $identifier,
                 $entityClass,
                 $fromField,
@@ -112,7 +112,7 @@ class MigrateCommand extends Command
 
             // Media or subclass of Media
             if (is_a($toValue, Media::class, true)) {
-                $output->writeln(sprintf('<comment>%s already migrated.</comment>', $message));
+                $output->writeln(\sprintf('<comment>%s already migrated.</comment>', $message));
                 continue;
             }
 
@@ -123,27 +123,27 @@ class MigrateCommand extends Command
             }
 
             if (!\is_string($fromValue)) {
-                $output->writeln(sprintf('<comment>%s invalid value.</comment>', $message));
+                $output->writeln(\sprintf('<comment>%s invalid value.</comment>', $message));
                 continue;
             }
 
             try {
                 $event = $this->createMediaSaveEvent($channel, $fromValue);
             } catch (\Throwable $th) {
-                $output->writeln(sprintf('<comment>%s unable to create event (%s).</comment>', $message, $th->getMessage()));
+                $output->writeln(\sprintf('<comment>%s unable to create event (%s).</comment>', $message, $th->getMessage()));
                 continue;
             }
 
             try {
                 $this->eventDispatcher->dispatch($event);
             } catch (\Throwable $th) {
-                $output->writeln(sprintf('<comment>%s unable to migrate.</comment>', $message));
+                $output->writeln(\sprintf('<comment>%s unable to migrate.</comment>', $message));
                 continue;
             }
 
             $media = $event->getMedia();
             if (!$media instanceof Media) {
-                $output->writeln(sprintf('<comment>%s unable to migrate.</comment>', $message));
+                $output->writeln(\sprintf('<comment>%s unable to migrate.</comment>', $message));
                 continue;
             }
 
@@ -152,14 +152,14 @@ class MigrateCommand extends Command
             $entityManager->persist($media);
             $entityManager->flush();
 
-            $output->writeln(sprintf('<info>%s is successfully.</info>', $message));
+            $output->writeln(\sprintf('<info>%s is successfully.</info>', $message));
             ++$successfully;
         }
 
         // Clear entity manager
         $entityManager->clear();
 
-        $output->writeln(sprintf('<info>A total of %d items was migrated.</info>', $successfully));
+        $output->writeln(\sprintf('<info>A total of %d items was migrated.</info>', $successfully));
 
         return Command::SUCCESS;
     }
@@ -174,7 +174,7 @@ class MigrateCommand extends Command
         $argument = $this->getDefinition()->getArgument($name);
         $description = $argument->getDescription();
         if ($appendAutocompleterValuesToDesc) {
-            $description .= sprintf(' (%s)', implode(' | ', $autocompleterValues));
+            $description .= \sprintf(' (%s)', implode(' | ', $autocompleterValues));
         }
 
         $question = new Question($description);
@@ -186,7 +186,7 @@ class MigrateCommand extends Command
 
     protected function createMediaSaveEvent(ChannelInterface $channel, string $value): MediaSaveEvent
     {
-        $path = sprintf('%s/%s', $this->publicDir, ltrim($value, '/'));
+        $path = \sprintf('%s/%s', $this->publicDir, ltrim($value, '/'));
         if (is_file($path)) {
             return MediaSaveEvent::createFromPath($channel, $path);
         } elseif (str_starts_with($value, 'http://') || str_starts_with($value, 'https://')) {

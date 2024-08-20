@@ -18,7 +18,7 @@ abstract class AbstractChannel implements ChannelInterface
         }
 
         // Like Git commit ID
-        return sprintf('%02s/%07s.%s',
+        return \sprintf('%02s/%07s.%s',
             mb_substr($hash, 0, 2),
             mb_substr($hash, 2, 7),
             $file->guessExtension() ?? $file->getExtension()

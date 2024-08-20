@@ -11,6 +11,6 @@ class UnsupportedChannelException extends ServiceRegistryException
 {
     public function __construct(ServiceRegistryInterface $registry, string $channel)
     {
-        parent::__construct($registry, sprintf('The channel with value "%s" is invalid. Accepted values are: "%s".', $channel, implode('", "', $registry->getServiceIds())));
+        parent::__construct($registry, \sprintf('The channel with value "%s" is invalid. Accepted values are: "%s".', $channel, implode('", "', $registry->getServiceIds())));
     }
 }

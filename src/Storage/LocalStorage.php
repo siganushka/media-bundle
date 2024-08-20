@@ -16,7 +16,7 @@ class LocalStorage implements StorageInterface
 
     public function save(ChannelInterface $channel, File $file): string
     {
-        $filename = sprintf('%s/%s/%s', $this->publicDir, $this->uploadDir, $channel->getTargetName($file));
+        $filename = \sprintf('%s/%s/%s', $this->publicDir, $this->uploadDir, $channel->getTargetName($file));
         $pathinfo = pathinfo($filename);
 
         try {
@@ -41,10 +41,10 @@ class LocalStorage implements StorageInterface
             throw new \RuntimeException('Unable parse file.');
         }
 
-        $file = sprintf('%s%s', $this->publicDir, $path);
+        $file = \sprintf('%s%s', $this->publicDir, $path);
         if (is_dir($file)) {
             // delete file only (not include directory)
-            throw new \RuntimeException(sprintf('File %s invalid.', $file));
+            throw new \RuntimeException(\sprintf('File %s invalid.', $file));
         }
 
         if (is_file($file)) {

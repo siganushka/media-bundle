@@ -29,7 +29,7 @@ class MediaSaveEventTest extends TestCase
             // Delete file after tests.
             @unlink($event->getFile()->getPathname());
         } catch (\Throwable $th) {
-            $this->markTestSkipped(sprintf('Download remote file fail (Skipped with message "%s").', $th->getMessage()));
+            $this->markTestSkipped(\sprintf('Download remote file fail (Skipped with message "%s").', $th->getMessage()));
         }
     }
 
