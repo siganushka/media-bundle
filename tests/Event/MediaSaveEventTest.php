@@ -2,13 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Siganushka\MediaBundle\Tests;
+namespace Siganushka\MediaBundle\Tests\Event;
 
 use PHPUnit\Framework\TestCase;
 use Siganushka\MediaBundle\ChannelInterface;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
-use Symfony\Component\HttpFoundation\File\File;
 
 class MediaSaveEventTest extends TestCase
 {
