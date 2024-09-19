@@ -25,14 +25,13 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 /**
  * @psalm-suppress PropertyNotSetInConstructor
  */
-#[Route('/media')]
 class MediaController extends AbstractController
 {
     public function __construct(protected MediaRepository $mediaRepository)
     {
     }
 
-    #[Route(methods: 'GET')]
+    #[Route('/media', methods: 'GET')]
     public function getCollection(Request $request, PaginatorInterface $paginator): Response
     {
         $queryBuilder = $this->mediaRepository->createQueryBuilder('m');
@@ -45,7 +44,7 @@ class MediaController extends AbstractController
         return $this->createResponse($pagination);
     }
 
-    #[Route(methods: 'POST')]
+    #[Route('/media', methods: 'POST')]
     public function postCollection(Request $request, EventDispatcherInterface $eventDispatcher, EntityManagerInterface $entityManager): Response
     {
         $formData = array_replace_recursive(
@@ -80,7 +79,7 @@ class MediaController extends AbstractController
         return $this->createResponse($media);
     }
 
-    #[Route('/{hash}', methods: 'GET')]
+    #[Route('/media/{hash}', methods: 'GET')]
     public function getItem(string $hash): Response
     {
         $entity = $this->mediaRepository->findOneByHash($hash);
@@ -91,7 +90,7 @@ class MediaController extends AbstractController
         return $this->createResponse($entity);
     }
 
-    #[Route('/{hash}', methods: 'DELETE')]
+    #[Route('/media/{hash}', methods: 'DELETE')]
     public function deleteItem(EntityManagerInterface $entityManager, string $hash): Response
     {
         $entity = $this->mediaRepository->findOneByHash($hash);
@@ -106,7 +105,7 @@ class MediaController extends AbstractController
             throw new BadRequestHttpException('Unable to delete resource.');
         }
 
-        // 204 no content response
+        // 204 No Content
         return $this->createResponse(null, Response::HTTP_NO_CONTENT);
     }
 
