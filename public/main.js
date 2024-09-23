@@ -5,7 +5,7 @@ const handleMediaUpload = (el, input, channel, accept) => {
     return false
   }
 
-  const view = el.querySelector('.media-view')
+  const view = el.querySelector('.mmedia-preview')
   const data = document.getElementById(input)
   const file = document.createElement('input')
         file.setAttribute('type', 'file')
@@ -50,8 +50,8 @@ const handleMediaUpload = (el, input, channel, accept) => {
 const handleMediaRemove = (el, input, confirmationText) => {
   if (false === confirm(confirmationText)) return false
 
-  const wrap = el.closest('.media-wrap')
-  const view = wrap.querySelector('.media-view')
+  const wrap = el.closest('.media-uploader')
+  const view = wrap.querySelector('.mmedia-preview')
   const data = document.getElementById(input)
 
   wrap.classList.remove('media-uploaded')

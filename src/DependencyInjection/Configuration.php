@@ -57,6 +57,7 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('channels')
                     ->example([
                         'foo' => [
+                            'constraint' => 'Symfony\Component\Validator\Constraints\File',
                             'constraint_options' => ['maxSize' => '2MB'],
                         ],
                         'bar' => [

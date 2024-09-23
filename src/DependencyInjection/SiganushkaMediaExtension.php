@@ -28,15 +28,13 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
+        $container->setAlias(StorageInterface::class, $config['storage']);
+
         $mediaRepositoryDef = $container->findDefinition(MediaRepository::class);
         $mediaRepositoryDef->setArgument('$entityClass', $config['media_class']);
 
-        $container->setAlias(StorageInterface::class, $config['storage']);
-
         $mediaRemoveListenerDef = $container->findDefinition(MediaRemoveListener::class);
-        $mediaRemoveListenerDef
-            ->addTag('doctrine.orm.entity_listener', ['event' => 'postRemove', 'entity' => Media::class])
-        ;
+        $mediaRemoveListenerDef->addTag('doctrine.orm.entity_listener', ['event' => 'postRemove', 'entity' => Media::class]);
 
         $migrateCommandDef = $container->findDefinition(MigrateCommand::class);
         $migrateCommandDef->setArgument('$publicDir', '%kernel.project_dir%/public');
