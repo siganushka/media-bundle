@@ -6,7 +6,6 @@ namespace Siganushka\MediaBundle\Form\Extension;
 
 use Siganushka\MediaBundle\ChannelInterface;
 use Siganushka\MediaBundle\ChannelRegistry;
-use Siganushka\MediaBundle\Form\Type\MediaFileType;
 use Siganushka\MediaBundle\Form\Type\MediaType;
 use Siganushka\MediaBundle\Media\Generic;
 use Symfony\Component\Form\AbstractTypeExtension;
@@ -35,7 +34,7 @@ class ChannelTypeExtension extends AbstractTypeExtension
         }
 
         $view->vars['channel'] = $options['channel'];
-        $view->vars['accept'] = \count($accept) ? implode(',', $accept) : '*';
+        $view->vars['accept'] = \count($accept) ? implode(', ', $accept) : '*';
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -60,7 +59,6 @@ class ChannelTypeExtension extends AbstractTypeExtension
     public static function getExtendedTypes(): iterable
     {
         return [
-            MediaFileType::class,
             MediaType::class,
         ];
     }

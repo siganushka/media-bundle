@@ -1,92 +1,71 @@
 .media-uploader {
   width: 100px;
-  min-height: 100px;
-  padding: 1px;
+  height: 100px;
   background-position: center center;
   background-repeat: no-repeat;
-  background-size: 30% 30%;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background-size: 2rem auto;
+  cursor: pointer;
+  padding: 1px;
 }
 
-.media-uploader:not(.media-loading, .media-uploaded) {
+.media-uploader:not(.media-uploaded) {
   background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' fill='%23aeb5bd' viewBox='0 0 16 16'><path d='M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0'/><path d='M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12'/></svg>");
 }
 
-.media-uploader:not(.media-loading, .media-disabled):focus {
+.media-uploader:has(> input[type=file]:focus) {
   border-color: #86b7fe !important;
+  box-shadow: 0 0 0 .25rem rgba(13, 110, 253, .25);
 }
 
-.media-uploader:not(.media-loading, .media-uploaded, .media-disabled):focus {
-  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' fill='%2386b7fe' viewBox='0 0 16 16'><path d='M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0'/><path d='M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12'/></svg>");
+.media-uploader.media-error:has(> input[type=file]) {
+  border-color: var(--bs-form-invalid-border-color) !important;
 }
 
-.media-uploader:not(.media-loading, .media-disabled):is(.border-danger) {
-  border-color: #dc3545 !important;
-  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' fill='%23dc3545' viewBox='0 0 16 16'><path d='M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0'/><path d='M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12'/></svg>");
+.media-uploader.media-error:has(> input[type=file]:focus) {
+  box-shadow: 0 0 0 .25rem rgba(var(--bs-danger-rgb), .25);
 }
 
-.media-uploader:is(.media-loading, .media-disabled):focus {
-  box-shadow: none;
-}
-
-.media-uploader .media-rm,
-.media-uploader:not(.media-loading, .media-uploaded, .media-disabled) {
-  cursor: pointer;
-}
-
-.media-uploader .media-sp,
-.media-uploader .media-rm {
-  color: rgba(33, 37, 41, .5);
-  position: absolute;
-  z-index: 1;
-}
-
-.media-uploader .media-rm {
-  color: rgba(33, 37, 41, .7);
-  font-size: 150%;
-  line-height: 1;
-  border-radius: 100%;
-  background-color: rgba(255, 255, 255, .7);
-  padding: 2px 6px 3px 6px;
-}
-
-.media-uploader .media-sp,
-.media-uploader .media-rm {
-  display: none;
-}
-
-.media-uploader .mmedia-preview {
-  height: 100%;
-  line-height: 1;
-  text-align: center;
-}
-
-.media-uploader .mmedia-preview img {
-  max-width: 100%;
-  max-height: 100%;
-  border-radius: 0.25rem;
-}
-
-.media-uploader .mmedia-preview small {
-  color: #538ee6;
-  font-size: 10px;
-  word-wrap: break-word;
-  word-break: break-word;
-}
-
-.media-uploader:is(.media-loading):not(.media-disabled) .media-sp,
-.media-uploader:is(.media-uploaded):not(.media-disabled):hover .media-rm {
-  display: block;
-}
-
-.media-uploader:is(.media-disabled) {
+.media-uploader:not(.media-uploaded):has(> input[type=file]:disabled) {
+  cursor: not-allowed;
   opacity: .5;
 }
 
-.media-uploader:is(.media-uploaded):not(.media-disabled):hover .mmedia-preview {
-  opacity: .7;
+.media-uploader .spinner-border {
+  margin-left: -1rem;
+  margin-top: -1rem;
+}
+
+.media-uploader.media-loading {
+  background-image: none;
+}
+
+.media-uploader.media-loading .spinner-border {
+  display: block !important;
+}
+
+.media-uploader.media-uploaded {
+  cursor: default;
+}
+
+.media-uploader.media-uploaded:hover {
+  filter: brightness(90%);
+}
+
+.media-uploader.media-uploaded:hover .btn-close {
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 1) !important;
+  padding: .5rem;
+  display: block !important;
+}
+
+.media-uploader input[type=file] {
+  width: 0;
+  height: 0;
+}
+
+.media-uploader .media-preview,
+.media-uploader .media-preview img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: var(--bs-border-radius) !important;
 }

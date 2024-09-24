@@ -1,0 +1,28 @@
+{% block media_widget %}
+<label
+  for="{{ id }}_uploader"
+  class="media-uploader d-flex justify-content-center align-items-center text-body-tertiary border bg-white rounded overflow-hidden position-relative
+  {%- if errors|length %} media-error{% endif %}
+  {%- if value %} media-uploaded{% endif %}"
+  {% if style %}style="{{ style }}"{% endif %}
+>
+
+  <div class="spinner-border position-absolute top-50 start-50 d-none"></div>
+  <span class="btn-close rounded-circle position-absolute top-50 start-50 translate-middle z-1 d-none"
+    data-confirmation-text="{{ 'generic.remove_confirmation'|trans }}"></span>
+
+  <div class="media-preview d-flex justify-content-center align-items-center h-100 w-100">
+    {%- if data and data.image -%}
+      <img src="{{ data.url }}" />
+    {%- elseif data and data.name -%}
+      <small>{{ data.name }}</small>
+    {%- endif -%}
+  </div>
+
+  {# Using opacity (not display none) for keyboard event #}
+  <input type="file" id="{{ id }}_uploader" channel="{{ channel }}" accept="{{ accept }}" {% if disabled or data %} disabled{% endif %} />
+
+  {# Using display none replace input hidden (chrome error) #}
+  {{ form_widget(form, { type: 'text', attr: { class: 'd-none' } }) }}
+</label>
+{% endblock %}

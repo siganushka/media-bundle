@@ -4,25 +4,36 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\Form;
 
-use Siganushka\MediaBundle\Form\Type\MediaChannelType;
-use Siganushka\MediaBundle\Form\Type\MediaFileType;
+use Siganushka\MediaBundle\ChannelRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Event\PostSubmitEvent;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 class MediaUploadType extends AbstractType
 {
+    public function __construct(private ChannelRegistry $registry)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('channel', MediaChannelType::class, [
+            ->add('channel', ChoiceType::class, [
                 'label' => 'media.channel',
                 'placeholder' => 'generic.choice',
+                'choices' => $this->registry->all(),
+                'choice_value' => fn (?string $choice) => $choice,
+                'choice_translation_domain' => false,
+                'invalid_message' => 'media.channel.invalid',
+                'invalid_message_parameters' => fn (Options $options) => ['{{ accepted_values }}' => implode(', ', $options['choices'])],
                 'constraints' => new NotBlank(null, 'media.channel.not_blank'),
             ])
         ;
@@ -45,7 +56,7 @@ class MediaUploadType extends AbstractType
 
         /** @var FormInterface */
         $form = $form->getParent();
-        $form->add('file', MediaFileType::class, [
+        $form->add('file', FileType::class, [
             'label' => 'media.file',
             'channel' => $channel,
             'constraints' => new NotBlank(null, 'media.file.not_blank'),
