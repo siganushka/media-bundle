@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\DependencyInjection;
 
-use Siganushka\MediaBundle\ChannelRegistry;
+use Siganushka\MediaBundle\ChannelInterface;
 use Siganushka\MediaBundle\Command\MigrateCommand;
 use Siganushka\MediaBundle\Doctrine\EventListener\MediaRemoveListener;
 use Siganushka\MediaBundle\Entity\Media;
@@ -12,7 +12,6 @@ use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Storage\LocalStorage;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
@@ -43,8 +42,9 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         $localStorageDef->setArgument('$publicDir', '%kernel.project_dir%/public');
         $localStorageDef->setArgument('$uploadDir', 'uploads');
 
-        $channelRegistryDef = $container->findDefinition(ChannelRegistry::class);
-        $channelRegistryDef->setArgument('$channels', new TaggedIteratorArgument('siganushka_media.channel'));
+        $container->registerForAutoconfiguration(ChannelInterface::class)
+            ->addTag('siganushka_media.channel')
+        ;
     }
 
     public function prepend(ContainerBuilder $container): void

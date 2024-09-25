@@ -17,7 +17,6 @@
         "knplabs/knp-components": "^4.1",
         "siganushka/doctrine-contracts": "dev-main",
         "siganushka/generic-bundle": "dev-main",
-        "siganushka/registry-contracts": "dev-main",
         "symfony/form": "^6.4|^7.0",
         "symfony/framework-bundle": "^6.4|^7.0",
         "symfony/serializer": "^6.4|^7.0",

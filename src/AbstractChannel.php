@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle;
 
-use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Mapping\GenericMetadata;
 
@@ -43,12 +42,7 @@ abstract class AbstractChannel implements ChannelInterface
 
     public function getAlias(): string
     {
-        $alias = static::class;
-        if (preg_match('~([^\\\\]+?)?$~i', $alias, $matches)) {
-            return Container::underscore($matches[1]);
-        }
-
-        return $alias;
+        return ChannelRegistry::normalizeAlias(static::class);
     }
 
     public function __toString(): string

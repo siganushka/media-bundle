@@ -47,12 +47,7 @@ class ChannelTypeExtension extends AbstractTypeExtension
                 return $channel;
             }
 
-            $channel ??= Generic::class;
-            if ($this->registry->has($channel)) {
-                return $this->registry->get($channel);
-            }
-
-            return $this->registry->getByClass($channel);
+            return $this->registry->get($channel ?? Generic::class);
         });
     }
 

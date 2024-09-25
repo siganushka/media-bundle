@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle;
 
-use Siganushka\Contracts\Registry\AliasableInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraint;
 
-interface ChannelInterface extends AliasableInterface, \Stringable
+interface ChannelInterface extends \Stringable
 {
     /**
      * 返回新文件名存储名称.

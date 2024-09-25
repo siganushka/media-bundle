@@ -4,30 +4,46 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle;
 
-use Siganushka\Contracts\Registry\Exception\ServiceNonExistingException;
-use Siganushka\Contracts\Registry\ServiceRegistry;
+use Siganushka\MediaBundle\Exception\UnsupportedChannelException;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 
-/**
- * @method bool                               has(string $serviceId)
- * @method ChannelInterface                   get(string $serviceId)
- * @method array<string,    ChannelInterface> all()
- * @method array<int,       string>           getServiceIds()
- */
-class ChannelRegistry extends ServiceRegistry
+use function Symfony\Component\String\u;
+
+final class ChannelRegistry
 {
-    public function __construct(iterable $channels = [])
+    public function __construct(private ServiceLocator $locator)
     {
-        parent::__construct(ChannelInterface::class, $channels);
     }
 
-    public function getByClass(string $class): ChannelInterface
+    /**
+     * @return array<string, ChannelInterface>
+     */
+    public function all(): array
     {
-        foreach ($this->all() as $channel) {
-            if ($class === $channel::class) {
-                return $channel;
-            }
-        }
+        return iterator_to_array($this->locator);
+    }
 
-        throw new ServiceNonExistingException($this, $class);
+    public function get(string $alias): ChannelInterface
+    {
+        $normalizedAlias = self::normalizeAlias($alias);
+
+        try {
+            return $this->locator->get($normalizedAlias);
+        } catch (\Throwable) {
+            throw new UnsupportedChannelException($this, $alias);
+        }
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function aliases(): array
+    {
+        return array_keys($this->locator->getProvidedServices());
+    }
+
+    public static function normalizeAlias(string $alias): string
+    {
+        return u($alias)->afterLast('\\')->snake()->toString();
     }
 }

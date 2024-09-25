@@ -9,12 +9,10 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\Mapping\ClassMetadataFactory;
 use Siganushka\Contracts\Doctrine\ResourceInterface;
-use Siganushka\Contracts\Registry\Exception\ServiceNonExistingException;
 use Siganushka\MediaBundle\ChannelInterface;
 use Siganushka\MediaBundle\ChannelRegistry;
 use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
-use Siganushka\MediaBundle\Exception\UnsupportedChannelException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -58,7 +56,7 @@ class MigrateCommand extends Command
         $entityClass = $this->getArgumentForAsk('entity-class', $input, $output, array_keys($entities), false);
         $fromField = $this->getArgumentForAsk('from-field', $input, $output, $entities[$entityClass] ?? []);
         $toField = $this->getArgumentForAsk('to-field', $input, $output, $entities[$entityClass] ?? []);
-        $channelAlias = $this->getArgumentForAsk('channel-alias', $input, $output, $this->channelRegistry->getServiceIds());
+        $channelAlias = $this->getArgumentForAsk('channel-alias', $input, $output, $this->channelRegistry->aliases());
 
         /** @var EntityManagerInterface|null */
         $entityManager = $this->managerRegistry->getManagerForClass($entityClass);
@@ -74,12 +72,7 @@ class MigrateCommand extends Command
             throw new \InvalidArgumentException(\sprintf('The "to-field" "%s" is not mapped for "%s".', $toField, $entityClass));
         }
 
-        try {
-            $channel = $this->channelRegistry->get($channelAlias);
-        } catch (ServiceNonExistingException $th) {
-            throw new UnsupportedChannelException($this->channelRegistry, $channelAlias);
-        }
-
+        $channel = $this->channelRegistry->get($channelAlias);
         $queryBuilder = $entityManager->getRepository($entityClass)
             ->createQueryBUilder('t')
             // ->where(sprintf('t.%s IS NULL', $toField))

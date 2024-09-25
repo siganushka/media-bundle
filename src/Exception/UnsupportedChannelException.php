@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\Exception;
 
-use Siganushka\Contracts\Registry\Exception\ServiceRegistryException;
-use Siganushka\Contracts\Registry\ServiceRegistryInterface;
+use Siganushka\MediaBundle\ChannelRegistry;
 
-class UnsupportedChannelException extends ServiceRegistryException
+class UnsupportedChannelException extends \RuntimeException
 {
-    public function __construct(ServiceRegistryInterface $registry, string $channel)
+    public function __construct(ChannelRegistry $registry, string $alias)
     {
-        parent::__construct($registry, \sprintf('The channel with value "%s" is invalid. Accepted values are: "%s".', $channel, implode('", "', $registry->getServiceIds())));
+        parent::__construct(\sprintf('The channel with value "%s" is invalid. Accepted values are: "%s".', $alias, implode('", "', $registry->aliases())));
     }
 }
