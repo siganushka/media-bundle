@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Siganushka\MediaBundle\Tests\Routing;
+namespace Siganushka\MediaBundle\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\FrameworkBundle\Routing\AttributeRouteControllerLoader;
@@ -18,7 +18,7 @@ class RoutesTest extends TestCase
      */
     public function testRotues(string $routeName, string $path, array $methods): void
     {
-        $locator = new FileLocator(__DIR__.'/../../config/');
+        $locator = new FileLocator(__DIR__.'/../config/');
 
         new LoaderResolver([
             $loader = new PhpFileLoader($locator),
