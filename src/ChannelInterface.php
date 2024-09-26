@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Siganushka\MediaBundle;
 
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\File as AssertFile;
 
 interface ChannelInterface extends \Stringable
 {
@@ -19,11 +19,9 @@ interface ChannelInterface extends \Stringable
     public function getTargetName(File $file): string;
 
     /**
-     * 返回文件验证类型集合.
-     *
-     * @return array<int, Constraint>
+     * 返回文件验证约束类型.
      */
-    public function getConstraints(): array;
+    public function getConstraint(): AssertFile;
 
     /**
      * 文件保存前置事件回调.

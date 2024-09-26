@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Siganushka\MediaBundle;
 
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\Validator\Mapping\GenericMetadata;
+use Symfony\Component\Validator\Constraints\File as AssertFile;
 
 abstract class AbstractChannel implements ChannelInterface
 {
@@ -24,12 +24,9 @@ abstract class AbstractChannel implements ChannelInterface
         );
     }
 
-    public function getConstraints(): array
+    public function getConstraint(): AssertFile
     {
-        $metadata = new GenericMetadata();
-        $this->loadConstraints($metadata);
-
-        return $metadata->getConstraints();
+        return new AssertFile();
     }
 
     public function onPreSave(File $file): void
@@ -48,9 +45,5 @@ abstract class AbstractChannel implements ChannelInterface
     public function __toString(): string
     {
         return $this->getAlias();
-    }
-
-    protected function loadConstraints(GenericMetadata $metadata): void
-    {
     }
 }

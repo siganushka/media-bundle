@@ -20,7 +20,7 @@ class ValidatorTypeExtension extends ChannelTypeExtension
 
             $channel = $options['channel'] ?? null;
             if ($channel instanceof ChannelInterface) {
-                array_push($constraints, ...$channel->getConstraints());
+                $constraints[] = $channel->getConstraint();
             }
 
             return $constraints;

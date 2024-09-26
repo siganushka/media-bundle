@@ -13,7 +13,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\File;
 
 class ChannelTypeExtension extends AbstractTypeExtension
 {
@@ -23,18 +22,15 @@ class ChannelTypeExtension extends AbstractTypeExtension
 
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
-        // Guesses HTML accept from channel constraints (twig only)
-        // @see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept
-        // @see https://www.iana.org/assignments/media-types/media-types.xhtml
-        $accept = [];
-        foreach ($options['channel']->getConstraints() as $constraint) {
-            if ($constraint instanceof File && $constraint->mimeTypes) {
-                $accept = array_merge($accept, (array) $constraint->mimeTypes);
-            }
-        }
+        if (($channel = $options['channel']) instanceof ChannelInterface) {
+            // Pass data-attr to templates.
+            $view->vars['channel'] = $channel;
 
-        $view->vars['channel'] = $options['channel'];
-        $view->vars['accept'] = \count($accept) ? implode(', ', $accept) : '*';
+            // Guesses HTML accept from channel constraint (twig only)
+            // @see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept
+            // @see https://www.iana.org/assignments/media-types/media-types.xhtml
+            $view->vars['accept'] = implode(', ', $channel->getConstraint()->mimeTypes);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
