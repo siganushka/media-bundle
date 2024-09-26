@@ -23,6 +23,6 @@
   <input type="file" id="{{ id }}_uploader" channel="{{ channel }}" accept="{{ accept }}" {% if disabled or data %} disabled{% endif %} />
 
   {# Using display none replace input hidden (chrome error) #}
-  {{ form_widget(form, { type: 'text', attr: { class: 'd-none' } }) }}
+  {{ form_widget(form, {type: 'text', attr: {class: 'd-none'}}) }}
 </label>
 {% endblock %}
