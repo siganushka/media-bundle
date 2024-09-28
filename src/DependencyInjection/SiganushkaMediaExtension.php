@@ -8,7 +8,6 @@ use Siganushka\MediaBundle\ChannelInterface;
 use Siganushka\MediaBundle\Command\MigrateCommand;
 use Siganushka\MediaBundle\Doctrine\EventListener\MediaRemoveListener;
 use Siganushka\MediaBundle\Entity\Media;
-use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Storage\LocalStorage;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 use Symfony\Component\Config\FileLocator;
@@ -27,10 +26,12 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $container->setAlias(StorageInterface::class, $config['storage']);
+        foreach (Configuration::$resourceMapping as $configName => [, $repositoryClass]) {
+            $repositoryDef = $container->findDefinition($repositoryClass);
+            $repositoryDef->setArgument('$entityClass', $config[$configName]);
+        }
 
-        $mediaRepositoryDef = $container->findDefinition(MediaRepository::class);
-        $mediaRepositoryDef->setArgument('$entityClass', $config['media_class']);
+        $container->setAlias(StorageInterface::class, $config['storage']);
 
         $mediaRemoveListenerDef = $container->findDefinition(MediaRemoveListener::class);
         $mediaRemoveListenerDef->addTag('doctrine.orm.entity_listener', ['event' => 'postRemove', 'entity' => Media::class]);
@@ -49,22 +50,20 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
 
     public function prepend(ContainerBuilder $container): void
     {
-        if (!$container->hasExtension('siganushka_generic')) {
-            return;
-        }
-
         $configs = $container->getExtensionConfig($this->getAlias());
 
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
         $overrideMappings = [];
-        if (Media::class !== $config['media_class']) {
-            $overrideMappings[] = Media::class;
+        foreach (Configuration::$resourceMapping as $configName => [$entityClass]) {
+            if ($config[$configName] !== $entityClass) {
+                $overrideMappings[$entityClass] = $config[$configName];
+            }
         }
 
         $container->prependExtensionConfig('siganushka_generic', [
-            'doctrine' => ['entity_to_superclass' => $overrideMappings],
+            'doctrine' => ['mapping_override' => $overrideMappings],
         ]);
     }
 }

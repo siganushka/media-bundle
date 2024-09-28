@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Siganushka\MediaBundle\DependencyInjection;
 
 use Siganushka\MediaBundle\Entity\Media;
+use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Storage\LocalStorage;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
@@ -18,30 +19,36 @@ use Symfony\Component\Validator\Constraints\File;
  */
 class Configuration implements ConfigurationInterface
 {
+    public static array $resourceMapping = [
+        'media_class' => [Media::class, MediaRepository::class],
+    ];
+
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('siganushka_media');
         /** @var ArrayNodeDefinition */
         $rootNode = $treeBuilder->getRootNode();
 
-        $rootNode
-            ->children()
-                ->scalarNode('media_class')
-                    ->defaultValue(Media::class)
-                    ->validate()
-                        ->ifTrue(static fn (mixed $v): bool => !is_a($v, Media::class, true))
-                        ->thenInvalid('The value must be instanceof '.Media::class.', %s given.')
+        foreach (static::$resourceMapping as $configName => [$entityClass]) {
+            $rootNode
+                ->children()
+                    ->scalarNode($configName)
+                        ->defaultValue($entityClass)
+                        ->validate()
+                            ->ifTrue(static fn (mixed $v): bool => !is_a($v, $entityClass, true))
+                            ->thenInvalid('The value must be instanceof '.$entityClass.', %s given.')
+                        ->end()
                     ->end()
-                ->end()
-                ->scalarNode('storage')
-                    ->defaultValue(LocalStorage::class)
-                    ->cannotBeEmpty()
-                    ->validate()
-                        ->ifTrue(static fn (mixed $v): bool => !is_a($v, StorageInterface::class, true))
-                        ->thenInvalid('The value must be instanceof '.StorageInterface::class.', %s given.')
+                    ->scalarNode('storage')
+                        ->defaultValue(LocalStorage::class)
+                        ->cannotBeEmpty()
+                        ->validate()
+                            ->ifTrue(static fn (mixed $v): bool => !is_a($v, StorageInterface::class, true))
+                            ->thenInvalid('The value must be instanceof '.StorageInterface::class.', %s given.')
+                        ->end()
                     ->end()
-                ->end()
-        ;
+            ;
+        }
 
         $this->addChannelsSection($rootNode);
 
