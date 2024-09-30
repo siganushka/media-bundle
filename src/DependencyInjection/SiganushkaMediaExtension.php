@@ -6,8 +6,8 @@ namespace Siganushka\MediaBundle\DependencyInjection;
 
 use Siganushka\MediaBundle\ChannelInterface;
 use Siganushka\MediaBundle\Command\MigrateCommand;
+use Siganushka\MediaBundle\DependencyInjection\Compiler\ChannelPass;
 use Siganushka\MediaBundle\Doctrine\EventListener\MediaRemoveListener;
-use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Storage\LocalStorage;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 use Symfony\Component\Config\FileLocator;
@@ -34,7 +34,7 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         $container->setAlias(StorageInterface::class, $config['storage']);
 
         $mediaRemoveListenerDef = $container->findDefinition(MediaRemoveListener::class);
-        $mediaRemoveListenerDef->addTag('doctrine.orm.entity_listener', ['event' => 'postRemove', 'entity' => Media::class]);
+        $mediaRemoveListenerDef->addTag('doctrine.orm.entity_listener', ['event' => 'postRemove', 'entity' => $config['media_class']]);
 
         $migrateCommandDef = $container->findDefinition(MigrateCommand::class);
         $migrateCommandDef->setArgument('$publicDir', '%kernel.project_dir%/public');
@@ -44,7 +44,7 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         $localStorageDef->setArgument('$uploadDir', 'uploads');
 
         $container->registerForAutoconfiguration(ChannelInterface::class)
-            ->addTag('siganushka_media.channel')
+            ->addTag(ChannelPass::CHANNEL_TAG)
         ;
     }
 
@@ -55,15 +55,15 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $overrideMappings = [];
+        $mappingOverride = [];
         foreach (Configuration::$resourceMapping as $configName => [$entityClass]) {
             if ($config[$configName] !== $entityClass) {
-                $overrideMappings[$entityClass] = $config[$configName];
+                $mappingOverride[$entityClass] = $config[$configName];
             }
         }
 
         $container->prependExtensionConfig('siganushka_generic', [
-            'doctrine' => ['mapping_override' => $overrideMappings],
+            'doctrine' => ['mapping_override' => $mappingOverride],
         ]);
     }
 }

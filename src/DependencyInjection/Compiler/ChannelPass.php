@@ -10,12 +10,14 @@ use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class AddChannelPass implements CompilerPassInterface
+class ChannelPass implements CompilerPassInterface
 {
+    public const CHANNEL_TAG = 'siganushka_media.channel';
+
     public function process(ContainerBuilder $container): void
     {
         $servicesMap = [];
-        foreach ($container->findTaggedServiceIds('siganushka_media.channel', true) as $serviceId => $tag) {
+        foreach ($container->findTaggedServiceIds(self::CHANNEL_TAG, true) as $serviceId => $tag) {
             $alias = ChannelRegistry::normalizeAlias($serviceId);
             $servicesMap[$alias] = new Reference($serviceId);
         }
