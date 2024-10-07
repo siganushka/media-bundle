@@ -22,28 +22,28 @@ class Media implements ResourceInterface, TimestampableInterface
     use TimestampableTrait;
 
     #[ORM\Column(length: 32, options: ['fixed' => true])]
-    private ?string $hash = null;
+    protected ?string $hash = null;
 
     #[ORM\Column]
-    private ?string $url = null;
+    protected ?string $url = null;
 
     #[ORM\Column]
-    private ?string $name = null;
+    protected ?string $name = null;
 
     #[ORM\Column]
-    private ?string $extension = null;
+    protected ?string $extension = null;
 
     #[ORM\Column]
-    private ?string $mimeType = null;
+    protected ?string $mimeType = null;
 
     #[ORM\Column]
-    private ?int $size = null;
+    protected ?int $size = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $width = null;
+    protected ?int $width = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $height = null;
+    protected ?int $height = null;
 
     public function getHash(): ?string
     {
