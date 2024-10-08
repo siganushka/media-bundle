@@ -74,7 +74,7 @@ class MigrateCommand extends Command
 
         $channel = $this->channelRegistry->get($channelAlias);
         $queryBuilder = $entityManager->getRepository($entityClass)
-            ->createQueryBUilder('t')
+            ->createQueryBuilder('t')
             // ->where(sprintf('t.%s IS NULL', $toField))
             // ->setMaxResults(10)
         ;
