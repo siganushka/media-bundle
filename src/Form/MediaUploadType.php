@@ -13,7 +13,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -32,9 +31,7 @@ class MediaUploadType extends AbstractType
                 'choices' => $this->registry->all(),
                 'choice_value' => fn (?string $choice) => $choice,
                 'choice_translation_domain' => false,
-                'invalid_message' => 'media.channel.invalid',
-                'invalid_message_parameters' => fn (Options $options) => ['{{ accepted_values }}' => implode(', ', $options['choices'])],
-                'constraints' => new NotBlank(null, 'media.channel.not_blank'),
+                'constraints' => new NotBlank(),
             ])
         ;
 
@@ -59,7 +56,7 @@ class MediaUploadType extends AbstractType
         $form->add('file', FileType::class, [
             'label' => 'media.file',
             'channel' => $channel,
-            'constraints' => new NotBlank(null, 'media.file.not_blank'),
+            'constraints' => new NotBlank(),
         ]);
     }
 }

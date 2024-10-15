@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 return [
-    'media.hash' => '标识',
     'media.channel' => '类型',
     'media.file' => '文件',
 
