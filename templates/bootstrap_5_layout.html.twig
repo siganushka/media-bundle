@@ -19,10 +19,11 @@
     {%- endif -%}
   </div>
 
-  {# Using opacity (not display none) for keyboard event #}
+  {# Using width=0, height=0 (not display=none) to keep keyboard events #}
   <input type="file" id="{{ id }}_uploader" channel="{{ channel }}" accept="{{ accept }}" {% if disabled or data %} disabled{% endif %} />
 
-  {# Using display none replace input hidden (chrome error) #}
-  {{ form_widget(form, {type: 'text', attr: {class: 'd-none'}}) }}
+  {# Using required=false to fix chrome error (An invalid form control with name='xxx' is not focusable) #}
+  {# Using display=none (not type=hidden) to fix chrome error #}
+  {{ form_widget(form, {type: 'text', required: false, attr: {class: 'd-none'}}) }}
 </label>
 {% endblock %}
