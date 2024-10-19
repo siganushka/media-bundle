@@ -16,7 +16,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ChannelTypeExtension extends AbstractTypeExtension
 {
-    public function __construct(private ChannelRegistry $registry)
+    public function __construct(private readonly ChannelRegistry $registry)
     {
     }
 

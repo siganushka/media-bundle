@@ -27,7 +27,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 class MediaController extends AbstractController
 {
-    public function __construct(protected MediaRepository $mediaRepository)
+    public function __construct(protected readonly MediaRepository $mediaRepository)
     {
     }
 

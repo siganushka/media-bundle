@@ -30,10 +30,10 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class MigrateCommand extends Command
 {
     public function __construct(
-        private EventDispatcherInterface $eventDispatcher,
-        private ManagerRegistry $managerRegistry,
-        private ChannelRegistry $channelRegistry,
-        private string $publicDir)
+        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly ManagerRegistry $managerRegistry,
+        private readonly ChannelRegistry $channelRegistry,
+        private readonly string $publicDir)
     {
         parent::__construct();
     }

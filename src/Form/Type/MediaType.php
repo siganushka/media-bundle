@@ -20,7 +20,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class MediaType extends AbstractType implements DataTransformerInterface
 {
-    public function __construct(private ManagerRegistry $registry)
+    public function __construct(private readonly ManagerRegistry $registry)
     {
     }
 

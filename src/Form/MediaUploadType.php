@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class MediaUploadType extends AbstractType
 {
-    public function __construct(private ChannelRegistry $registry)
+    public function __construct(private readonly ChannelRegistry $registry)
     {
     }
 

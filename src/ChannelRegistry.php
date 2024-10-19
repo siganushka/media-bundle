@@ -11,7 +11,7 @@ use function Symfony\Component\String\u;
 
 final class ChannelRegistry
 {
-    public function __construct(private ServiceLocator $locator)
+    public function __construct(private readonly ServiceLocator $locator)
     {
     }
 

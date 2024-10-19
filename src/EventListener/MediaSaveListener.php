@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class MediaSaveListener implements EventSubscriberInterface
 {
-    public function __construct(private StorageInterface $storage, private MediaRepository $mediaRepository)
+    public function __construct(private readonly StorageInterface $storage, private readonly MediaRepository $mediaRepository)
     {
     }
 

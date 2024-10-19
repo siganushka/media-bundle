@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\Doctrine\EventListener;
 
-use Doctrine\ORM\Event\PostRemoveEventArgs;
 use Psr\Log\LoggerInterface;
 use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 
 class MediaRemoveListener
 {
-    public function __construct(private LoggerInterface $logger, private StorageInterface $storage)
+    public function __construct(private readonly LoggerInterface $logger, private readonly StorageInterface $storage)
     {
     }
 
-    public function postRemove(Media $entity, PostRemoveEventArgs $args): void
+    public function postRemove(Media $entity): void
     {
         $url = $entity->getUrl();
         if (null === $url) {

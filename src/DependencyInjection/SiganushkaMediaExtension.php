@@ -15,6 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
+use Symfony\Component\Filesystem\Filesystem;
 
 class SiganushkaMediaExtension extends Extension implements PrependExtensionInterface
 {
@@ -36,11 +37,12 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         $mediaRemoveListenerDef = $container->findDefinition(MediaRemoveListener::class);
         $mediaRemoveListenerDef->addTag('doctrine.orm.entity_listener', ['event' => 'postRemove', 'entity' => $config['media_class']]);
 
+        $publicDirectory = $this->getPublicDirectory($container);
         $migrateCommandDef = $container->findDefinition(MigrateCommand::class);
-        $migrateCommandDef->setArgument('$publicDir', '%kernel.project_dir%/public');
+        $migrateCommandDef->setArgument('$publicDir', $publicDirectory);
 
         $localStorageDef = $container->findDefinition(LocalStorage::class);
-        $localStorageDef->setArgument('$publicDir', '%kernel.project_dir%/public');
+        $localStorageDef->setArgument('$publicDir', $publicDirectory);
         $localStorageDef->setArgument('$uploadDir', 'uploads');
 
         $container->registerForAutoconfiguration(ChannelInterface::class)
@@ -65,5 +67,25 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         $container->prependExtensionConfig('siganushka_generic', [
             'doctrine' => ['mapping_override' => $mappingOverride],
         ]);
+    }
+
+    /**
+     * @see https://symfony.com/doc/current/configuration/override_dir_structure.html#override-the-public-directory
+     * @see https://github.com/symfony/framework-bundle/blob/7.1/DependencyInjection/FrameworkExtension.php#L3129
+     */
+    private function getPublicDirectory(ContainerBuilder $container): string
+    {
+        /** @var string */
+        $projectDir = $container->getParameter('kernel.project_dir');
+        $defaultPublicDir = $projectDir.'/public';
+
+        $composerFilePath = $projectDir.'/composer.json';
+        if (!file_exists($composerFilePath)) {
+            return $defaultPublicDir;
+        }
+
+        $composerConfig = json_decode((new Filesystem())->readFile($composerFilePath), true, flags: \JSON_THROW_ON_ERROR);
+
+        return isset($composerConfig['extra']['public-dir']) ? $projectDir.'/'.$composerConfig['extra']['public-dir'] : $defaultPublicDir;
     }
 }
