@@ -1,0 +1,26 @@
+{
+    "name": "@siganushka/media-bundle",
+    "description": "Media bundle integration for Symfony",
+    "license": "MIT",
+    "version": "0.1.0",
+    "symfony": {
+        "controllers": {
+            "media": {
+                "main": "dist/controller.js",
+                "name": "sigan-media",
+                "webpackMode": "eager",
+                "fetch": "eager",
+                "enabled": true,
+                "autoimport": {
+                    "@siganushka/media-bundle/dist/bootstrap5.css": true
+                }
+            }
+        },
+        "importmap": {
+            "@hotwired/stimulus": "^3.0.0"
+        }
+    },
+    "peerDependencies": {
+        "@hotwired/stimulus": "^3.0.0"
+    }
+}

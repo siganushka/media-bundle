@@ -1,7 +1,7 @@
 {
     "name": "siganushka/media-bundle",
     "description": "Media Bundle.",
-    "keywords": ["media-bundle"],
+    "keywords": ["media-bundle", "symfony-ux"],
     "homepage": "https://github.com/siganushka/media-bundle",
     "type": "symfony-bundle",
     "license": "MIT",

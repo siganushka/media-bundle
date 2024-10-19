@@ -10,6 +10,7 @@ use Siganushka\MediaBundle\DependencyInjection\Compiler\ChannelPass;
 use Siganushka\MediaBundle\Doctrine\EventListener\MediaRemoveListener;
 use Siganushka\MediaBundle\Storage\LocalStorage;
 use Siganushka\MediaBundle\Storage\StorageInterface;
+use Symfony\Component\AssetMapper\AssetMapperInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -67,6 +68,17 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         $container->prependExtensionConfig('siganushka_generic', [
             'doctrine' => ['mapping_override' => $mappingOverride],
         ]);
+
+        // @see https://symfony.com/doc/current/frontend/create_ux_bundle.html#specifics-for-asset-mapper
+        if ($this->isAssetMapperAvailable($container)) {
+            $container->prependExtensionConfig('framework', [
+                'asset_mapper' => [
+                    'paths' => [
+                        __DIR__.'/../../assets/dist' => '@siganushka/media-bundle',
+                    ],
+                ],
+            ]);
+        }
     }
 
     /**
@@ -87,5 +99,20 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         $composerConfig = json_decode((new Filesystem())->readFile($composerFilePath), true, flags: \JSON_THROW_ON_ERROR);
 
         return isset($composerConfig['extra']['public-dir']) ? $projectDir.'/'.$composerConfig['extra']['public-dir'] : $defaultPublicDir;
+    }
+
+    private function isAssetMapperAvailable(ContainerBuilder $container): bool
+    {
+        if (!interface_exists(AssetMapperInterface::class)) {
+            return false;
+        }
+
+        /** @var array */
+        $bundlesMetadata = $container->getParameter('kernel.bundles_metadata');
+        if (!isset($bundlesMetadata['FrameworkBundle'])) {
+            return false;
+        }
+
+        return is_file($bundlesMetadata['FrameworkBundle']['path'].'/Resources/config/asset_mapper.php');
     }
 }
