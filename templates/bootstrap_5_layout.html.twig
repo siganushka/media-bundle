@@ -5,16 +5,16 @@
   {%- if errors|length %} media-error{% endif %}
   {%- if value %} media-uploaded{% endif %}"
   {% if style %}style="{{ style }}"{% endif %}
-  data-controller="sigan-media"
-  data-sigan-media-url-value="{{ url('siganushka_media_media_postcollection') }}"
-  data-sigan-media-channel-value="{{ channel }}"
-  data-sigan-media-confirm-value="{{ 'generic.remove_confirmation'|trans }}"
+  data-controller="siganushka-media"
+  data-siganushka-media-url-value="{{ path('siganushka_media_media_postcollection') }}"
+  data-siganushka-media-channel-value="{{ channel }}"
+  data-siganushka-media-confirm-value="{{ 'generic.remove_confirmation'|trans }}"
 >
 
   <div class="spinner-border position-absolute top-50 start-50 d-none"></div>
-  <span class="btn-close rounded-circle position-absolute top-50 start-50 translate-middle z-1 d-none" data-action="click->sigan-media#remove"></span>
+  <span class="btn-close rounded-circle position-absolute top-50 start-50 translate-middle z-1 d-none" data-action="click->siganushka-media#remove"></span>
 
-  <div class="media-preview d-flex justify-content-center align-items-center h-100 w-100" data-sigan-media-target="view">
+  <div class="media-preview d-flex justify-content-center align-items-center h-100 w-100" data-siganushka-media-target="view">
     {%- if data and data.image -%}
       <img src="{{ data.url }}" />
     {%- elseif data and data.name -%}
@@ -27,13 +27,13 @@
     type="file"
     id="{{ id }}_uploader"
     accept="{{ accept }}"
-    data-sigan-media-target='file'
-    data-action="change->sigan-media#change"
+    data-siganushka-media-target='file'
+    data-action="change->siganushka-media#change"
     {% if disabled or data %} disabled{% endif %}
   />
 
   {# Using required=false to fix chrome error (An invalid form control with name='xxx' is not focusable) #}
   {# Using display=none (not type=hidden) to fix chrome error #}
-  {{ form_widget(form, {type: 'text', required: false, attr: {class: 'd-none', 'data-sigan-media-target': 'data'}}) }}
+  {{ form_widget(form, {type: 'text', required: false, attr: {class: 'd-none', 'data-siganushka-media-target': 'data'}}) }}
 </label>
 {% endblock %}

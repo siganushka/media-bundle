@@ -11,8 +11,6 @@ export default class extends Controller {
   }
 
   change(event) {
-    console.log('change...', event)
-
     const files = event.target.files
     if (!files.length) return false
 

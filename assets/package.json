@@ -7,9 +7,9 @@
         "controllers": {
             "media": {
                 "main": "dist/controller.js",
-                "name": "sigan-media",
+                "name": "siganushka-media",
                 "webpackMode": "eager",
-                "fetch": "eager",
+                "fetch": "lazy",
                 "enabled": true,
                 "autoimport": {
                     "@siganushka/media-bundle/dist/bootstrap5.css": true
