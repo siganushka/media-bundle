@@ -9,7 +9,7 @@
                 "main": "dist/controller.js",
                 "name": "siganushka-media",
                 "webpackMode": "eager",
-                "fetch": "lazy",
+                "fetch": "eager",
                 "enabled": true,
                 "autoimport": {
                     "@siganushka/media-bundle/dist/bootstrap5.css": true
