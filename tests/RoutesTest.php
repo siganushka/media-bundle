@@ -10,6 +10,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderResolver;
 use Symfony\Component\Routing\Loader\AttributeDirectoryLoader;
 use Symfony\Component\Routing\Loader\PhpFileLoader;
+use Symfony\Component\Routing\Route;
 
 class RoutesTest extends TestCase
 {
@@ -26,9 +27,11 @@ class RoutesTest extends TestCase
         ]);
 
         $routes = $loader->load('routes.php');
+        /** @var Route */
+        $route = $routes->get($routeName);
 
-        static::assertSame($path, $routes->get($routeName)?->getPath());
-        static::assertSame($methods, $routes->get($routeName)?->getMethods());
+        static::assertSame($path, $route->getPath());
+        static::assertSame($methods, $route->getMethods());
     }
 
     public static function routesProvider(): iterable

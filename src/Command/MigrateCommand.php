@@ -52,7 +52,7 @@ class MigrateCommand extends Command
     {
         $entities = $this->getEntities();
 
-        /** @psalm-var class-string */
+        /** @var class-string */
         $entityClass = $this->getArgumentForAsk('entity-class', $input, $output, array_keys($entities), false);
         $fromField = $this->getArgumentForAsk('from-field', $input, $output, $entities[$entityClass] ?? []);
         $toField = $this->getArgumentForAsk('to-field', $input, $output, $entities[$entityClass] ?? []);
@@ -86,8 +86,8 @@ class MigrateCommand extends Command
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
         $successfully = 0;
         foreach ($result as $entity) {
-            $identifier = is_a($entity, ResourceInterface::class, true)
-                ? $propertyAccessor->getValue($entity, 'id')
+            $identifier = is_a($entity, ResourceInterface::class)
+                ? $entity->getId()
                 : $successfully;
 
             $message = \sprintf('#%d Execute migrate from %s::%s -> %s',
@@ -103,8 +103,7 @@ class MigrateCommand extends Command
                 $toValue = null;
             }
 
-            // Media or subclass of Media
-            if (is_a($toValue, Media::class, true)) {
+            if (\is_object($toValue) && is_a($toValue, Media::class, true)) {
                 $output->writeln(\sprintf('<comment>%s already migrated.</comment>', $message));
                 continue;
             }
@@ -159,6 +158,7 @@ class MigrateCommand extends Command
 
     protected function getArgumentForAsk(string $name, InputInterface $input, OutputInterface $output, array $autocompleterValues = [], bool $appendAutocompleterValuesToDesc = true): string
     {
+        /** @var string|null */
         $value = $input->getArgument($name);
         if (null !== $value) {
             return $value;
@@ -174,7 +174,11 @@ class MigrateCommand extends Command
         $question->setAutocompleterValues($autocompleterValues);
         $question->setMaxAttempts(3);
 
-        return (new SymfonyStyle($input, $output))->askQuestion($question);
+        $style = new SymfonyStyle($input, $output);
+        /** @var string */
+        $anwser = $style->askQuestion($question);
+
+        return $anwser;
     }
 
     protected function createMediaSaveEvent(ChannelInterface $channel, string $value): MediaSaveEvent
@@ -193,7 +197,7 @@ class MigrateCommand extends Command
     {
         $entities = [];
         foreach ($this->managerRegistry->getManagers() as $em) {
-            /** @var ClassMetadataFactory */
+            /** @var ClassMetadataFactory<ClassMetadata> */
             $factory = $em->getMetadataFactory();
             foreach ($factory->getAllMetadata() as $metadata) {
                 $name = $metadata->getName();

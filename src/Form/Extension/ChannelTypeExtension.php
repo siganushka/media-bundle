@@ -29,7 +29,7 @@ class ChannelTypeExtension extends AbstractTypeExtension
             // Guesses HTML accept from channel constraint (twig only)
             // @see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept
             // @see https://www.iana.org/assignments/media-types/media-types.xhtml
-            $view->vars['accept'] = implode(', ', $channel->getConstraint()->mimeTypes);
+            $view->vars['accept'] = implode(', ', (array) $channel->getConstraint()->mimeTypes);
         }
     }
 

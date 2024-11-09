@@ -14,9 +14,6 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\File;
 
-/**
- * @psalm-suppress UndefinedInterfaceMethod
- */
 class Configuration implements ConfigurationInterface
 {
     public static array $resourceMapping = [
@@ -35,7 +32,7 @@ class Configuration implements ConfigurationInterface
                     ->scalarNode($configName)
                         ->defaultValue($entityClass)
                         ->validate()
-                            ->ifTrue(static fn (mixed $v): bool => !is_a($v, $entityClass, true))
+                            ->ifTrue(static fn (mixed $v): bool => \is_string($v) && !is_a($v, $entityClass, true))
                             ->thenInvalid('The value must be instanceof '.$entityClass.', %s given.')
                         ->end()
                     ->end()
@@ -43,7 +40,7 @@ class Configuration implements ConfigurationInterface
                         ->defaultValue(LocalStorage::class)
                         ->cannotBeEmpty()
                         ->validate()
-                            ->ifTrue(static fn (mixed $v): bool => !is_a($v, StorageInterface::class, true))
+                            ->ifTrue(static fn (mixed $v): bool => \is_string($v) && !is_a($v, StorageInterface::class, true))
                             ->thenInvalid('The value must be instanceof '.StorageInterface::class.', %s given.')
                         ->end()
                     ->end()
@@ -85,7 +82,7 @@ class Configuration implements ConfigurationInterface
                     ->info('This value will be used for validation when uploading files.')
                     ->defaultValue(File::class)
                     ->validate()
-                        ->ifTrue(static fn (mixed $v): bool => !is_a($v, Constraint::class, true))
+                        ->ifTrue(static fn (mixed $v): bool => \is_string($v) && !is_a($v, Constraint::class, true))
                         ->thenInvalid('The value must be instanceof '.Constraint::class.', %s given.')
                     ->end()
                 ->end()

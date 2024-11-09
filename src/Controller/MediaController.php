@@ -22,9 +22,6 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-/**
- * @psalm-suppress PropertyNotSetInConstructor
- */
 class MediaController extends AbstractController
 {
     public function __construct(protected readonly MediaRepository $mediaRepository)
@@ -109,6 +106,9 @@ class MediaController extends AbstractController
         return $this->createResponse(null, Response::HTTP_NO_CONTENT);
     }
 
+    /**
+     * @param PaginationInterface<int, mixed>|Media|null $data
+     */
     protected function createResponse(PaginationInterface|Media|null $data, int $statusCode = Response::HTTP_OK, array $headers = []): Response
     {
         $attributes = [

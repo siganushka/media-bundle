@@ -17,6 +17,9 @@ class MediaNormalizer implements NormalizerInterface
     ) {
     }
 
+    /**
+     * @param Media $object
+     */
     public function normalize($object, string $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
     {
         if (\array_key_exists(AbstractNormalizer::ATTRIBUTES, $context)) {

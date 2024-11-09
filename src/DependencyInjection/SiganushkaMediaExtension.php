@@ -96,6 +96,7 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
             return $defaultPublicDir;
         }
 
+        /** @var array */
         $composerConfig = json_decode((new Filesystem())->readFile($composerFilePath), true, flags: \JSON_THROW_ON_ERROR);
 
         return isset($composerConfig['extra']['public-dir']) ? $projectDir.'/'.$composerConfig['extra']['public-dir'] : $defaultPublicDir;

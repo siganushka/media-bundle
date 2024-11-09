@@ -42,7 +42,7 @@
         "tools:run": [
             "tools/vendor/bin/php-cs-fixer fix",
             "tools/vendor/bin/simple-phpunit --debug",
-            "tools/vendor/bin/psalm --show-info=true --no-cache"
+            "tools/vendor/bin/phpstan"
         ]
     }
 }

@@ -9,6 +9,7 @@ use Siganushka\GenericBundle\Form\DataTransformer\EntityToIdentifierTransformer;
 use Siganushka\MediaBundle\Entity\Media;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataTransformerInterface;
+use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -59,13 +60,20 @@ class MediaType extends AbstractType implements DataTransformerInterface
             return null;
         }
 
+        if (!\is_string($value)) {
+            throw new TransformationFailedException('Expected a string.');
+        }
+
         $queryString = parse_url($value, \PHP_URL_QUERY);
         if (!\is_string($queryString)) {
             return $value;
         }
 
         parse_str($queryString, $result);
+        if (isset($result['hash']) && \is_string($result['hash'])) {
+            return $result['hash'];
+        }
 
-        return $result['hash'] ?? $value;
+        return $value;
     }
 }
