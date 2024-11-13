@@ -2,12 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Siganushka\MediaBundle\Doctrine\EventListener;
+namespace Siganushka\MediaBundle\Doctrine;
 
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
+use Doctrine\ORM\Events;
 use Psr\Log\LoggerInterface;
 use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 
+#[AsEntityListener(event: Events::postRemove, entity: Media::class)]
 class MediaRemoveListener
 {
     public function __construct(private readonly LoggerInterface $logger, private readonly StorageInterface $storage)

@@ -7,7 +7,6 @@ namespace Siganushka\MediaBundle\DependencyInjection;
 use Siganushka\MediaBundle\ChannelInterface;
 use Siganushka\MediaBundle\Command\MigrateCommand;
 use Siganushka\MediaBundle\DependencyInjection\Compiler\ChannelPass;
-use Siganushka\MediaBundle\Doctrine\EventListener\MediaRemoveListener;
 use Siganushka\MediaBundle\Storage\LocalStorage;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 use Symfony\Component\AssetMapper\AssetMapperInterface;
@@ -34,9 +33,6 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         }
 
         $container->setAlias(StorageInterface::class, $config['storage']);
-
-        $mediaRemoveListenerDef = $container->findDefinition(MediaRemoveListener::class);
-        $mediaRemoveListenerDef->addTag('doctrine.orm.entity_listener', ['event' => 'postRemove', 'entity' => $config['media_class']]);
 
         $publicDirectory = $this->getPublicDirectory($container);
         $migrateCommandDef = $container->findDefinition(MigrateCommand::class);
