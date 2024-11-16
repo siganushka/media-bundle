@@ -6,7 +6,7 @@ namespace Siganushka\MediaBundle\Form\Type;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Siganushka\GenericBundle\Form\DataTransformer\EntityToIdentifierTransformer;
-use Siganushka\MediaBundle\Entity\Media;
+use Siganushka\MediaBundle\Repository\MediaRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
@@ -21,8 +21,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class MediaType extends AbstractType implements DataTransformerInterface
 {
-    public function __construct(private readonly ManagerRegistry $registry)
+    /**
+     * @var class-string
+     */
+    private string $mediaClass;
+
+    public function __construct(private readonly ManagerRegistry $registry, MediaRepository $mediaRepository)
     {
+        $this->mediaClass = $mediaRepository->getClassName();
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -30,7 +36,7 @@ class MediaType extends AbstractType implements DataTransformerInterface
         $builder->addViewTransformer($this, true);
 
         // Using addViewTransformer to transformer object for view
-        $builder->addViewTransformer(new EntityToIdentifierTransformer($this->registry, Media::class, 'hash'), true);
+        $builder->addViewTransformer(new EntityToIdentifierTransformer($this->registry, $this->mediaClass, 'hash'), true);
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options): void

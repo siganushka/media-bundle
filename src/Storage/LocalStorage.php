@@ -35,7 +35,7 @@ class LocalStorage implements StorageInterface
         }
 
         // No request context in CLI mode
-        return ('cli' === PHP_SAPI) ? $path : $this->urlHelper->getAbsoluteUrl($path);
+        return ('cli' === \PHP_SAPI) ? $path : $this->urlHelper->getAbsoluteUrl($path);
     }
 
     public function delete(string $url): void
