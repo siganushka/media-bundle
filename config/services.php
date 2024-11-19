@@ -20,7 +20,6 @@ return static function (ContainerConfigurator $container): void {
             '../src/Entity/',
             '../src/Event/',
             '../src/Exception/',
-            '../src/Resources/',
             '../src/Storage/AliyunOssStorage.php',
             '../src/SiganushkaMediaBundle.php',
         ]);
