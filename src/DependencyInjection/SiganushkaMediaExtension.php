@@ -28,19 +28,19 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         $config = $this->processConfiguration($configuration, $configs);
 
         foreach (Configuration::$resourceMapping as $configName => [, $repositoryClass]) {
-            $repositoryDef = $container->findDefinition($repositoryClass);
-            $repositoryDef->setArgument('$entityClass', $config[$configName]);
+            $repository = $container->findDefinition($repositoryClass);
+            $repository->setArgument('$entityClass', $config[$configName]);
         }
 
         $container->setAlias(StorageInterface::class, $config['storage']);
 
         $publicDirectory = $this->getPublicDirectory($container);
-        $migrateCommandDef = $container->findDefinition(MigrateCommand::class);
-        $migrateCommandDef->setArgument('$publicDir', $publicDirectory);
+        $migrateCommand = $container->findDefinition(MigrateCommand::class);
+        $migrateCommand->setArgument('$publicDir', $publicDirectory);
 
-        $localStorageDef = $container->findDefinition(LocalStorage::class);
-        $localStorageDef->setArgument('$publicDir', $publicDirectory);
-        $localStorageDef->setArgument('$uploadDir', 'uploads');
+        $localStorage = $container->findDefinition(LocalStorage::class);
+        $localStorage->setArgument('$publicDir', $publicDirectory);
+        $localStorage->setArgument('$uploadDir', 'uploads');
 
         $container->registerForAutoconfiguration(ChannelInterface::class)
             ->addTag(ChannelPass::CHANNEL_TAG)

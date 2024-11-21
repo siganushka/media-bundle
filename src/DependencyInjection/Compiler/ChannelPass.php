@@ -22,7 +22,7 @@ class ChannelPass implements CompilerPassInterface
             $servicesMap[$alias] = new Reference($serviceId);
         }
 
-        $channelRegistryDef = $container->findDefinition(ChannelRegistry::class);
-        $channelRegistryDef->setArgument(0, ServiceLocatorTagPass::register($container, $servicesMap));
+        $channelRegistry = $container->findDefinition(ChannelRegistry::class);
+        $channelRegistry->setArgument(0, ServiceLocatorTagPass::register($container, $servicesMap));
     }
 }

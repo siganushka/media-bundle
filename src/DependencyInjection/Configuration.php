@@ -27,25 +27,26 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->getRootNode();
 
         foreach (static::$resourceMapping as $configName => [$entityClass]) {
-            $rootNode
-                ->children()
-                    ->scalarNode($configName)
-                        ->defaultValue($entityClass)
-                        ->validate()
-                            ->ifTrue(static fn (mixed $v): bool => \is_string($v) && !is_subclass_of($v, $entityClass, true))
-                            ->thenInvalid('The value must be instanceof '.$entityClass.', %s given.')
-                        ->end()
+            $rootNode->children()
+                ->scalarNode($configName)
+                    ->defaultValue($entityClass)
+                    ->validate()
+                        ->ifTrue(static fn (mixed $v): bool => \is_string($v) && !is_subclass_of($v, $entityClass, true))
+                        ->thenInvalid('The value must be instanceof '.$entityClass.', %s given.')
                     ->end()
-                    ->scalarNode('storage')
-                        ->defaultValue(LocalStorage::class)
-                        ->cannotBeEmpty()
-                        ->validate()
-                            ->ifTrue(static fn (mixed $v): bool => \is_string($v) && !is_subclass_of($v, StorageInterface::class, true))
-                            ->thenInvalid('The value must be instanceof '.StorageInterface::class.', %s given.')
-                        ->end()
-                    ->end()
+                ->end()
             ;
         }
+
+        $rootNode->children()
+            ->scalarNode('storage')
+            ->defaultValue(LocalStorage::class)
+            ->cannotBeEmpty()
+            ->validate()
+                ->ifTrue(static fn (mixed $v): bool => \is_string($v) && !is_subclass_of($v, StorageInterface::class, true))
+                ->thenInvalid('The value must be instanceof '.StorageInterface::class.', %s given.')
+            ->end()
+        ;
 
         $this->addChannelsSection($rootNode);
 

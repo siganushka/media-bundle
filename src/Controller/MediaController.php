@@ -98,7 +98,7 @@ class MediaController extends AbstractController
         try {
             $entityManager->remove($entity);
             $entityManager->flush();
-        } catch (ForeignKeyConstraintViolationException $th) {
+        } catch (ForeignKeyConstraintViolationException) {
             throw new BadRequestHttpException('Unable to delete resource.');
         }
 
