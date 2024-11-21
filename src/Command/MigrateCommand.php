@@ -86,7 +86,7 @@ class MigrateCommand extends Command
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
         $successfully = 0;
         foreach ($result as $entity) {
-            $identifier = is_a($entity, ResourceInterface::class)
+            $identifier = is_subclass_of($entity, ResourceInterface::class)
                 ? $entity->getId()
                 : $successfully;
 
@@ -103,7 +103,7 @@ class MigrateCommand extends Command
                 $toValue = null;
             }
 
-            if (\is_object($toValue) && is_a($toValue, Media::class, true)) {
+            if (\is_object($toValue) && is_subclass_of($toValue, Media::class, true)) {
                 $output->writeln(\sprintf('<comment>%s already migrated.</comment>', $message));
                 continue;
             }
@@ -201,7 +201,7 @@ class MigrateCommand extends Command
             $factory = $em->getMetadataFactory();
             foreach ($factory->getAllMetadata() as $metadata) {
                 $name = $metadata->getName();
-                if (is_a($name, Media::class, true)) {
+                if (is_subclass_of($name, Media::class, true)) {
                     continue;
                 }
 
