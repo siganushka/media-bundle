@@ -32,6 +32,7 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         foreach (Configuration::$resourceMapping as $configName => [, $repositoryClass]) {
             $repository = $container->findDefinition($repositoryClass);
             $repository->setArgument('$entityClass', $config[$configName]);
+            $repository->addTag('doctrine.repository_service');
         }
 
         $container->setAlias(StorageInterface::class, $config['storage']);
