@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\DependencyInjection;
 
+use Doctrine\ORM\Events;
 use Siganushka\MediaBundle\ChannelInterface;
 use Siganushka\MediaBundle\Command\MigrateCommand;
 use Siganushka\MediaBundle\DependencyInjection\Compiler\ChannelPass;
+use Siganushka\MediaBundle\Doctrine\MediaRemoveListener;
 use Siganushka\MediaBundle\Storage\LocalStorage;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 use Symfony\Component\AssetMapper\AssetMapperInterface;
@@ -41,6 +43,9 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         $localStorage = $container->findDefinition(LocalStorage::class);
         $localStorage->setArgument('$publicDir', $publicDirectory);
         $localStorage->setArgument('$uploadDir', 'uploads');
+
+        $mediaRemoveListener = $container->findDefinition(MediaRemoveListener::class);
+        $mediaRemoveListener->addTag('doctrine.orm.entity_listener', ['event' => Events::postRemove, 'entity' => $config['media_class']]);
 
         $container->registerForAutoconfiguration(ChannelInterface::class)
             ->addTag(ChannelPass::CHANNEL_TAG)
