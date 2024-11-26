@@ -20,7 +20,7 @@ class MediaNormalizer implements NormalizerInterface
     /**
      * @param Media $object
      */
-    public function normalize($object, string $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
+    public function normalize($object, ?string $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
     {
         if (\array_key_exists(AbstractNormalizer::ATTRIBUTES, $context)) {
             return $this->normalizer->normalize($object, $format, $context);
@@ -32,7 +32,7 @@ class MediaNormalizer implements NormalizerInterface
         return \is_string($url) && \is_string($hash) ? \sprintf('%s?hash=%s', $url, $hash) : null;
     }
 
-    public function supportsNormalization($data, string $format = null, array $context = []): bool
+    public function supportsNormalization($data, ?string $format = null, array $context = []): bool
     {
         return $data instanceof Media;
     }

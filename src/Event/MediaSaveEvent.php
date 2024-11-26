@@ -81,7 +81,7 @@ class MediaSaveEvent extends Event
      * @see https://en.wikipedia.org/wiki/Data_URI_scheme
      * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URLs
      */
-    public static function createFromDataUri(ChannelInterface $channel, string $dataUri, string $fileName = null): self
+    public static function createFromDataUri(ChannelInterface $channel, string $dataUri, ?string $fileName = null): self
     {
         if (!preg_match('/^data:([a-z0-9][a-z0-9\!\#\$\&\-\^\_\+\.]{0,126}\/[a-z0-9][a-z0-9\!\#\$\&\-\^\_\+\.]{0,126}(;[a-z0-9\-]+\=[a-z0-9\-]+)?)?(;base64)?,[a-z0-9\!\$\&\\\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i', $dataUri)) {
             throw new \InvalidArgumentException('Invalid data uri file.');
@@ -98,7 +98,7 @@ class MediaSaveEvent extends Event
     /**
      * Create event from binary file content.
      */
-    public static function createFromContent(ChannelInterface $channel, string $content, string $fileName = null): self
+    public static function createFromContent(ChannelInterface $channel, string $content, ?string $fileName = null): self
     {
         $file = \sprintf('%s/%s', sys_get_temp_dir(), $fileName ?? uniqid());
 
