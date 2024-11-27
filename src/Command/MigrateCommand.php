@@ -23,10 +23,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-#[AsCommand(
-    name: 'siganushka:media:migrate',
-    description: 'Migrate existing media data to SiganushkaMediaBundle.',
-)]
+#[AsCommand('siganushka:media:migrate', 'Migrate existing media data to SiganushkaMediaBundle.')]
 class MigrateCommand extends Command
 {
     public function __construct(
