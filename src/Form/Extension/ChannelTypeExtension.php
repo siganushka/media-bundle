@@ -27,9 +27,15 @@ class ChannelTypeExtension extends AbstractTypeExtension
             $view->vars['channel'] = $channel;
 
             // Guesses HTML accept from channel constraint (twig only)
+            // @see https://symfony.com/blog/new-in-symfony-6-2-improved-file-validator
             // @see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept
             // @see https://www.iana.org/assignments/media-types/media-types.xhtml
-            $view->vars['accept'] = implode(', ', (array) $channel->getConstraint()->mimeTypes);
+            $mimeTypes = (array) $channel->getConstraint()->mimeTypes;
+            foreach ((array) $channel->getConstraint()->extensions as $key => $value) {
+                $mimeTypes[] = \sprintf('.%s', \is_string($key) ? $key : $value);
+            }
+
+            $view->vars['accept'] = implode(', ', $mimeTypes);
         }
     }
 
