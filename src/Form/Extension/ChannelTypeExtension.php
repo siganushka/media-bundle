@@ -13,6 +13,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 class ChannelTypeExtension extends AbstractTypeExtension
 {
@@ -25,17 +26,8 @@ class ChannelTypeExtension extends AbstractTypeExtension
         if (($channel = $options['channel']) instanceof ChannelInterface) {
             // Pass data-attr to templates.
             $view->vars['channel'] = $channel;
-
-            // Guesses HTML accept from channel constraint (twig only)
-            // @see https://symfony.com/blog/new-in-symfony-6-2-improved-file-validator
-            // @see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept
-            // @see https://www.iana.org/assignments/media-types/media-types.xhtml
-            $mimeTypes = (array) $channel->getConstraint()->mimeTypes;
-            foreach ((array) $channel->getConstraint()->extensions as $key => $value) {
-                $mimeTypes[] = \sprintf('.%s', \is_string($key) ? $key : $value);
-            }
-
-            $view->vars['accept'] = implode(', ', $mimeTypes);
+            // Gets HTML input file accept from file constraint (twig only)
+            $view->vars['accept'] = static::getAcceptFormFile($channel->getConstraint());
         }
     }
 
@@ -58,5 +50,27 @@ class ChannelTypeExtension extends AbstractTypeExtension
         return [
             MediaType::class,
         ];
+    }
+
+    /**
+     * Gets HTML input file accept from file constraint.
+     *
+     * @see https://symfony.com/blog/new-in-symfony-6-2-improved-file-validator
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept
+     * @see https://www.iana.org/assignments/media-types/media-types.xhtml
+     */
+    public static function getAcceptFormFile(File $file): string
+    {
+        $accepts = (array) $file->mimeTypes;
+
+        foreach ((array) $file->extensions as $key => $value) {
+            if (\is_string($key)) {
+                array_push($accepts, ...(array) $value);
+            } else {
+                $accepts[] = '.'.$value;
+            }
+        }
+
+        return \count($accepts) ? implode(',', $accepts) : '*';
     }
 }

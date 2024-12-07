@@ -25,4 +25,7 @@ interface StorageInterface
      * @param string $url 文件地址
      */
     public function delete(string $url): void;
+
+    // public function save(string|\SplFileInfo $file): string;
+    // public function validate(string $url): string;
 }
