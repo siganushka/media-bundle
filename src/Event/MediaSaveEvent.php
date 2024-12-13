@@ -32,7 +32,7 @@ class MediaSaveEvent extends Event
         return $this->media;
     }
 
-    public function setMedia(Media $media): self
+    public function setMedia(?Media $media): self
     {
         $this->media = $media;
 
@@ -40,7 +40,7 @@ class MediaSaveEvent extends Event
     }
 
     /**
-     * Create event from file path.
+     * Create from file path.
      *
      * @return static
      */
@@ -50,7 +50,7 @@ class MediaSaveEvent extends Event
     }
 
     /**
-     * Create event from remote file url.
+     * Create from remote file url.
      *
      * @see https://www.jianshu.com/p/42e0c4304b60
      */
@@ -76,7 +76,7 @@ class MediaSaveEvent extends Event
     }
 
     /**
-     * Create event from data urls file content.
+     * Create from data URI file content.
      *
      * @see https://en.wikipedia.org/wiki/Data_URI_scheme
      * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URLs
@@ -96,7 +96,7 @@ class MediaSaveEvent extends Event
     }
 
     /**
-     * Create event from binary file content.
+     * Create from binary file content.
      */
     public static function createFromContent(ChannelInterface $channel, string $content, ?string $fileName = null): self
     {

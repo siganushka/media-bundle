@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Siganushka\MediaBundle\Storage;
 
 use OSS\OssClient;
-use Siganushka\MediaBundle\ChannelInterface;
-use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * @see https://help.aliyun.com/document_detail/31834.html
@@ -24,20 +22,21 @@ class AliyunOssStorage implements StorageInterface
         $this->ossClient = new OssClient($accessKeyId, $accessKeySecret, $endpoint);
     }
 
-    public function save(ChannelInterface $channel, File $file): string
+    public function save(string|\SplFileInfo $origin, string $target): string
     {
-        $object = $channel->getTargetName($file);
+        if (\is_string($origin)) {
+            $origin = new \SplFileInfo($origin);
+        }
 
         try {
-            $result = $this->ossClient->uploadFile($this->bucket, $object, $file->getPathname());
+            $result = $this->ossClient->uploadFile($this->bucket, $target, $origin->getPathname());
         } catch (\Throwable $th) {
             // add logger...
             throw $th;
         }
 
-        // Delete file after save.
-        if ($file->isFile()) {
-            @unlink($file->getPathname());
+        if ($origin->isFile()) {
+            @unlink($origin->getPathname());
         }
 
         if (isset($result['info']['url'])) {

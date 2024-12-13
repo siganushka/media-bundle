@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\Storage;
 
-use Siganushka\MediaBundle\ChannelInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\UrlHelper;
 
@@ -17,13 +16,17 @@ class LocalStorage implements StorageInterface
     ) {
     }
 
-    public function save(ChannelInterface $channel, File $file): string
+    public function save(string|\SplFileInfo $origin, string $target): string
     {
-        $filename = \sprintf('%s/%s/%s', $this->publicDir, $this->uploadDir, $channel->getTargetName($file));
+        if (!$origin instanceof File) {
+            $origin = new File($origin instanceof \SplFileInfo ? $origin->getPathname() : $origin);
+        }
+
+        $filename = \sprintf('%s/%s/%s', $this->publicDir, $this->uploadDir, $target);
         $pathinfo = pathinfo($filename);
 
         try {
-            $targetFile = $file->move($pathinfo['dirname'], $pathinfo['basename']);
+            $targetFile = $origin->move($pathinfo['dirname'], $pathinfo['basename']);
         } catch (\Throwable $th) {
             // add logger...
             throw $th;
