@@ -63,11 +63,11 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('channels')
                     ->example([
                         'foo' => [
-                            'constraint' => 'Symfony\Component\Validator\Constraints\File',
+                            'constraint' => 'file',
                             'constraint_options' => ['maxSize' => '2MB'],
                         ],
                         'bar' => [
-                            'constraint' => 'Symfony\Component\Validator\Constraints\Image',
+                            'constraint' => 'image',
                             'constraint_options' => ['minWidth' => 320, 'allowSquare' => true],
                         ],
                         'baz' => [
