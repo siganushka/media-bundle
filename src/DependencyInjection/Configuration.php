@@ -13,6 +13,7 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\Image;
 
 class Configuration implements ConfigurationInterface
 {
@@ -82,6 +83,14 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('constraint')
                     ->info('This value will be used for validation when uploading files.')
                     ->defaultValue(File::class)
+                    ->beforeNormalization()
+                        ->ifString()
+                        ->then(fn (string $v): string => match ($v) {
+                            'file' => File::class,
+                            'image' => Image::class,
+                            default => $v,
+                        })
+                    ->end()
                     ->validate()
                         ->ifTrue(static fn (mixed $v): bool => \is_string($v) && !is_subclass_of($v, Constraint::class, true))
                         ->thenInvalid('The value must be instanceof '.Constraint::class.', %s given.')
