@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\Form;
 
+use Siganushka\MediaBundle\Channel;
 use Siganushka\MediaBundle\ChannelRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Event\PostSubmitEvent;
@@ -48,15 +49,19 @@ class MediaUploadType extends AbstractType
 
     public function formModifier(FormEvent $event): void
     {
+        $constraints = [new NotBlank()];
+
         $form = $event->getForm();
         $channel = $event instanceof PostSubmitEvent ? $form->getData() : $event->getData();
+        if ($channel instanceof Channel) {
+            $constraints[] = $channel->getConstraint();
+        }
 
         /** @var FormInterface */
-        $form = $form->getParent();
-        $form->add('file', FileType::class, [
+        $parent = $form->getParent();
+        $parent->add('file', FileType::class, [
             'label' => 'media.file',
-            'channel' => $channel,
-            'constraints' => new NotBlank(),
+            'constraints' => $constraints,
         ]);
     }
 }

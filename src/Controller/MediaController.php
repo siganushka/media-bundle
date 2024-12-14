@@ -8,7 +8,7 @@ use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use Siganushka\MediaBundle\ChannelInterface;
+use Siganushka\MediaBundle\Channel;
 use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Siganushka\MediaBundle\Form\MediaUploadType;
@@ -46,6 +46,7 @@ class MediaController extends AbstractController
     {
         $formData = array_replace_recursive(
             $request->request->all(),
+            $request->query->all(),
             $request->files->all(),
         );
 
@@ -59,7 +60,7 @@ class MediaController extends AbstractController
             }
         }
 
-        /** @var array{ channel: ChannelInterface, file: UploadedFile } */
+        /** @var array{ channel: Channel, file: UploadedFile } */
         $data = $form->getData();
 
         $event = new MediaSaveEvent($data['channel'], $data['file']);

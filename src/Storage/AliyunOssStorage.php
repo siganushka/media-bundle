@@ -22,12 +22,8 @@ class AliyunOssStorage implements StorageInterface
         $this->ossClient = new OssClient($accessKeyId, $accessKeySecret, $endpoint);
     }
 
-    public function save(string|\SplFileInfo $origin, string $target): string
+    public function save(\SplFileInfo $origin, string $target): string
     {
-        if (\is_string($origin)) {
-            $origin = new \SplFileInfo($origin);
-        }
-
         try {
             $result = $this->ossClient->uploadFile($this->bucket, $target, $origin->getPathname());
         } catch (\Throwable $th) {

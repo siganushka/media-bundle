@@ -7,12 +7,10 @@ namespace Siganushka\MediaBundle;
 use Siganushka\MediaBundle\Exception\UnsupportedChannelException;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 
-use function Symfony\Component\String\u;
-
 final class ChannelRegistry
 {
     /**
-     * @param ServiceLocator<ChannelInterface> $locator
+     * @param ServiceLocator<Channel> $locator
      */
     public function __construct(private readonly ServiceLocator $locator)
     {
@@ -23,12 +21,10 @@ final class ChannelRegistry
         return iterator_to_array($this->locator);
     }
 
-    public function get(string $alias): ChannelInterface
+    public function get(string $alias): Channel
     {
-        $normalizedAlias = self::normalizeAlias($alias);
-
         try {
-            return $this->locator->get($normalizedAlias);
+            return $this->locator->get($alias);
         } catch (\Throwable) {
             throw new UnsupportedChannelException($this, $alias);
         }
@@ -37,10 +33,5 @@ final class ChannelRegistry
     public function aliases(): array
     {
         return array_keys($this->locator->getProvidedServices());
-    }
-
-    public static function normalizeAlias(string $alias): string
-    {
-        return u($alias)->afterLast('\\')->snake()->toString();
     }
 }

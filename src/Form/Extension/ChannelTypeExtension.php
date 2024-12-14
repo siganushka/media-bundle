@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\Form\Extension;
 
-use Siganushka\MediaBundle\ChannelInterface;
+use Siganushka\MediaBundle\Channel;
 use Siganushka\MediaBundle\ChannelRegistry;
 use Siganushka\MediaBundle\Form\Type\MediaType;
-use Siganushka\MediaBundle\Media\Generic;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -21,27 +20,26 @@ class ChannelTypeExtension extends AbstractTypeExtension
     {
     }
 
+    /**
+     * @param array{ channel: Channel } $options
+     */
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
-        if (($channel = $options['channel']) instanceof ChannelInterface) {
-            // Pass data-attr to templates.
-            $view->vars['channel'] = $channel;
-            // Gets HTML input file accept from file constraint (twig only)
-            $view->vars['accept'] = static::getAcceptFormFile($channel->getConstraint());
-        }
+        $view->vars['channel'] = $options['channel'];
+        $view->vars['accept'] = static::getAcceptFormFile($options['channel']->getConstraint());
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefault('channel', Generic::class);
-        $resolver->setAllowedTypes('channel', ['null', 'string', ChannelInterface::class]);
+        $resolver->setRequired('channel');
+        $resolver->setAllowedTypes('channel', ['string', Channel::class]);
 
-        $resolver->setNormalizer('channel', function (Options $options, string|ChannelInterface|null $channel): ChannelInterface {
-            if ($channel instanceof ChannelInterface) {
-                return $channel;
+        $resolver->setNormalizer('channel', function (Options $options, string|Channel $channel): Channel {
+            if (\is_string($channel)) {
+                return $this->registry->get($channel);
             }
 
-            return $this->registry->get($channel ?? Generic::class);
+            return $channel;
         });
     }
 

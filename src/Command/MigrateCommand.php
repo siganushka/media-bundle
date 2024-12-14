@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\Mapping\ClassMetadataFactory;
 use Siganushka\Contracts\Doctrine\ResourceInterface;
-use Siganushka\MediaBundle\ChannelInterface;
+use Siganushka\MediaBundle\Channel;
 use Siganushka\MediaBundle\ChannelRegistry;
 use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
@@ -178,7 +178,7 @@ class MigrateCommand extends Command
         return $anwser;
     }
 
-    protected function createMediaSaveEvent(ChannelInterface $channel, string $value): MediaSaveEvent
+    protected function createMediaSaveEvent(Channel $channel, string $value): MediaSaveEvent
     {
         $path = \sprintf('%s/%s', $this->publicDir, ltrim($value, '/'));
         if (is_file($path)) {

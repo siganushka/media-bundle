@@ -12,7 +12,6 @@ use Siganushka\MediaBundle\Storage\LocalStorage;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
-use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\Image;
 
@@ -40,7 +39,7 @@ class ConfigurationTest extends TestCase
                     'constraint_options' => ['maxSize' => '2MB'],
                 ],
                 'bar' => [
-                    'constraint' => Image::class,
+                    'constraint' => 'image',
                     'constraint_options' => ['minWidth' => 320, 'allowSquare' => true],
                 ],
             ],
@@ -89,7 +88,7 @@ class ConfigurationTest extends TestCase
     public function testChannelsInvalidException(): void
     {
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage(\sprintf('The value must be instanceof %s, "stdClass" given', Constraint::class));
+        $this->expectExceptionMessage(\sprintf('The value must be instanceof %s, "stdClass" given', File::class));
 
         $config = [
             'channels' => [

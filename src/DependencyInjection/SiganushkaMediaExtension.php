@@ -5,18 +5,20 @@ declare(strict_types=1);
 namespace Siganushka\MediaBundle\DependencyInjection;
 
 use Doctrine\ORM\Events;
-use Siganushka\MediaBundle\ChannelInterface;
+use Siganushka\MediaBundle\Channel;
+use Siganushka\MediaBundle\ChannelRegistry;
 use Siganushka\MediaBundle\Command\MigrateCommand;
-use Siganushka\MediaBundle\DependencyInjection\Compiler\ChannelPass;
 use Siganushka\MediaBundle\Doctrine\MediaRemoveListener;
 use Siganushka\MediaBundle\Storage\LocalStorage;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 use Symfony\Component\AssetMapper\AssetMapperInterface;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Filesystem\Filesystem;
 
 class SiganushkaMediaExtension extends Extension implements PrependExtensionInterface
@@ -29,12 +31,26 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
+        $container->setAlias(StorageInterface::class, $config['storage']);
+
         foreach (Configuration::$resourceMapping as $configName => [, $repositoryClass]) {
             $repository = $container->findDefinition($repositoryClass);
             $repository->setArgument('$entityClass', $config[$configName]);
         }
 
-        $container->setAlias(StorageInterface::class, $config['storage']);
+        $servicesMap = [];
+        foreach ($config['channels'] as $alias => $options) {
+            $id = \sprintf('siganushka_media.channels.%s', $alias);
+            $servicesMap[$alias] = new Reference($id);
+
+            $container->register($id, Channel::class)
+                ->setArgument('$alias', $alias)
+                ->setArgument('$options', $options)
+            ;
+        }
+
+        $channelRegistry = $container->findDefinition(ChannelRegistry::class);
+        $channelRegistry->setArgument(0, ServiceLocatorTagPass::register($container, $servicesMap));
 
         $publicDirectory = $this->getPublicDirectory($container);
         $migrateCommand = $container->findDefinition(MigrateCommand::class);
@@ -46,10 +62,6 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
 
         $mediaRemoveListener = $container->findDefinition(MediaRemoveListener::class);
         $mediaRemoveListener->addTag('doctrine.orm.entity_listener', ['event' => Events::postRemove, 'entity' => $config['media_class']]);
-
-        $container->registerForAutoconfiguration(ChannelInterface::class)
-            ->addTag(ChannelPass::CHANNEL_TAG)
-        ;
     }
 
     public function prepend(ContainerBuilder $container): void

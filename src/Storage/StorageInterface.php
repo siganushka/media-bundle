@@ -6,7 +6,7 @@ namespace Siganushka\MediaBundle\Storage;
 
 interface StorageInterface
 {
-    public function save(string|\SplFileInfo $origin, string $target): string;
+    public function save(\SplFileInfo $origin, string $target): string;
 
     public function delete(string $url): void;
 }

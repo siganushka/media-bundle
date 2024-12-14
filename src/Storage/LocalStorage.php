@@ -16,10 +16,10 @@ class LocalStorage implements StorageInterface
     ) {
     }
 
-    public function save(string|\SplFileInfo $origin, string $target): string
+    public function save(\SplFileInfo $origin, string $target): string
     {
         if (!$origin instanceof File) {
-            $origin = new File($origin instanceof \SplFileInfo ? $origin->getPathname() : $origin);
+            $origin = new File($origin->getPathname());
         }
 
         $filename = \sprintf('%s/%s/%s', $this->publicDir, $this->uploadDir, $target);

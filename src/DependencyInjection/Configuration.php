@@ -11,7 +11,6 @@ use Siganushka\MediaBundle\Storage\StorageInterface;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
-use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\Image;
 
@@ -32,26 +31,30 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode($configName)
                     ->defaultValue($entityClass)
                     ->validate()
-                        ->ifTrue(static fn (mixed $v): bool => \is_string($v) && !is_subclass_of($v, $entityClass, true))
+                        ->ifTrue(static fn (mixed $v): bool => \is_string($v) && !is_a($v, $entityClass, true))
                         ->thenInvalid('The value must be instanceof '.$entityClass.', %s given.')
                     ->end()
                 ->end()
             ;
         }
 
+        $this->addStorageSection($rootNode);
+        $this->addChannelsSection($rootNode);
+
+        return $treeBuilder;
+    }
+
+    public function addStorageSection(ArrayNodeDefinition $rootNode): void
+    {
         $rootNode->children()
             ->scalarNode('storage')
             ->defaultValue(LocalStorage::class)
             ->cannotBeEmpty()
             ->validate()
-                ->ifTrue(static fn (mixed $v): bool => \is_string($v) && !is_subclass_of($v, StorageInterface::class, true))
+                ->ifTrue(static fn (mixed $v): bool => \is_string($v) && !is_a($v, StorageInterface::class, true))
                 ->thenInvalid('The value must be instanceof '.StorageInterface::class.', %s given.')
             ->end()
         ;
-
-        $this->addChannelsSection($rootNode);
-
-        return $treeBuilder;
     }
 
     public function addChannelsSection(ArrayNodeDefinition $rootNode): void
@@ -82,6 +85,7 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->scalarNode('constraint')
                     ->info('This value will be used for validation when uploading files.')
+                    ->cannotBeEmpty()
                     ->defaultValue(File::class)
                     ->beforeNormalization()
                         ->ifString()
@@ -92,8 +96,8 @@ class Configuration implements ConfigurationInterface
                         })
                     ->end()
                     ->validate()
-                        ->ifTrue(static fn (mixed $v): bool => \is_string($v) && !is_subclass_of($v, Constraint::class, true))
-                        ->thenInvalid('The value must be instanceof '.Constraint::class.', %s given.')
+                        ->ifTrue(static fn (mixed $v): bool => \is_string($v) && !is_a($v, File::class, true))
+                        ->thenInvalid('The value must be instanceof '.File::class.', %s given.')
                     ->end()
                 ->end()
                 ->arrayNode('constraint_options')
