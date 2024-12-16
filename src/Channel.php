@@ -12,7 +12,7 @@ final class Channel
     /**
      * @param array{
      *  constraint: class-string<AssertFile>,
-     *  constraint_options: array
+     *  constraint_options: array<string, mixed>
      * } $options
      */
     public function __construct(private readonly string $alias, private readonly array $options)
@@ -32,7 +32,7 @@ final class Channel
         }
 
         // Like Git commit ID
-        return \sprintf('%s/%02s/%07s.%s', $this->alias, mb_substr($hash, 0, 2), mb_substr($hash, 2, 7), $extension);
+        return \sprintf('%02s/%07s.%s', mb_substr($hash, 0, 2), mb_substr($hash, 2, 7), $extension);
     }
 
     public function getConstraint(): AssertFile
