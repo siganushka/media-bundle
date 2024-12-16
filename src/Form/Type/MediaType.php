@@ -41,11 +41,15 @@ class MediaType extends AbstractType implements DataTransformerInterface
 
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
+        $view->vars['type'] = $options['type'];
         $view->vars['style'] = $options['style'];
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
+        $resolver->setDefault('type', 'img');
+        $resolver->setAllowedValues('type', ['img', 'file']);
+
         $resolver->setDefault('style', null);
         $resolver->setAllowedTypes('style', ['null', 'string']);
     }

@@ -2,6 +2,7 @@
 <label
   for="{{ id }}_uploader"
   class="media-uploader d-flex justify-content-center align-items-center text-body-tertiary border bg-white rounded overflow-hidden position-relative
+  icon-{{ type }}
   {%- if errors|length %} media-error{% endif %}
   {%- if value %} media-uploaded{% endif %}"
   {% if style %}style="{{ style }}"{% endif %}
