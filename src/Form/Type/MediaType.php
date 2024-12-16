@@ -24,7 +24,7 @@ class MediaType extends AbstractType implements DataTransformerInterface
     /**
      * @var class-string
      */
-    private string $mediaClass;
+    private readonly string $mediaClass;
 
     public function __construct(private readonly ManagerRegistry $registry, MediaRepository $mediaRepository)
     {

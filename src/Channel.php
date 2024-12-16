@@ -12,7 +12,7 @@ final class Channel
     /**
      * @param array{
      *  constraint: class-string<AssertFile>,
-     *  constraint_options: array<string, mixed>
+     *  constraint_options?: array<string, mixed>
      * } $options
      */
     public function __construct(private readonly string $alias, private readonly array $options)
@@ -39,7 +39,7 @@ final class Channel
     {
         $ref = new \ReflectionClass($this->options['constraint']);
 
-        return $ref->newInstanceArgs($this->options['constraint_options']);
+        return $ref->newInstanceArgs($this->options['constraint_options'] ?? []);
     }
 
     public function __toString(): string
