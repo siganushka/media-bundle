@@ -35,11 +35,11 @@ class ChannelTypeExtension extends AbstractTypeExtension
         $resolver->setAllowedTypes('channel', ['null', 'string', Channel::class]);
 
         $resolver->setNormalizer('channel', function (Options $options, string|Channel $channel): Channel {
-            if (\is_string($channel)) {
-                return $this->registry->get($channel);
+            if ($channel instanceof Channel) {
+                return $channel;
             }
 
-            return $channel;
+            return $this->registry->get($channel);
         });
     }
 
