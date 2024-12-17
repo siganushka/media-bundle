@@ -10,14 +10,14 @@ use Siganushka\MediaBundle\Repository\MediaRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * @implements DataTransformerInterface<string, mixed>
+ * @implements DataTransformerInterface<string, string>
  */
 class MediaType extends AbstractType implements DataTransformerInterface
 {
@@ -41,22 +41,22 @@ class MediaType extends AbstractType implements DataTransformerInterface
 
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
-        $view->vars['type'] = $options['type'];
+        $view->vars['icon'] = $options['icon'];
         $view->vars['style'] = $options['style'];
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefault('type', 'img');
-        $resolver->setAllowedValues('type', ['img', 'file']);
-
-        $resolver->setDefault('style', null);
-        $resolver->setAllowedTypes('style', ['null', 'string']);
+        $resolver->setDefaults([
+            'style' => null,
+            'icon' => 'plus',
+            'invalid_message' => 'Please enter a valid media URL.',
+        ]);
     }
 
     public function getParent(): string
     {
-        return TextType::class;
+        return UrlType::class;
     }
 
     public function transform($value): ?string

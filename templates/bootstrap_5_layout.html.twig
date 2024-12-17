@@ -1,8 +1,7 @@
 {% block media_widget %}
 <label
   for="{{ id }}_uploader"
-  class="media-uploader d-flex justify-content-center align-items-center text-body-tertiary border bg-white rounded overflow-hidden position-relative
-  icon-{{ type }}
+  class="media-uploader d-flex justify-content-center align-items-center text-body-tertiary border bg-white rounded overflow-hidden position-relative icon-{{ icon }}
   {%- if errors|length %} media-error{% endif %}
   {%- if value %} media-uploaded{% endif %}"
   {% if style %}style="{{ style }}"{% endif %}
@@ -34,6 +33,6 @@
 
   {# Using required=false to fix chrome error (An invalid form control with name='xxx' is not focusable) #}
   {# Using display=none (not type=hidden) to fix chrome error #}
-  {{ form_widget(form, {type: 'text', required: false, attr: {class: 'd-none', 'data-siganushka-media-target': 'data'}}) }}
+  {{ form_widget(form, {required: false, attr: {class: 'd-none', 'data-siganushka-media-target': 'data'}}) }}
 </label>
 {% endblock %}
