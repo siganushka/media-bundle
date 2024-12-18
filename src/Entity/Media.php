@@ -15,7 +15,7 @@ use function Symfony\Component\String\u;
 
 #[ORM\Entity(repositoryClass: MediaRepository::class)]
 #[ORM\UniqueConstraint(columns: ['hash'])]
-class Media implements ResourceInterface, TimestampableInterface
+class Media implements ResourceInterface, TimestampableInterface, \Stringable
 {
     use ResourceTrait;
     use TimestampableTrait;
@@ -33,7 +33,7 @@ class Media implements ResourceInterface, TimestampableInterface
     protected ?string $extension = null;
 
     #[ORM\Column]
-    protected ?string $mimeType = null;
+    protected ?string $mime = null;
 
     #[ORM\Column]
     protected ?string $size = null;
@@ -92,14 +92,14 @@ class Media implements ResourceInterface, TimestampableInterface
         return $this;
     }
 
-    public function getMimeType(): ?string
+    public function getMime(): ?string
     {
-        return $this->mimeType;
+        return $this->mime;
     }
 
-    public function setMimeType(string $mimeType): static
+    public function setMime(string $mime): static
     {
-        $this->mimeType = $mimeType;
+        $this->mime = $mime;
 
         return $this;
     }
@@ -142,6 +142,11 @@ class Media implements ResourceInterface, TimestampableInterface
 
     public function isImage(): bool
     {
-        return u($this->mimeType)->startsWith('image');
+        return u($this->mime)->startsWith('image');
+    }
+
+    public function __toString(): string
+    {
+        return \sprintf('%s?hash=%s', $this->url, $this->hash);
     }
 }

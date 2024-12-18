@@ -10,7 +10,7 @@ use Siganushka\MediaBundle\Repository\MediaRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -50,13 +50,13 @@ class MediaType extends AbstractType implements DataTransformerInterface
         $resolver->setDefaults([
             'style' => null,
             'icon' => 'plus',
-            'invalid_message' => 'Please enter a valid media URL.',
+            'invalid_message' => 'The value is not a valid media reference.',
         ]);
     }
 
     public function getParent(): string
     {
-        return UrlType::class;
+        return TextType::class;
     }
 
     public function transform($value): ?string

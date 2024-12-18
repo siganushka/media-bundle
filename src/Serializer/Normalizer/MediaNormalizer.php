@@ -13,8 +13,8 @@ class MediaNormalizer implements NormalizerInterface
 {
     public function __construct(
         #[Autowire(service: 'serializer.normalizer.object')]
-        private readonly NormalizerInterface $normalizer,
-    ) {
+        private readonly NormalizerInterface $normalizer)
+    {
     }
 
     /**
@@ -26,10 +26,7 @@ class MediaNormalizer implements NormalizerInterface
             return $this->normalizer->normalize($object, $format, $context);
         }
 
-        $url = $object->getUrl();
-        $hash = $object->getHash();
-
-        return \is_string($url) && \is_string($hash) ? \sprintf('%s?hash=%s', $url, $hash) : null;
+        return $object->__toString();
     }
 
     public function supportsNormalization($data, ?string $format = null, array $context = []): bool

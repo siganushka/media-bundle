@@ -41,8 +41,8 @@ class MediaSaveListener implements EventSubscriberInterface
 
         $name = $file instanceof UploadedFile ? $file->getClientOriginalName() : $file->getFilename();
         $extension = $file->guessExtension() ?? $file->getExtension();
-        $mimeType = $file->getMimeType();
-        if (null === $mimeType) {
+        $mime = $file->getMimeType();
+        if (null === $mime) {
             throw new \RuntimeException('Unable to access file.');
         }
 
@@ -58,7 +58,7 @@ class MediaSaveListener implements EventSubscriberInterface
         $media->setHash($hash);
         $media->setName($name);
         $media->setExtension($extension);
-        $media->setMimeType($mimeType);
+        $media->setMime($mime);
         $media->setSize($size);
         $media->setWidth($width);
         $media->setHeight($height);
