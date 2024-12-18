@@ -13,6 +13,7 @@ use Siganushka\MediaBundle\Channel;
 use Siganushka\MediaBundle\ChannelRegistry;
 use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
+use Siganushka\MediaBundle\Utils\FileUtils;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -182,9 +183,9 @@ class MigrateCommand extends Command
     {
         $path = \sprintf('%s/%s', $this->publicDir, ltrim($value, '/'));
         if (is_file($path)) {
-            return MediaSaveEvent::createFromPath($channel, $path);
+            return new MediaSaveEvent($channel, new \SplFileInfo($path));
         } elseif (str_starts_with($value, 'http://') || str_starts_with($value, 'https://')) {
-            return MediaSaveEvent::createFromUrl($channel, $value);
+            return new MediaSaveEvent($channel, FileUtils::createFromUrl($value));
         } else {
             throw new \InvalidArgumentException('invalid file like');
         }

@@ -63,7 +63,7 @@ class MediaController extends AbstractController
         /** @var array{ channel: Channel, file: UploadedFile } */
         $data = $form->getData();
 
-        $event = new MediaSaveEvent($data['channel'], $data['file']);
+        $event = new MediaSaveEvent(...$data);
         $eventDispatcher->dispatch($event);
 
         $media = $event->getMedia();
