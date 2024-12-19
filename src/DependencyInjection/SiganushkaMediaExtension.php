@@ -20,7 +20,6 @@ use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Validator\Constraints\File;
 
 class SiganushkaMediaExtension extends Extension implements PrependExtensionInterface
 {
@@ -40,8 +39,6 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         }
 
         $servicesMap = [];
-
-        $config['channels'] += ['default' => ['constraint' => File::class]];
         foreach ($config['channels'] as $alias => $options) {
             $id = \sprintf('siganushka_media.channels.%s', $alias);
             $servicesMap[$alias] = new Reference($id);

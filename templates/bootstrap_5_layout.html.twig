@@ -13,11 +13,11 @@
   <div class="spinner-border position-absolute top-50 start-50 d-none"></div>
   <span class="btn-close rounded-circle position-absolute top-50 start-50 translate-middle z-1 d-none" data-action="click->siganushka-media#remove"></span>
 
-  <div class="media-preview d-flex justify-content-center align-items-center h-100 w-100" data-siganushka-media-target="view">
+  <div class="media-preview d-flex justify-content-center align-items-center text-break lh-ms h-100 w-100" data-siganushka-media-target="view">
     {%- if data and data.image -%}
       <img src="{{ data.url }}" />
     {%- elseif data and data.name -%}
-      <small>{{ data.name }}</small>
+      {{ data.name }}
     {%- endif -%}
   </div>
 

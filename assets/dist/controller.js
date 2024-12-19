@@ -33,7 +33,7 @@ export default class extends Controller {
     }).then(res => {
       event.target.disabled = true
       this.dataTarget.value = res.hash
-      this.viewTarget.innerHTML = res.image ? `<img src="${res.url}" />` : `<small>${res.name}</small>`
+      this.viewTarget.innerHTML = res.image ? `<img src="${res.url}" />` : res.name
       this.element.classList.add('media-uploaded')
     }).catch(err => {
       alert(err)

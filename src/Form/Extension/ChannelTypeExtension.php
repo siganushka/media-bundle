@@ -31,8 +31,8 @@ class ChannelTypeExtension extends AbstractTypeExtension
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefault('channel', 'default');
-        $resolver->setAllowedTypes('channel', ['null', 'string', Channel::class]);
+        $resolver->setRequired('channel');
+        $resolver->setAllowedTypes('channel', ['string', Channel::class]);
 
         $resolver->setNormalizer('channel', function (Options $options, string|Channel $channel): Channel {
             if ($channel instanceof Channel) {

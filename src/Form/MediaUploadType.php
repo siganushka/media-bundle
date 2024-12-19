@@ -49,10 +49,10 @@ class MediaUploadType extends AbstractType
 
     public function formModifier(FormEvent $event): void
     {
-        $constraints = [new NotBlank()];
-
         $form = $event->getForm();
         $channel = $event instanceof PostSubmitEvent ? $form->getData() : $event->getData();
+
+        $constraints = [new NotBlank()];
         if ($channel instanceof Channel) {
             $constraints[] = $channel->getConstraint();
         }

@@ -34,8 +34,6 @@ class MediaType extends AbstractType implements DataTransformerInterface
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addViewTransformer($this, true);
-
-        // Using addViewTransformer to transformer object for view
         $builder->addViewTransformer(new EntityToIdentifierTransformer($this->registry, $this->mediaClass, 'hash'), true);
     }
 
@@ -48,8 +46,8 @@ class MediaType extends AbstractType implements DataTransformerInterface
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'style' => null,
             'icon' => 'plus',
+            'style' => null,
             'invalid_message' => 'The value is not a valid media reference.',
         ]);
     }
