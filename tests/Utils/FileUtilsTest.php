@@ -32,7 +32,6 @@ class FileUtilsTest extends TestCase
             // Delete file after tests.
             @unlink($file->getPathname());
         } catch (\Throwable $th) {
-            dump($th->getMessage());
             $this->markTestSkipped(\sprintf('Download remote file fail (Skipped with message "%s").', $th->getMessage()));
         }
     }

@@ -20,7 +20,7 @@ class Media implements ResourceInterface, TimestampableInterface, \Stringable
     use ResourceTrait;
     use TimestampableTrait;
 
-    #[ORM\Column(length: 32, options: ['fixed' => true])]
+    #[ORM\Column]
     protected ?string $hash = null;
 
     #[ORM\Column]
