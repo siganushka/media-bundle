@@ -35,8 +35,9 @@ class AliyunOssStorage implements StorageInterface
             @unlink($origin->getPathname());
         }
 
-        if (isset($result['info']['url'])) {
-            return $result['info']['url'];
+        $url = $result['info']['url'] ?? null;
+        if ($url && \is_string($url)) {
+            return $url;
         }
 
         throw new \LogicException('Invalid response.');
