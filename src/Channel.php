@@ -7,6 +7,8 @@ namespace Siganushka\MediaBundle;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints\File as AssertFile;
 
+use function Symfony\Component\String\b;
+
 final class Channel
 {
     /**
@@ -32,7 +34,7 @@ final class Channel
         }
 
         // Like Git commit ID
-        return \sprintf('%02s/%07s.%s', mb_substr($hash, 0, 2), mb_substr($hash, 2, 7), $extension);
+        return \sprintf('%s/%02s/%07s.%s', b($this->alias)->kebab(), mb_substr($hash, 0, 2), mb_substr($hash, 2, 7), $extension);
     }
 
     public function getConstraint(): AssertFile
