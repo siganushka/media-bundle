@@ -50,7 +50,7 @@ class MediaController extends AbstractController
             $request->files->all(),
         );
 
-        $form = $this->createForm(MediaUploadType::class);
+        $form = $this->createForm(MediaUploadType::class, null, ['allow_extra_fields' => true, 'csrf_protection' => false]);
         $form->submit($formData);
 
         if (!$form->isValid()) {

@@ -63,11 +63,11 @@ class MigrateCommand extends Command
         }
 
         if (!\in_array($fromField, $entities[$entityClass] ?? [])) {
-            throw new \InvalidArgumentException(\sprintf('The "from-field" "%s" is not mapped for "%s".', $fromField, $entityClass));
+            throw new \InvalidArgumentException(\sprintf('The "from-field" with value "%s" is not mapped for "%s".', $fromField, $entityClass));
         }
 
         if (!\in_array($toField, $entities[$entityClass] ?? [])) {
-            throw new \InvalidArgumentException(\sprintf('The "to-field" "%s" is not mapped for "%s".', $toField, $entityClass));
+            throw new \InvalidArgumentException(\sprintf('The "to-field" with value "%s" is not mapped for "%s".', $toField, $entityClass));
         }
 
         $channel = $this->channelRegistry->get($channelAlias);
@@ -184,7 +184,7 @@ class MigrateCommand extends Command
         $path = \sprintf('%s/%s', $this->publicDir, ltrim($value, '/'));
         if (is_file($path)) {
             return new MediaSaveEvent($channel, new \SplFileInfo($path));
-        } elseif (str_starts_with($value, 'http://') || str_starts_with($value, 'https://')) {
+        } elseif (str_contains($path, '://') || str_starts_with($path, '//')) {
             return new MediaSaveEvent($channel, FileUtils::createFromUrl($value));
         } else {
             throw new \InvalidArgumentException('invalid file like');
@@ -203,9 +203,7 @@ class MigrateCommand extends Command
                     continue;
                 }
 
-                if ($metadata instanceof ClassMetadata) {
-                    $entities[$name] = array_keys($metadata->getReflectionProperties());
-                }
+                $entities[$name] = array_keys($metadata->getReflectionProperties());
             }
         }
 

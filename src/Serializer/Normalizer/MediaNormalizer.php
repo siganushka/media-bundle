@@ -6,6 +6,7 @@ namespace Siganushka\MediaBundle\Serializer\Normalizer;
 
 use Siganushka\MediaBundle\Entity\Media;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\UrlHelper;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -13,7 +14,8 @@ class MediaNormalizer implements NormalizerInterface
 {
     public function __construct(
         #[Autowire(service: 'serializer.normalizer.object')]
-        private readonly NormalizerInterface $normalizer)
+        private readonly NormalizerInterface $normalizer,
+        private readonly UrlHelper $urlHelper)
     {
     }
 
@@ -26,7 +28,7 @@ class MediaNormalizer implements NormalizerInterface
             return $this->normalizer->normalize($object, $format, $context);
         }
 
-        return $object->__toString();
+        return $this->urlHelper->getAbsoluteUrl($object->__toString());
     }
 
     public function supportsNormalization($data, ?string $format = null, array $context = []): bool
