@@ -112,6 +112,11 @@ class MigrateCommand extends Command
                 $fromValue = null;
             }
 
+            if (null === $fromValue) {
+                $output->writeln(\sprintf('<comment>%s value is empty.</comment>', $message));
+                continue;
+            }
+
             if (!\is_string($fromValue)) {
                 $output->writeln(\sprintf('<comment>%s invalid value.</comment>', $message));
                 continue;

@@ -36,7 +36,8 @@ class ResizeImageListener implements EventSubscriberInterface
         $newHeight = (int) round($height * ($maxWidth / $width));
 
         $imagick = new \Imagick($file->getPathname());
-        $imagick->resizeImage($maxWidth, $newHeight, \Imagick::FILTER_LANCZOS, 0.5);
+        $imagick->setImageCompressionQuality(70);
+        $imagick->thumbnailImage($maxWidth, $newHeight);
         $imagick->writeImage($file->getPathname());
 
         // [important] Clears file status cache
@@ -53,7 +54,8 @@ class ResizeImageListener implements EventSubscriberInterface
         $newWidth = (int) round($width * ($maxHeight / $height));
 
         $imagick = new \Imagick($file->getPathname());
-        $imagick->resizeImage($newWidth, $maxHeight, \Imagick::FILTER_LANCZOS, 0.5);
+        $imagick->setImageCompressionQuality(70);
+        $imagick->thumbnailImage($newWidth, $maxHeight);
         $imagick->writeImage($file->getPathname());
 
         // [important] Clears file status cache
