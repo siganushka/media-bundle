@@ -143,8 +143,6 @@ class MigrateCommand extends Command
             }
 
             $propertyAccessor->setValue($entity, $toField, $media);
-
-            $entityManager->persist($media);
             $entityManager->flush();
 
             $output->writeln(\sprintf('<info>%s is successfully.</info>', $message));
