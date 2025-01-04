@@ -21,6 +21,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
@@ -143,6 +144,8 @@ class MigrateCommand extends Command
             }
 
             $propertyAccessor->setValue($entity, $toField, $media);
+
+            $entityManager->persist($media);
             $entityManager->flush();
 
             $output->writeln(\sprintf('<info>%s is successfully.</info>', $message));
@@ -186,7 +189,12 @@ class MigrateCommand extends Command
     {
         $path = \sprintf('%s/%s', $this->publicDir, ltrim($value, '/'));
         if (is_file($path)) {
-            return new MediaSaveEvent($channel, new \SplFileInfo($path));
+            $newPath = \sprintf('%s/%s', sys_get_temp_dir(), pathinfo($path, \PATHINFO_BASENAME));
+
+            $filesystem = new Filesystem();
+            $filesystem->copy($path, $newPath, true);
+
+            return new MediaSaveEvent($channel, new \SplFileInfo($newPath));
         } elseif (str_contains($path, '://') || str_starts_with($path, '//')) {
             return new MediaSaveEvent($channel, FileUtils::createFromUrl($value));
         } else {
