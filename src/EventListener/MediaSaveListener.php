@@ -73,7 +73,7 @@ class MediaSaveListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            MediaSaveEvent::class => 'onMediaSave',
+            MediaSaveEvent::class => ['onMediaSave', -16],
         ];
     }
 }
