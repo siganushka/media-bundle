@@ -26,7 +26,7 @@ class MediaSaveListener implements EventSubscriberInterface
             $file = new File($file->getPathname());
         }
 
-        $hash = sha1_file($file->getPathname());
+        $hash = md5_file($file->getPathname());
         if (false === $hash) {
             throw new \RuntimeException('Unable to hash file.');
         }
