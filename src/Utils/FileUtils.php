@@ -19,7 +19,7 @@ class FileUtils
     public static function createFromUrl(string $url, int $timeoutMs = 10000): \SplFileInfo
     {
         if (false === $curl = curl_init()) {
-            throw new \RuntimeException('failed to initialize');
+            throw new \RuntimeException('Failed to initialize');
         }
 
         curl_setopt($curl, \CURLOPT_URL, $url);
@@ -74,7 +74,7 @@ class FileUtils
 
         file_put_contents($file, $content);
         if (!is_file($file)) {
-            throw new \RuntimeException('Unable to save file.');
+            throw new \RuntimeException('Failed to save file.');
         }
 
         return new \SplFileInfo($file);
@@ -99,7 +99,7 @@ class FileUtils
 
         $result = @getimagesize($file->getPathname());
         if (false === $result) {
-            throw new \RuntimeException('Unable to access file.');
+            throw new \RuntimeException('Failed to get image pixels.');
         }
 
         return $result;
@@ -124,7 +124,7 @@ class FileUtils
 
         $size = $file->getSize();
         if (false === $size) {
-            throw new \RuntimeException('Unable to access file.');
+            throw new \RuntimeException('Failed to get image size.');
         }
 
         return static::formatBytes($size);

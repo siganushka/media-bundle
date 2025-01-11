@@ -9,11 +9,8 @@ use Symfony\Component\HttpFoundation\UrlHelper;
 
 class LocalStorage implements StorageInterface
 {
-    public function __construct(
-        private readonly UrlHelper $urlHelper,
-        private readonly string $publicDir,
-        private readonly string $uploadDir,
-    ) {
+    public function __construct(private readonly UrlHelper $urlHelper, private readonly string $publicDir)
+    {
     }
 
     public function save(\SplFileInfo $origin, string $target): string
@@ -22,7 +19,7 @@ class LocalStorage implements StorageInterface
             $origin = new File($origin->getPathname());
         }
 
-        $filename = \sprintf('%s/%s/%s', $this->publicDir, $this->uploadDir, $target);
+        $filename = \sprintf('%s/uploads/%s', $this->publicDir, $target);
         $pathinfo = pathinfo($filename);
 
         try {
@@ -48,7 +45,7 @@ class LocalStorage implements StorageInterface
             throw new \RuntimeException('Unable parse file.');
         }
 
-        $file = \sprintf('%s%s', $this->publicDir, $path);
+        $file = $this->publicDir.$path;
         if (is_dir($file)) {
             // delete file only (not include directory)
             throw new \RuntimeException(\sprintf('File %s invalid.', $file));
