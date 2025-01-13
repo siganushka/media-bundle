@@ -8,14 +8,13 @@ use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use Siganushka\MediaBundle\Channel;
 use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Siganushka\MediaBundle\Form\MediaUploadType;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Form\Util\FormUtil;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -44,13 +43,10 @@ class MediaController extends AbstractController
     #[Route('/media', methods: 'POST')]
     public function postCollection(Request $request, EventDispatcherInterface $eventDispatcher, EntityManagerInterface $entityManager): Response
     {
-        $formData = array_replace_recursive(
-            $request->request->all(),
-            $request->query->all(),
-            $request->files->all(),
-        );
+        // @see https://github.com/symfony/symfony/blob/7.3/src/Symfony/Component/Form/Extension/HttpFoundation/HttpFoundationRequestHandler.php#L39
+        $formData = FormUtil::mergeParamsAndFiles($request->request->all(), $request->files->all());
 
-        $form = $this->createForm(MediaUploadType::class, null, ['allow_extra_fields' => true, 'csrf_protection' => false]);
+        $form = $this->createForm(MediaUploadType::class);
         $form->submit($formData);
 
         if (!$form->isValid()) {
@@ -60,7 +56,7 @@ class MediaController extends AbstractController
             }
         }
 
-        /** @var array{ channel: Channel, file: UploadedFile } */
+        /** @var array */
         $data = $form->getData();
 
         $event = new MediaSaveEvent(...$data);
