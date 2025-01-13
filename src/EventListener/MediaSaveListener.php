@@ -40,6 +40,10 @@ class MediaSaveListener implements EventSubscriberInterface
         clearstatcache(true, $file->getPathname());
 
         $name = $file instanceof UploadedFile ? $file->getClientOriginalName() : $file->getFilename();
+        if ($replace = mb_substr(pathinfo($name, \PATHINFO_FILENAME), 32)) {
+            $name = str_replace($replace, '', $name);
+        }
+
         $extension = $file->guessExtension() ?? $file->getExtension();
         $mime = $file->getMimeType();
         if (null === $mime) {
