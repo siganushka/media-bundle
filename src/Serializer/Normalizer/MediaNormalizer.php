@@ -25,7 +25,11 @@ class MediaNormalizer implements NormalizerInterface
     public function normalize($object, ?string $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
     {
         if (\array_key_exists(AbstractNormalizer::ATTRIBUTES, $context)) {
-            return $this->normalizer->normalize($object, $format, $context);
+            /** @var array{ url: string } */
+            $data = $this->normalizer->normalize($object, $format, $context);
+            $data['url'] = $this->urlHelper->getAbsoluteUrl($data['url']);
+
+            return $data;
         }
 
         return $this->urlHelper->getAbsoluteUrl($object->__toString());
