@@ -33,6 +33,11 @@ class MediaSaveListener implements EventSubscriberInterface
 
         $media = $this->repository->findOneByHash($hash);
         if ($media instanceof Media) {
+            // Remove the original file if it already exists
+            if ($file->isFile()) {
+                @unlink($file->getPathname());
+            }
+
             goto SET_EVENT_DATA;
         }
 

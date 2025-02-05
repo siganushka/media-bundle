@@ -85,7 +85,7 @@ class MigrateCommand extends Command
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
         $successfully = 0;
         foreach ($result as $entity) {
-            $identifier = is_subclass_of($entity, ResourceInterface::class)
+            $identifier = $entity instanceof ResourceInterface
                 ? $entity->getId()
                 : $successfully;
 
@@ -187,19 +187,21 @@ class MigrateCommand extends Command
 
     protected function createMediaSaveEvent(Channel $channel, string $value): MediaSaveEvent
     {
-        $path = \sprintf('%s/%s', $this->publicDir, ltrim($value, '/'));
-        if (is_file($path)) {
-            $newPath = \sprintf('%s/%s', sys_get_temp_dir(), pathinfo($path, \PATHINFO_BASENAME));
-
-            $filesystem = new Filesystem();
-            $filesystem->copy($path, $newPath, true);
-
-            return new MediaSaveEvent($channel, new \SplFileInfo($newPath));
-        } elseif (str_contains($path, '://') || str_starts_with($path, '//')) {
+        if (str_contains($value, '://') || str_starts_with($value, '//')) {
             return new MediaSaveEvent($channel, FileUtils::createFromUrl($value));
-        } else {
+        }
+
+        $originFile = \sprintf('%s/%s', $this->publicDir, ltrim($value, '/'));
+        if (!is_file($originFile)) {
             throw new \InvalidArgumentException('invalid file like');
         }
+
+        $targetFile = \sprintf('%s/%s', sys_get_temp_dir(), pathinfo($originFile, \PATHINFO_BASENAME));
+
+        $filesystem = new Filesystem();
+        $filesystem->copy($originFile, $targetFile, true);
+
+        return new MediaSaveEvent($channel, new \SplFileInfo($targetFile));
     }
 
     protected function getEntities(): array
