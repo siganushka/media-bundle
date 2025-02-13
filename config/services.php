@@ -22,6 +22,7 @@ return static function (ContainerConfigurator $container): void {
             '../src/Exception/',
             '../src/Storage/AliyunOssStorage.php',
             '../src/Storage/HuaweiObsStorage.php',
+            '../src/Utils/FileUtils.php',
             '../src/Channel.php',
             '../src/SiganushkaMediaBundle.php',
         ]);
