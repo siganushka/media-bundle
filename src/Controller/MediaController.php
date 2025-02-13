@@ -13,7 +13,6 @@ use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Siganushka\MediaBundle\Form\MediaUploadType;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\Util\FormUtil;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -50,10 +49,7 @@ class MediaController extends AbstractController
         $form->submit($formData);
 
         if (!$form->isValid()) {
-            $error = $form->getErrors(true, true)->current();
-            if ($error instanceof FormError) {
-                throw new BadRequestHttpException(\sprintf('[%s] %s', $error->getOrigin()?->getName() ?? '', $error->getMessage()));
-            }
+            return $this->json($form, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         /** @var array */
