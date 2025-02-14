@@ -37,7 +37,7 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
 
         $servicesMap = [];
         foreach ($config['channels'] as $alias => $options) {
-            $id = \sprintf('siganushka_media.channels.%s', $alias);
+            $id = \sprintf('siganushka_media.channel.%s', $alias);
             $servicesMap[$alias] = new Reference($id);
 
             $container->register($id, Channel::class)->setArguments([$alias, $options]);
