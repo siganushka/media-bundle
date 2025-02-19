@@ -82,14 +82,19 @@ class MigrateCommand extends Command
         /** @var array<int, object> */
         $result = $query->getResult();
 
+        $total = \count($result);
+        $current = $successfully = 0;
+
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
-        $successfully = 0;
         foreach ($result as $entity) {
+            ++$current;
             $identifier = $entity instanceof ResourceInterface
                 ? $entity->getId()
-                : $successfully;
+                : $current;
 
-            $message = \sprintf('#%d Execute migrate from %s::%s -> %s',
+            $message = \sprintf('[%d/%d] #%d Execute migrate from %s::%s -> %s',
+                $current,
+                $total,
                 $identifier,
                 $entityClass,
                 $fromField,
@@ -155,7 +160,7 @@ class MigrateCommand extends Command
         // Clear entity manager
         $entityManager->clear();
 
-        $output->writeln(\sprintf('<info>A total of %d items was migrated.</info>', $successfully));
+        $output->writeln(\sprintf('<info>A total of %d items, %d items was migrated.</info>', $total, $successfully));
 
         return Command::SUCCESS;
     }
