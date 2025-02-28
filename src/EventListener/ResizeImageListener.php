@@ -21,17 +21,14 @@ class ResizeImageListener implements EventSubscriberInterface
             return;
         }
 
-        $file = $event->getFile();
-        if (null !== $event->getMaxWidth()) {
-            $this->resizeMaxWidth($file, $event->getMaxWidth());
-        }
+        $maxWidth = $event->getMaxWidth();
+        $maxHeight = $event->getMaxHeight();
 
-        if (null !== $event->getMaxHeight()) {
-            $this->resizeMaxHeight($file, $event->getMaxHeight());
-        }
+        $maxWidth && $this->resizeByMaxWidth($event->getFile(), $maxWidth);
+        $maxHeight && $this->resizeByMaxHeight($event->getFile(), $maxHeight);
     }
 
-    private function resizeMaxWidth(\SplFileInfo $file, int $maxWidth): void
+    public function resizeByMaxWidth(\SplFileInfo $file, int $maxWidth): void
     {
         [$width, $height] = FileUtils::getImageSize($file);
         if ($width <= $maxWidth) {
@@ -60,7 +57,7 @@ class ResizeImageListener implements EventSubscriberInterface
         ));
     }
 
-    private function resizeMaxHeight(\SplFileInfo $file, int $maxHeight): void
+    public function resizeByMaxHeight(\SplFileInfo $file, int $maxHeight): void
     {
         [$width, $height] = FileUtils::getImageSize($file);
         if ($height <= $maxHeight) {
