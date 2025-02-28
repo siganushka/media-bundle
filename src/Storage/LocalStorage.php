@@ -22,20 +22,14 @@ class LocalStorage implements StorageInterface
         $filename = \sprintf('%s/uploads/%s', $this->publicDir, $target);
         $pathinfo = pathinfo($filename);
 
-        try {
-            $targetFile = $origin->move($pathinfo['dirname'], $pathinfo['basename']);
-        } catch (\Throwable $th) {
-            // add logger...
-            throw $th;
-        }
+        $targetFile = $origin->move($pathinfo['dirname'], $pathinfo['basename']);
 
         $path = $targetFile->getPathname();
         if (str_starts_with($path, $this->publicDir)) {
             $path = substr($path, \strlen($this->publicDir));
         }
 
-        // No request context in CLI mode
-        return ('cli' === \PHP_SAPI) ? $path : $this->urlHelper->getAbsoluteUrl($path);
+        return $this->urlHelper->getAbsoluteUrl($path);
     }
 
     public function delete(string $url): void

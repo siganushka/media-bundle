@@ -30,16 +30,11 @@ class HuaweiObsStorage implements StorageInterface
 
     public function save(\SplFileInfo $origin, string $target): string
     {
-        try {
-            $result = $this->client->putObject([
-                'Bucket' => $this->bucket,
-                'Key' => $target,
-                'Body' => $origin->openFile(),
-            ]);
-        } catch (\Throwable $th) {
-            // add logger...
-            throw $th;
-        }
+        $result = $this->client->putObject([
+            'Bucket' => $this->bucket,
+            'Key' => $target,
+            'Body' => $origin->openFile(),
+        ]);
 
         if ($origin->isFile()) {
             @unlink($origin->getPathname());
