@@ -145,6 +145,11 @@ class Media implements ResourceInterface, TimestampableInterface, \Stringable
         return u($this->mime)->startsWith('image');
     }
 
+    public function isVideo(): bool
+    {
+        return u($this->mime)->startsWith('video');
+    }
+
     public function __toString(): string
     {
         return \sprintf('%s?hash=%s', $this->url, $this->hash);

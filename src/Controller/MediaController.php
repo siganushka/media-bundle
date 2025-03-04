@@ -106,7 +106,7 @@ class MediaController extends AbstractController
     {
         $attributes = [
             'hash', 'url', 'name', 'extension', 'mime', 'size', 'sizeStr',
-            'width', 'height', 'image', 'updatedAt', 'createdAt',
+            'width', 'height', 'image', 'video', 'updatedAt', 'createdAt',
         ];
 
         return $this->json($data, $statusCode, $headers, compact('attributes'));

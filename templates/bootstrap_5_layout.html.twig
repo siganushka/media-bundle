@@ -16,6 +16,8 @@
   <div class="media-preview d-flex justify-content-center align-items-center text-center text-break lh-ms h-100 w-100" data-siganushka-media-target="view">
     {%- if data and data.image -%}
       <img src="{{ data.url }}" />
+    {%- elseif data and data.video -%}
+      <video src="{{ data.url }}" controls />
     {%- elseif data and data.name -%}
       {{ data.name }}
     {%- endif -%}

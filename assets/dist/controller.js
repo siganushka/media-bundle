@@ -33,8 +33,14 @@ export default class extends Controller {
     }).then(res => {
       event.target.disabled = true
       this.dataTarget.value = res.hash
-      this.viewTarget.innerHTML = res.image ? `<img src="${res.url}" />` : res.name
       this.element.classList.add('media-uploaded')
+      if (res.image) {
+        this.viewTarget.innerHTML = `<img src="${res.url}" />`
+      } else if (res.video) {
+        this.viewTarget.innerHTML = `<video src="${res.url}" controls />`
+      } else {
+        this.viewTarget.innerHTML = res.name
+      }
     }).catch(err => {
       alert(err)
     }).finally(() => {
