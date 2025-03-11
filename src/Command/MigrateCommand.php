@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\Command;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ManagerRegistry;
@@ -148,7 +149,11 @@ class MigrateCommand extends Command
                 continue;
             }
 
-            $propertyAccessor->setValue($entity, $toField, $media);
+            $ref = new \ReflectionProperty($entity, $toField);
+            $type = $ref->getType();
+            $typeName = $type && $type instanceof \ReflectionNamedType ? $type->getName() : null;
+
+            $propertyAccessor->setValue($entity, $toField, Collection::class === $typeName ? [$media] : $media);
 
             $entityManager->persist($media);
             $entityManager->flush();
