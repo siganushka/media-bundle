@@ -108,7 +108,7 @@ class MigrateCommand extends Command
                 $toValue = null;
             }
 
-            if (\is_object($toValue) && is_subclass_of($toValue, Media::class, true)) {
+            if ($toValue instanceof Media || ($toValue instanceof Collection && $toValue->count())) {
                 $output->writeln(\sprintf('<comment>%s already migrated.</comment>', $message));
                 continue;
             }
