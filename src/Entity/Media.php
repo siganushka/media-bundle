@@ -5,20 +5,20 @@ declare(strict_types=1);
 namespace Siganushka\MediaBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Siganushka\Contracts\Doctrine\CreatableInterface;
+use Siganushka\Contracts\Doctrine\CreatableTrait;
 use Siganushka\Contracts\Doctrine\ResourceInterface;
 use Siganushka\Contracts\Doctrine\ResourceTrait;
-use Siganushka\Contracts\Doctrine\TimestampableInterface;
-use Siganushka\Contracts\Doctrine\TimestampableTrait;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 
 use function Symfony\Component\String\u;
 
 #[ORM\Entity(repositoryClass: MediaRepository::class)]
 #[ORM\UniqueConstraint(columns: ['hash'])]
-class Media implements ResourceInterface, TimestampableInterface, \Stringable
+class Media implements ResourceInterface, CreatableInterface, \Stringable
 {
+    use CreatableTrait;
     use ResourceTrait;
-    use TimestampableTrait;
 
     #[ORM\Column]
     protected ?string $hash = null;
