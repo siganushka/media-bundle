@@ -43,7 +43,10 @@ class MediaController extends AbstractController
     public function postCollection(Request $request, EventDispatcherInterface $eventDispatcher, EntityManagerInterface $entityManager): Response
     {
         // @see https://github.com/symfony/symfony/blob/7.3/src/Symfony/Component/Form/Extension/HttpFoundation/HttpFoundationRequestHandler.php#L39
-        $formData = FormUtil::mergeParamsAndFiles($request->request->all(), $request->files->all());
+        $formData = FormUtil::mergeParamsAndFiles(
+            $request->request->all(),
+            $request->files->all(),
+        );
 
         $form = $this->createForm(MediaUploadType::class);
         $form->submit($formData);
@@ -72,10 +75,8 @@ class MediaController extends AbstractController
     #[Route('/media/{hash}', methods: 'GET')]
     public function getItem(string $hash): Response
     {
-        $entity = $this->mediaRepository->findOneByHash($hash);
-        if (!$entity) {
-            throw $this->createNotFoundException(\sprintf('Resource #%s not found.', $hash));
-        }
+        $entity = $this->mediaRepository->findOneByHash($hash)
+            ?? throw $this->createNotFoundException();
 
         return $this->createResponse($entity);
     }
@@ -83,10 +84,8 @@ class MediaController extends AbstractController
     #[Route('/media/{hash}', methods: 'DELETE')]
     public function deleteItem(EntityManagerInterface $entityManager, string $hash): Response
     {
-        $entity = $this->mediaRepository->findOneByHash($hash);
-        if (!$entity) {
-            throw $this->createNotFoundException(\sprintf('Resource #%s not found.', $hash));
-        }
+        $entity = $this->mediaRepository->findOneByHash($hash)
+            ?? throw $this->createNotFoundException();
 
         try {
             $entityManager->remove($entity);
