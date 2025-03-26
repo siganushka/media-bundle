@@ -30,7 +30,7 @@
     accept="{{ accept }}"
     data-siganushka-media-target='file'
     data-action="change->siganushka-media#change"
-    {% if disabled or data %} disabled{% endif %}
+    {% if disabled or data %}disabled{% endif ~%}
   />
 
   {# Using required=false to fix chrome error (An invalid form control with name='xxx' is not focusable) #}
