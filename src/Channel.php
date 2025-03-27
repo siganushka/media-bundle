@@ -35,7 +35,7 @@ final class Channel
         return \sprintf('%02s/%02s/%07s.%s',
             mb_substr($hash, 0, 2),
             mb_substr($hash, 2, 2),
-            mb_substr($hash, 4, 7),
+            mb_substr($hash, 0, 7),
             $extension
         );
     }
