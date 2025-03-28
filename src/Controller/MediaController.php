@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\Controller;
 
-use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -16,7 +15,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Util\FormUtil;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
@@ -87,12 +85,8 @@ class MediaController extends AbstractController
         $entity = $this->mediaRepository->findOneByHash($hash)
             ?? throw $this->createNotFoundException();
 
-        try {
-            $entityManager->remove($entity);
-            $entityManager->flush();
-        } catch (ForeignKeyConstraintViolationException) {
-            throw new BadRequestHttpException('Unable to delete resource.');
-        }
+        $entityManager->remove($entity);
+        $entityManager->flush();
 
         // 204 No Content
         return $this->createResponse(null, Response::HTTP_NO_CONTENT);
