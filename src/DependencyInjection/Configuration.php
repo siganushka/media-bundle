@@ -60,7 +60,7 @@ class Configuration implements ConfigurationInterface
     public function addChannelsSection(ArrayNodeDefinition $rootNode): void
     {
         /** @var ArrayNodeDefinition */
-        $channelsNodeBuilder = $rootNode
+        $channelNode = $rootNode
             ->fixXmlConfig('channel')
             ->children()
                 ->arrayNode('channels')
@@ -81,7 +81,7 @@ class Configuration implements ConfigurationInterface
                     ->prototype('array')
         ;
 
-        $channelsNodeBuilder
+        $channelNode
             ->children()
                 ->scalarNode('constraint')
                     ->info('This value will be used for validation when uploading files.')
@@ -104,7 +104,31 @@ class Configuration implements ConfigurationInterface
                     ->info('This value will be passed to the validation constraint.')
                     ->defaultValue([])
                     ->useAttributeAsKey('name')
-                    ->prototype('variable')
+                    ->prototype('variable')->end()
+                ->end()
+                ->arrayNode('resize')
+                    ->info('This value is used when resizing the image.')
+                    ->canBeEnabled()
+                    ->beforeNormalization()
+                        ->ifTrue(fn (mixed $v) => \is_int($v))
+                        ->then(fn (int $v): array => ['max_width' => $v, 'max_height' => $v, 'enabled' => true])
+                    ->end()
+                    ->children()
+                        ->integerNode('max_width')->end()
+                        ->integerNode('max_height')->end()
+                    ->end()
+                ->end()
+                ->arrayNode('optimize')
+                    ->info('This value is used to optimize the image quality.')
+                    ->canBeEnabled()
+                    ->beforeNormalization()
+                        ->ifTrue(fn (mixed $v) => \is_int($v))
+                        ->then(fn (int $v): array => ['quality' => $v, 'enabled' => true])
+                    ->end()
+                    ->children()
+                        ->integerNode('quality')->end()
+                    ->end()
+                ->end()
         ;
     }
 }
