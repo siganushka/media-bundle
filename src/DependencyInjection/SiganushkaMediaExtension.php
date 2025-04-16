@@ -12,6 +12,7 @@ use Siganushka\MediaBundle\Command\MigrateCommand;
 use Siganushka\MediaBundle\Doctrine\MediaRemoveListener;
 use Siganushka\MediaBundle\Storage\LocalStorage;
 use Siganushka\MediaBundle\Storage\StorageInterface;
+use Spatie\ImageOptimizer\OptimizerChainFactory;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -40,7 +41,24 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
             $id = \sprintf('siganushka_media.channel.%s', $alias);
             $servicesMap[$alias] = new Reference($id);
 
-            $container->register($id, Channel::class)->setArguments([$alias, $options]);
+            $channel = $container->register($id, Channel::class)
+                ->setArgument('$alias', $alias)
+                ->setArgument('$constraint', $options['constraint'])
+                ->setArgument('$constraintOptions', $options['constraint_options'])
+            ;
+
+            if ($this->isConfigEnabled($container, $options['resize'])) {
+                $channel->setArgument('$maxWidth', $options['resize']['max_width']);
+                $channel->setArgument('$maxHeight', $options['resize']['max_height']);
+            }
+
+            if ($this->isConfigEnabled($container, $options['optimize'])) {
+                if (!class_exists(OptimizerChainFactory::class)) {
+                    throw new \LogicException('Media optimize support cannot be enabled as the optimize component is not installed. Try running "composer require spatie/image-optimizer".');
+                }
+
+                $channel->setArgument('$optimize', $options['optimize']['quality']);
+            }
         }
 
         $container->setAlias(StorageInterface::class, $config['storage']);

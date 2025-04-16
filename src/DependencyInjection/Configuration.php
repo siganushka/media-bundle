@@ -126,7 +126,7 @@ class Configuration implements ConfigurationInterface
                         ->then(fn (int $v): array => ['quality' => $v, 'enabled' => true])
                     ->end()
                     ->children()
-                        ->integerNode('quality')->end()
+                        ->integerNode('quality')->defaultValue(85)->end()
                     ->end()
                 ->end()
         ;

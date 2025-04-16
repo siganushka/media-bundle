@@ -24,7 +24,8 @@
     },
     "require-dev": {
         "aliyuncs/oss-sdk-php": "^2.7",
-        "obs/esdk-obs-php": "^3.0"
+        "obs/esdk-obs-php": "^3.0",
+        "spatie/image-optimizer": "^1.7"
     },
     "autoload": {
         "psr-4": {

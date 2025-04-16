@@ -5,27 +5,40 @@ declare(strict_types=1);
 namespace Siganushka\MediaBundle\EventListener;
 
 use Psr\Log\LoggerInterface;
-use Siganushka\MediaBundle\Event\ResizeImageEvent;
+use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Siganushka\MediaBundle\Utils\FileUtils;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class ResizeImageListener implements EventSubscriberInterface
+class MediaResizeListener implements EventSubscriberInterface
 {
     public function __construct(private readonly LoggerInterface $logger)
     {
     }
 
-    public function onResizeImage(ResizeImageEvent $event): void
+    public function onMediaSave(MediaSaveEvent $event): void
     {
         if (!class_exists(\Imagick::class)) {
             return;
         }
 
-        $maxWidth = $event->getMaxWidth();
-        $maxHeight = $event->getMaxHeight();
+        $channel = $event->getChannel();
+        $file = $event->getFile();
 
-        $maxWidth && $this->resizeByMaxWidth($event->getFile(), $maxWidth);
-        $maxHeight && $this->resizeByMaxHeight($event->getFile(), $maxHeight);
+        try {
+            $channel->maxWidth && $this->resizeByMaxWidth($file, $channel->maxWidth);
+        } catch (\Throwable $th) {
+            $this->logger->error('Error on resize file by max width.', [
+                'msg' => $th->getMessage(),
+            ]);
+        }
+
+        try {
+            $channel->maxHeight && $this->resizeByMaxHeight($file, $channel->maxHeight);
+        } catch (\Throwable $th) {
+            $this->logger->error('Error on resize file by max height.', [
+                'msg' => $th->getMessage(),
+            ]);
+        }
     }
 
     public function resizeByMaxWidth(\SplFileInfo $file, int $maxWidth): void
@@ -89,7 +102,7 @@ class ResizeImageListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            ResizeImageEvent::class => 'onResizeImage',
+            MediaSaveEvent::class => ['onMediaSave', 16],
         ];
     }
 }

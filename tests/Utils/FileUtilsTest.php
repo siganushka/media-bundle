@@ -7,7 +7,6 @@ namespace Siganushka\MediaBundle\Tests\Utils;
 use PHPUnit\Framework\TestCase;
 use Siganushka\MediaBundle\Channel;
 use Siganushka\MediaBundle\Utils\FileUtils;
-use Symfony\Component\Validator\Constraints\File;
 
 class FileUtilsTest extends TestCase
 {
@@ -15,10 +14,7 @@ class FileUtilsTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->channel = new Channel('foo', [
-            'constraint' => File::class,
-            'constraint_options' => [],
-        ]);
+        $this->channel = new Channel('foo');
     }
 
     public function testCreateFromUrl(): void

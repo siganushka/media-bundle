@@ -9,13 +9,14 @@ use Symfony\Component\Validator\Constraints\File as AssertFile;
 
 final class Channel
 {
-    /**
-     * @param array{
-     *  constraint: class-string<AssertFile>,
-     *  constraint_options?: array<string, mixed>
-     * } $options
-     */
-    public function __construct(private readonly string $alias, private readonly array $options)
+    public function __construct(
+        public readonly string $alias,
+        /** @var class-string<AssertFile> */
+        public readonly string $constraint = AssertFile::class,
+        public readonly array $constraintOptions = [],
+        public readonly ?int $maxWidth = null,
+        public readonly ?int $maxHeight = null,
+        public readonly ?int $optimize = null)
     {
     }
 
@@ -42,9 +43,9 @@ final class Channel
 
     public function getConstraint(): AssertFile
     {
-        $ref = new \ReflectionClass($this->options['constraint']);
+        $ref = new \ReflectionClass($this->constraint);
 
-        return $ref->newInstanceArgs($this->options['constraint_options'] ?? []);
+        return $ref->newInstanceArgs($this->constraintOptions);
     }
 
     public function __toString(): string

@@ -6,13 +6,14 @@ namespace Siganushka\MediaBundle\Tests\EventListener;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
-use Siganushka\MediaBundle\Event\ResizeImageEvent;
-use Siganushka\MediaBundle\EventListener\ResizeImageListener;
+use Siganushka\MediaBundle\Channel;
+use Siganushka\MediaBundle\Event\MediaSaveEvent;
+use Siganushka\MediaBundle\EventListener\MediaResizeListener;
 use Siganushka\MediaBundle\Utils\FileUtils;
 
-class ResizeImageListenerTest extends TestCase
+class MediaResizeListenerTest extends TestCase
 {
-    private ResizeImageListener $listener;
+    private MediaResizeListener $listener;
 
     protected function setUp(): void
     {
@@ -20,7 +21,7 @@ class ResizeImageListenerTest extends TestCase
             static::markTestSkipped('Skip tests (Imagick not loaded).');
         }
 
-        $this->listener = new ResizeImageListener(new NullLogger());
+        $this->listener = new MediaResizeListener(new NullLogger());
     }
 
     public function testResizeImageMaxWidth(): void
@@ -39,28 +40,28 @@ class ResizeImageListenerTest extends TestCase
         static::assertSame(500, $width);
         static::assertSame(300, $height);
 
-        $this->listener->onResizeImage(new ResizeImageEvent($file));
+        $this->listener->onMediaSave(new MediaSaveEvent(new Channel('foo'), $file));
 
         [$width, $height] = FileUtils::getImageSize($file);
         static::assertSame(500, $width);
         static::assertSame(300, $height);
         static::assertSame($size, $file->getSize());
 
-        $this->listener->onResizeImage(new ResizeImageEvent($file, 500));
+        $this->listener->onMediaSave(new MediaSaveEvent(new Channel('foo', maxWidth: 500), $file));
 
         [$width, $height] = FileUtils::getImageSize($file);
         static::assertSame(500, $width);
         static::assertSame(300, $height);
         static::assertSame($size, $file->getSize());
 
-        $this->listener->onResizeImage(new ResizeImageEvent($file, 250));
+        $this->listener->onMediaSave(new MediaSaveEvent(new Channel('foo', maxWidth: 250), $file));
 
         [$width, $height] = FileUtils::getImageSize($file);
         static::assertSame(250, $width);
         static::assertSame(150, $height);
         static::assertNotSame($size, $file->getSize());
 
-        $this->listener->onResizeImage(new ResizeImageEvent($file, 50));
+        $this->listener->onMediaSave(new MediaSaveEvent(new Channel('foo', maxWidth: 50), $file));
 
         [$width, $height] = FileUtils::getImageSize($file);
         static::assertSame(50, $width);
@@ -86,28 +87,28 @@ class ResizeImageListenerTest extends TestCase
         static::assertSame(300, $width);
         static::assertSame(500, $height);
 
-        $this->listener->onResizeImage(new ResizeImageEvent($file));
+        $this->listener->onMediaSave(new MediaSaveEvent(new Channel('foo'), $file));
 
         [$width, $height] = FileUtils::getImageSize($file);
         static::assertSame(300, $width);
         static::assertSame(500, $height);
         static::assertSame($size, $file->getSize());
 
-        $this->listener->onResizeImage(new ResizeImageEvent($file, null, 500));
+        $this->listener->onMediaSave(new MediaSaveEvent(new Channel('foo', maxHeight: 500), $file));
 
         [$width, $height] = FileUtils::getImageSize($file);
         static::assertSame(300, $width);
         static::assertSame(500, $height);
         static::assertSame($size, $file->getSize());
 
-        $this->listener->onResizeImage(new ResizeImageEvent($file, null, 250));
+        $this->listener->onMediaSave(new MediaSaveEvent(new Channel('foo', maxHeight: 250), $file));
 
         [$width, $height] = FileUtils::getImageSize($file);
         static::assertSame(150, $width);
         static::assertSame(250, $height);
         static::assertNotSame($size, $file->getSize());
 
-        $this->listener->onResizeImage(new ResizeImageEvent($file, null, 50));
+        $this->listener->onMediaSave(new MediaSaveEvent(new Channel('foo', maxHeight: 50), $file));
 
         [$width, $height] = FileUtils::getImageSize($file);
         static::assertSame(30, $width);

@@ -65,12 +65,12 @@ class MediaController extends AbstractController
         $eventDispatcher->dispatch($event);
 
         $media = $event->getMedia();
-        if (null === $media) {
+        if (!$media) {
             throw new \RuntimeException('Unable to save file.');
         }
 
-        $entityManager->persist($media);
-        $entityManager->flush();
+        // $entityManager->persist($media);
+        // $entityManager->flush();
 
         return $this->createResponse($media);
     }
