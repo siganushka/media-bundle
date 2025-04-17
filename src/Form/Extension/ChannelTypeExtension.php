@@ -26,7 +26,7 @@ class ChannelTypeExtension extends AbstractTypeExtension
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['channel'] = $options['channel'];
-        $view->vars['accept'] = static::getAcceptFormFile($options['channel']->getConstraint());
+        $view->vars['accept'] = static::getAcceptFromFile($options['channel']->getConstraint());
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -57,7 +57,7 @@ class ChannelTypeExtension extends AbstractTypeExtension
      * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept
      * @see https://www.iana.org/assignments/media-types/media-types.xhtml
      */
-    public static function getAcceptFormFile(File $file): string
+    public static function getAcceptFromFile(File $file): string
     {
         $accepts = (array) $file->mimeTypes;
 

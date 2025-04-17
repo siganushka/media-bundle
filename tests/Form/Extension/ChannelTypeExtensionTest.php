@@ -14,22 +14,22 @@ class ChannelTypeExtensionTest extends TestCase
     public function testGetAccept(): void
     {
         $file = new File();
-        static::assertSame('*', ChannelTypeExtension::getAcceptFormFile($file));
+        static::assertSame('*', ChannelTypeExtension::getAcceptFromFile($file));
 
         $file = new File(mimeTypes: 'application/xml');
-        static::assertSame('application/xml', ChannelTypeExtension::getAcceptFormFile($file));
+        static::assertSame('application/xml', ChannelTypeExtension::getAcceptFromFile($file));
 
         $file = new File(mimeTypes: 'application/json', extensions: [
             'jpg',
             'txt' => 'text/plain',
             'xml' => ['text/xml', 'application/xml'],
         ]);
-        static::assertSame('application/json,.jpg,text/plain,text/xml,application/xml', ChannelTypeExtension::getAcceptFormFile($file));
+        static::assertSame('application/json,.jpg,text/plain,text/xml,application/xml', ChannelTypeExtension::getAcceptFromFile($file));
 
         $file = new Image();
-        static::assertSame('image/*', ChannelTypeExtension::getAcceptFormFile($file));
+        static::assertSame('image/*', ChannelTypeExtension::getAcceptFromFile($file));
 
         $file = new Image(mimeTypes: ['image/jpg', 'image/png']);
-        static::assertSame('image/jpg,image/png', ChannelTypeExtension::getAcceptFormFile($file));
+        static::assertSame('image/jpg,image/png', ChannelTypeExtension::getAcceptFromFile($file));
     }
 }
