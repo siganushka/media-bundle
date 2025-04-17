@@ -25,7 +25,7 @@ class MediaResizeListener implements EventSubscriberInterface
         $file = $event->getFile();
 
         try {
-            $channel->maxWidth && $this->resizeByMaxWidth($file, $channel->maxWidth);
+            $channel->resizeToMaxWidth && $this->resizeByMaxWidth($file, $channel->resizeToMaxWidth);
         } catch (\Throwable $th) {
             $this->logger->error('Error on resize file by max width.', [
                 'msg' => $th->getMessage(),
@@ -33,7 +33,7 @@ class MediaResizeListener implements EventSubscriberInterface
         }
 
         try {
-            $channel->maxHeight && $this->resizeByMaxHeight($file, $channel->maxHeight);
+            $channel->resizeToMaxHeight && $this->resizeByMaxHeight($file, $channel->resizeToMaxHeight);
         } catch (\Throwable $th) {
             $this->logger->error('Error on resize file by max height.', [
                 'msg' => $th->getMessage(),
@@ -102,7 +102,7 @@ class MediaResizeListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            MediaSaveEvent::class => ['onMediaSave', 16],
+            MediaSaveEvent::class => ['onMediaSave', 8],
         ];
     }
 }

@@ -48,8 +48,12 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
             ;
 
             if ($this->isConfigEnabled($container, $options['resize'])) {
-                $channel->setArgument('$maxWidth', $options['resize']['max_width']);
-                $channel->setArgument('$maxHeight', $options['resize']['max_height']);
+                if (!class_exists(\Imagick::class)) {
+                    throw new \LogicException('Media resize support cannot be enabled as the php_imagick extension is not installed.');
+                }
+
+                $channel->setArgument('$resizeToMaxWidth', $options['resize']['max_width']);
+                $channel->setArgument('$resizeToMaxHeight', $options['resize']['max_height']);
             }
 
             if ($this->isConfigEnabled($container, $options['optimize'])) {
@@ -57,7 +61,7 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
                     throw new \LogicException('Media optimize support cannot be enabled as the optimize component is not installed. Try running "composer require spatie/image-optimizer".');
                 }
 
-                $channel->setArgument('$optimize', $options['optimize']['quality']);
+                $channel->setArgument('$optimizeToQuality', $options['optimize']['quality']);
             }
         }
 

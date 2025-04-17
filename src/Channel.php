@@ -7,16 +7,16 @@ namespace Siganushka\MediaBundle;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints\File as AssertFile;
 
-final class Channel
+final class Channel implements \Stringable
 {
     public function __construct(
         public readonly string $alias,
         /** @var class-string<AssertFile> */
         public readonly string $constraint = AssertFile::class,
         public readonly array $constraintOptions = [],
-        public readonly ?int $maxWidth = null,
-        public readonly ?int $maxHeight = null,
-        public readonly ?int $optimize = null)
+        public readonly ?int $resizeToMaxWidth = null,
+        public readonly ?int $resizeToMaxHeight = null,
+        public readonly ?int $optimizeToQuality = null)
     {
     }
 

@@ -24,7 +24,7 @@ class MediaResizeListenerTest extends TestCase
         $this->listener = new MediaResizeListener(new NullLogger());
     }
 
-    public function testResizeImageMaxWidth(): void
+    public function testResizeImageresizeToMaxWidth(): void
     {
         $origin = './tests/Fixtures/landscape.jpg';
         $target = \sprintf('%s/%s', sys_get_temp_dir(), pathinfo($origin, \PATHINFO_BASENAME));
@@ -47,21 +47,21 @@ class MediaResizeListenerTest extends TestCase
         static::assertSame(300, $height);
         static::assertSame($size, $file->getSize());
 
-        $this->listener->onMediaSave(new MediaSaveEvent(new Channel('foo', maxWidth: 500), $file));
+        $this->listener->onMediaSave(new MediaSaveEvent(new Channel('foo', resizeToMaxWidth: 500), $file));
 
         [$width, $height] = FileUtils::getImageSize($file);
         static::assertSame(500, $width);
         static::assertSame(300, $height);
         static::assertSame($size, $file->getSize());
 
-        $this->listener->onMediaSave(new MediaSaveEvent(new Channel('foo', maxWidth: 250), $file));
+        $this->listener->onMediaSave(new MediaSaveEvent(new Channel('foo', resizeToMaxWidth: 250), $file));
 
         [$width, $height] = FileUtils::getImageSize($file);
         static::assertSame(250, $width);
         static::assertSame(150, $height);
         static::assertNotSame($size, $file->getSize());
 
-        $this->listener->onMediaSave(new MediaSaveEvent(new Channel('foo', maxWidth: 50), $file));
+        $this->listener->onMediaSave(new MediaSaveEvent(new Channel('foo', resizeToMaxWidth: 50), $file));
 
         [$width, $height] = FileUtils::getImageSize($file);
         static::assertSame(50, $width);
@@ -71,7 +71,7 @@ class MediaResizeListenerTest extends TestCase
         unlink($target);
     }
 
-    public function testResizeImageMaxHeight(): void
+    public function testResizeImageresizeToMaxHeight(): void
     {
         $origin = './tests/Fixtures/portrait.jpg';
         $target = \sprintf('%s/%s', sys_get_temp_dir(), pathinfo($origin, \PATHINFO_BASENAME));
@@ -94,21 +94,21 @@ class MediaResizeListenerTest extends TestCase
         static::assertSame(500, $height);
         static::assertSame($size, $file->getSize());
 
-        $this->listener->onMediaSave(new MediaSaveEvent(new Channel('foo', maxHeight: 500), $file));
+        $this->listener->onMediaSave(new MediaSaveEvent(new Channel('foo', resizeToMaxHeight: 500), $file));
 
         [$width, $height] = FileUtils::getImageSize($file);
         static::assertSame(300, $width);
         static::assertSame(500, $height);
         static::assertSame($size, $file->getSize());
 
-        $this->listener->onMediaSave(new MediaSaveEvent(new Channel('foo', maxHeight: 250), $file));
+        $this->listener->onMediaSave(new MediaSaveEvent(new Channel('foo', resizeToMaxHeight: 250), $file));
 
         [$width, $height] = FileUtils::getImageSize($file);
         static::assertSame(150, $width);
         static::assertSame(250, $height);
         static::assertNotSame($size, $file->getSize());
 
-        $this->listener->onMediaSave(new MediaSaveEvent(new Channel('foo', maxHeight: 50), $file));
+        $this->listener->onMediaSave(new MediaSaveEvent(new Channel('foo', resizeToMaxHeight: 50), $file));
 
         [$width, $height] = FileUtils::getImageSize($file);
         static::assertSame(30, $width);

@@ -18,12 +18,12 @@ class MediaOptimizeListener implements EventSubscriberInterface
     public function onMediaSave(MediaSaveEvent $event): void
     {
         $channel = $event->getChannel();
-        if (null === $channel->optimize) {
+        if (null === $channel->optimizeToQuality) {
             return;
         }
 
         try {
-            $optimizerChain = OptimizerChainFactory::create(['quality' => $channel->optimize]);
+            $optimizerChain = OptimizerChainFactory::create(['quality' => $channel->optimizeToQuality]);
             $optimizerChain->useLogger($this->logger);
             $optimizerChain->optimize($event->getFile()->getPathname());
         } catch (\Throwable $th) {
@@ -36,7 +36,7 @@ class MediaOptimizeListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            MediaSaveEvent::class => ['onMediaSave', 8],
+            MediaSaveEvent::class => ['onMediaSave', 4],
         ];
     }
 }
