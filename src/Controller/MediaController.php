@@ -69,8 +69,8 @@ class MediaController extends AbstractController
             throw new \RuntimeException('Unable to save file.');
         }
 
-        // $entityManager->persist($media);
-        // $entityManager->flush();
+        $entityManager->persist($media);
+        $entityManager->flush();
 
         return $this->createResponse($media);
     }
