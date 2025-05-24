@@ -73,9 +73,20 @@ class MediaSaveListener
         $media->setWidth($width);
         $media->setHeight($height);
 
-        $mediaUrl = $this->storage->save($file, $event->getChannel()->getTargetName($file));
+        $mediaUrl = $this->storage->save($file, $this->getTargetName($file, $event->getHash()));
         $media->setUrl($mediaUrl);
 
         $event->setMedia($media)->stopPropagation();
+    }
+
+    private function getTargetName(File $file, string $hash): string
+    {
+        // Like Git commit ID
+        return \sprintf('%02s/%02s/%07s.%s',
+            mb_substr($hash, 0, 2),
+            mb_substr($hash, 2, 2),
+            mb_substr($hash, 0, 7),
+            $file->guessExtension() ?? $file->getExtension(),
+        );
     }
 }
