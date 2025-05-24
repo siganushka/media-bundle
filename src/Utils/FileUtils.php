@@ -19,7 +19,7 @@ class FileUtils
     public static function createFromUrl(string $url, int $timeoutMs = 10000): \SplFileInfo
     {
         if (false === $curl = curl_init()) {
-            throw new \RuntimeException('Failed to initialize');
+            throw new \RuntimeException('Failed to initialize CURL.');
         }
 
         curl_setopt($curl, \CURLOPT_URL, $url);
@@ -54,7 +54,7 @@ class FileUtils
             throw new \InvalidArgumentException('Invalid data URI file.');
         }
 
-        [$_, $content] = array_pad(explode(',', $dataUri), 3, null);
+        [, $content] = array_pad(explode(',', $dataUri), 3, null);
         if (null === $content) {
             throw new \InvalidArgumentException('Invalid data URI file.');
         }
@@ -70,14 +70,14 @@ class FileUtils
      */
     public static function createFromContent(string $content, ?string $fileName = null): \SplFileInfo
     {
-        $file = \sprintf('%s/%s', sys_get_temp_dir(), $fileName ?? uniqid());
+        $file = new \SplFileInfo(sys_get_temp_dir().'/'.($fileName ?? uniqid()));
+        $fileobj = $file->openFile('a');
 
-        file_put_contents($file, $content);
-        if (!is_file($file)) {
+        if (0 === $fileobj->fwrite($content)) {
             throw new \RuntimeException('Failed to save file.');
         }
 
-        return new \SplFileInfo($file);
+        return $file;
     }
 
     /**
