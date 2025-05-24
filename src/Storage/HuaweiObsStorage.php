@@ -28,16 +28,20 @@ class HuaweiObsStorage implements StorageInterface
         ]);
     }
 
-    public function save(\SplFileInfo $origin, string $target): string
+    public function save(string|\SplFileInfo $originFile, ?string $targetFile = null): string
     {
+        if (\is_string($originFile)) {
+            $originFile = new \SplFileInfo($originFile);
+        }
+
         $result = $this->client->putObject([
             'Bucket' => $this->bucket,
-            'Key' => $target,
-            'Body' => $origin->openFile(),
+            'Key' => $targetFile ?? $originFile->getBasename(),
+            'Body' => $originFile->openFile(),
         ]);
 
-        if ($origin->isFile()) {
-            @unlink($origin->getPathname());
+        if ($originFile->isFile()) {
+            @unlink($originFile->getPathname());
         }
 
         $url = $result['ObjectURL'] ?? null;
@@ -51,7 +55,7 @@ class HuaweiObsStorage implements StorageInterface
     public function delete(string $url): void
     {
         $object = parse_url($url, \PHP_URL_PATH);
-        if (null === $object || false === $object) {
+        if (!\is_string($object)) {
             throw new \RuntimeException('Unable parse file.');
         }
 

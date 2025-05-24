@@ -13,16 +13,20 @@ class LocalStorage implements StorageInterface
     {
     }
 
-    public function save(\SplFileInfo $origin, string $target): string
+    public function save(string|\SplFileInfo $originFile, ?string $targetFile = null): string
     {
-        if (!$origin instanceof File) {
-            $origin = new File($origin->getPathname());
+        if (\is_string($originFile)) {
+            $originFile = new File($originFile);
         }
 
-        $filename = \sprintf('%s/uploads/%s', $this->publicDir, $target);
+        if (!$originFile instanceof File) {
+            $originFile = new File($originFile->getPathname());
+        }
+
+        $filename = \sprintf('%s/uploads/%s', $this->publicDir, $targetFile ?? $originFile->getBasename());
         $pathinfo = pathinfo($filename);
 
-        $targetFile = $origin->move($pathinfo['dirname'], $pathinfo['basename']);
+        $targetFile = $originFile->move($pathinfo['dirname'], $pathinfo['basename']);
 
         $path = $targetFile->getPathname();
         if (str_starts_with($path, $this->publicDir)) {
@@ -35,7 +39,7 @@ class LocalStorage implements StorageInterface
     public function delete(string $url): void
     {
         $path = parse_url($url, \PHP_URL_PATH);
-        if (null === $path || false === $path) {
+        if (!\is_string($path)) {
             throw new \RuntimeException('Unable parse file.');
         }
 

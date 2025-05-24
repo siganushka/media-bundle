@@ -22,12 +22,16 @@ class AliyunOssStorage implements StorageInterface
         $this->ossClient = new OssClient($accessKeyId, $accessKeySecret, $endpoint);
     }
 
-    public function save(\SplFileInfo $origin, string $target): string
+    public function save(string|\SplFileInfo $originFile, ?string $targetFile = null): string
     {
-        $result = $this->ossClient->uploadFile($this->bucket, $target, $origin->getPathname());
+        if (\is_string($originFile)) {
+            $originFile = new \SplFileInfo($originFile);
+        }
 
-        if ($origin->isFile()) {
-            @unlink($origin->getPathname());
+        $result = $this->ossClient->uploadFile($this->bucket, $targetFile ?? $originFile->getBasename(), $originFile->getPathname());
+
+        if ($originFile->isFile()) {
+            @unlink($originFile->getPathname());
         }
 
         $url = $result['info']['url'] ?? null;
@@ -41,7 +45,7 @@ class AliyunOssStorage implements StorageInterface
     public function delete(string $url): void
     {
         $object = parse_url($url, \PHP_URL_PATH);
-        if (null === $object || false === $object) {
+        if (!\is_string($object)) {
             throw new \RuntimeException('Unable parse file.');
         }
 
