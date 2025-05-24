@@ -54,7 +54,7 @@ class MediaController extends AbstractController
         if (!$form->isValid()) {
             $error = $form->getErrors(true, true)->current();
             if ($error instanceof FormError) {
-                throw new BadRequestHttpException(\sprintf('[%s] %s', $error->getOrigin()?->getName() ?? '', $error->getMessage()));
+                throw new BadRequestHttpException(\sprintf('[%s] %s', $error->getOrigin()?->getName() ?? 'form', $error->getMessage()));
             }
         }
 

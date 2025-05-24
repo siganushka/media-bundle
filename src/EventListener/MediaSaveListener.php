@@ -13,7 +13,8 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-#[AsEventListener(priority: -8)]
+#[AsEventListener(MediaSaveEvent::class, method: 'check', priority: 128)]
+#[AsEventListener(MediaSaveEvent::class, method: 'save', priority: -128)]
 class MediaSaveListener
 {
     public function __construct(
@@ -22,26 +23,25 @@ class MediaSaveListener
     {
     }
 
-    public function __invoke(MediaSaveEvent $event): void
+    public function check(MediaSaveEvent $event): void
     {
-        $file = $event->getFile();
-        if (!$file instanceof File) {
-            $file = new File($file->getPathname());
-        }
-
-        $hash = md5_file($file->getPathname());
-        if (false === $hash) {
-            throw new \RuntimeException('Unable to hash file.');
-        }
-
-        $media = $this->repository->findOneByHash($hash);
+        $media = $this->repository->findOneByHash($event->getHash());
         if ($media instanceof Media) {
             // Remove the original file if it already exists
+            $file = $event->getFile();
             if ($file->isFile()) {
                 @unlink($file->getPathname());
             }
 
-            goto SET_EVENT_DATA;
+            $event->setMedia($media)->stopPropagation();
+        }
+    }
+
+    public function save(MediaSaveEvent $event): void
+    {
+        $file = $event->getFile();
+        if (!$file instanceof File) {
+            $file = new File($file->getPathname());
         }
 
         // [important] Clears file status cache before access file
@@ -64,21 +64,18 @@ class MediaSaveListener
             $width = $height = null;
         }
 
-        $size = FileUtils::getFormattedSize($file);
-
         $media = $this->repository->createNew();
-        $media->setHash($hash);
+        $media->setHash($event->getHash());
         $media->setName($name);
         $media->setExtension($extension);
         $media->setMime($mime);
-        $media->setSize($size);
+        $media->setSize(FileUtils::getFormattedSize($file));
         $media->setWidth($width);
         $media->setHeight($height);
 
         $mediaUrl = $this->storage->save($file, $event->getChannel()->getTargetName($file));
         $media->setUrl($mediaUrl);
 
-        SET_EVENT_DATA:
         $event->setMedia($media)->stopPropagation();
     }
 }
