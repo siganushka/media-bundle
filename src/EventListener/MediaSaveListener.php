@@ -9,17 +9,20 @@ use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 use Siganushka\MediaBundle\Utils\FileUtils;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class MediaSaveListener implements EventSubscriberInterface
+#[AsEventListener(priority: -8)]
+class MediaSaveListener
 {
-    public function __construct(private readonly StorageInterface $storage, private readonly MediaRepository $repository)
+    public function __construct(
+        private readonly StorageInterface $storage,
+        private readonly MediaRepository $repository)
     {
     }
 
-    public function onMediaSave(MediaSaveEvent $event): void
+    public function __invoke(MediaSaveEvent $event): void
     {
         $file = $event->getFile();
         if (!$file instanceof File) {
@@ -77,12 +80,5 @@ class MediaSaveListener implements EventSubscriberInterface
 
         SET_EVENT_DATA:
         $event->setMedia($media)->stopPropagation();
-    }
-
-    public static function getSubscribedEvents(): array
-    {
-        return [
-            MediaSaveEvent::class => ['onMediaSave', -8],
-        ];
     }
 }

@@ -64,8 +64,7 @@ class MediaController extends AbstractController
         $event = new MediaSaveEvent(...$data);
         $eventDispatcher->dispatch($event);
 
-        $media = $event->getMedia();
-        if (!$media) {
+        if (null === $media = $event->getMedia()) {
             throw new \RuntimeException('Unable to save file.');
         }
 

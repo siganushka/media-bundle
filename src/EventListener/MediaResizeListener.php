@@ -7,15 +7,16 @@ namespace Siganushka\MediaBundle\EventListener;
 use Psr\Log\LoggerInterface;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Siganushka\MediaBundle\Utils\FileUtils;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
-class MediaResizeListener implements EventSubscriberInterface
+#[AsEventListener(priority: 8)]
+class MediaResizeListener
 {
     public function __construct(private readonly LoggerInterface $logger)
     {
     }
 
-    public function onMediaSave(MediaSaveEvent $event): void
+    public function __invoke(MediaSaveEvent $event): void
     {
         if (!class_exists(\Imagick::class)) {
             return;
@@ -97,12 +98,5 @@ class MediaResizeListener implements EventSubscriberInterface
             $newWidth,
             $newHeight,
         ));
-    }
-
-    public static function getSubscribedEvents(): array
-    {
-        return [
-            MediaSaveEvent::class => ['onMediaSave', 8],
-        ];
     }
 }

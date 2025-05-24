@@ -7,15 +7,16 @@ namespace Siganushka\MediaBundle\EventListener;
 use Psr\Log\LoggerInterface;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Spatie\ImageOptimizer\OptimizerChainFactory;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
-class MediaOptimizeListener implements EventSubscriberInterface
+#[AsEventListener(priority: 4)]
+class MediaOptimizeListener
 {
     public function __construct(private readonly LoggerInterface $logger)
     {
     }
 
-    public function onMediaSave(MediaSaveEvent $event): void
+    public function __invoke(MediaSaveEvent $event): void
     {
         $channel = $event->getChannel();
         if (null === $channel->optimizeToQuality) {
@@ -31,12 +32,5 @@ class MediaOptimizeListener implements EventSubscriberInterface
                 'msg' => $th->getMessage(),
             ]);
         }
-    }
-
-    public static function getSubscribedEvents(): array
-    {
-        return [
-            MediaSaveEvent::class => ['onMediaSave', 4],
-        ];
     }
 }
