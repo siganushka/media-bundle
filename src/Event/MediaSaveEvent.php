@@ -17,12 +17,13 @@ class MediaSaveEvent extends Event
         private readonly Channel $channel,
         private readonly \SplFileInfo $file)
     {
-        $hash = md5_file($file->getPathname());
-        if (false === $hash) {
+        $fileHash = md5_file($file->getPathname());
+        if (false === $fileHash) {
             throw new \RuntimeException('Unable to hash file.');
         }
 
-        $this->hash = $hash;
+        // [important] The same source file will generate different HASH in different channels.
+        $this->hash = md5(\sprintf('%s_%32s', $channel->__toString(), $fileHash));
     }
 
     public function getChannel(): Channel
