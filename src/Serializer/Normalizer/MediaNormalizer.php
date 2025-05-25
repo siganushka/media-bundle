@@ -20,13 +20,14 @@ class MediaNormalizer implements NormalizerInterface
     /**
      * @param Media $object
      */
-    public function normalize($object, ?string $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
+    public function normalize($object, ?string $format = null, array $context = []): array|string
     {
-        if (\array_key_exists(AbstractNormalizer::ATTRIBUTES, $context)) {
-            return $this->normalizer->normalize($object, $format, $context);
-        }
+        /** @var array|string */
+        $data = \array_key_exists(AbstractNormalizer::ATTRIBUTES, $context)
+            ? $this->normalizer->normalize($object, $format, $context)
+            : $object->__toString();
 
-        return $object->__toString();
+        return $data;
     }
 
     public function supportsNormalization($data, ?string $format = null, array $context = []): bool
