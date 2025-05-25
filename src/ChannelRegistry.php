@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle;
 
-use Siganushka\MediaBundle\Exception\UnsupportedChannelException;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 
 final class ChannelRegistry
@@ -23,11 +22,7 @@ final class ChannelRegistry
 
     public function get(string $alias): Channel
     {
-        try {
-            return $this->locator->get($alias);
-        } catch (\Throwable) {
-            throw new UnsupportedChannelException($this, $alias);
-        }
+        return $this->locator->get($alias);
     }
 
     public function aliases(): array
