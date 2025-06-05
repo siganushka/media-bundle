@@ -48,45 +48,33 @@ class MediaSaveListener
         clearstatcache(true, $file->getPathname());
 
         $name = $file instanceof UploadedFile ? $file->getClientOriginalName() : $file->getFilename();
-        if ($replace = mb_substr(pathinfo($name, \PATHINFO_FILENAME), 32)) {
-            $name = str_replace($replace, '', $name);
+        if ($search = mb_substr(pathinfo($name, \PATHINFO_FILENAME), 32)) {
+            $name = str_replace($search, '', $name);
         }
 
         $extension = $file->guessExtension() ?? $file->getExtension();
-        $mime = $file->getMimeType();
-        if (null === $mime) {
-            throw new \RuntimeException('Unable to access file.');
-        }
+        $mime = $file->getMimeType() ?? 'n/a';
+        $size = FileUtils::getFormattedSize($file);
+        $info = FileUtils::getImageSize($file);
 
-        try {
-            [$width, $height] = FileUtils::getImageSize($file);
-        } catch (\Throwable) {
-            $width = $height = null;
-        }
+        $targetFileName = \sprintf('%02s/%02s/%07s.%s',
+            mb_substr($event->getHash(), 0, 2),
+            mb_substr($event->getHash(), 2, 2),
+            mb_substr($event->getHash(), 0, 7),
+            $extension);
+
+        $url = $this->storage->save($file, $targetFileName);
 
         $media = $this->repository->createNew();
         $media->setHash($event->getHash());
         $media->setName($name);
         $media->setExtension($extension);
         $media->setMime($mime);
-        $media->setSize(FileUtils::getFormattedSize($file));
-        $media->setWidth($width);
-        $media->setHeight($height);
-
-        $mediaUrl = $this->storage->save($file, $this->getTargetName($file, $event->getHash()));
-        $media->setUrl($mediaUrl);
+        $media->setSize($size);
+        $media->setWidth($info[0]);
+        $media->setHeight($info[1]);
+        $media->setUrl($url);
 
         $event->setMedia($media)->stopPropagation();
-    }
-
-    private function getTargetName(File $file, string $hash): string
-    {
-        // Like Git commit ID
-        return \sprintf('%02s/%02s/%07s.%s',
-            mb_substr($hash, 0, 2),
-            mb_substr($hash, 2, 2),
-            mb_substr($hash, 0, 7),
-            $file->guessExtension() ?? $file->getExtension(),
-        );
     }
 }
