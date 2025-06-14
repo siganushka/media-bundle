@@ -28,7 +28,6 @@ class MediaUploadType extends AbstractType
         $builder
             ->add('channel', ChoiceType::class, [
                 'label' => 'media.channel',
-                'placeholder' => 'generic.choice',
                 'choices' => $this->registry->all(),
                 'choice_value' => fn (?string $choice) => $choice,
                 'choice_translation_domain' => false,
