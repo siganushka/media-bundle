@@ -7,7 +7,7 @@ namespace Siganushka\MediaBundle\Doctrine;
 use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 
-class MediaRemoveListener
+class MediaListener
 {
     public function __construct(private readonly StorageInterface $storage)
     {

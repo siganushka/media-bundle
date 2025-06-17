@@ -226,7 +226,7 @@ class MigrateCommand extends Command
                     continue;
                 }
 
-                $entities[$name] = array_keys($metadata->getReflectionProperties());
+                $entities[$name] = array_keys($metadata->getPropertyAccessors());
             }
         }
 

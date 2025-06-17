@@ -9,7 +9,7 @@ use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Spatie\ImageOptimizer\OptimizerChainFactory;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
-#[AsEventListener(priority: 4)]
+#[AsEventListener(MediaSaveEvent::class, priority: 4)]
 class MediaOptimizeListener
 {
     public function __construct(private readonly LoggerInterface $logger)

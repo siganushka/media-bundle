@@ -52,10 +52,9 @@ class MediaController extends AbstractController
         $form->submit($formData);
 
         if (!$form->isValid()) {
+            /** @var FormError */
             $error = $form->getErrors(true, true)->current();
-            if ($error instanceof FormError) {
-                throw new BadRequestHttpException(\sprintf('[%s] %s', $error->getOrigin()?->getName() ?? 'form', $error->getMessage()));
-            }
+            throw new BadRequestHttpException(\sprintf('[%s] %s', $error->getOrigin()?->getName() ?? 'form', $error->getMessage()));
         }
 
         /** @var array */
@@ -64,7 +63,7 @@ class MediaController extends AbstractController
         $event = new MediaSaveEvent(...$data);
         $eventDispatcher->dispatch($event);
 
-        if (null === $media = $event->getMedia()) {
+        if (!$media = $event->getMedia()) {
             throw new \RuntimeException('Unable to save file.');
         }
 
@@ -102,8 +101,7 @@ class MediaController extends AbstractController
     protected function createResponse(PaginationInterface|Media|null $data, int $statusCode = Response::HTTP_OK, array $headers = []): Response
     {
         $attributes = [
-            'hash', 'url', 'name', 'extension', 'mime', 'size', 'sizeStr',
-            'width', 'height', 'image', 'video', 'updatedAt', 'createdAt',
+            'hash', 'url', 'name', 'extension', 'mime', 'size', 'width', 'height', 'image', 'video', 'createdAt',
         ];
 
         return $this->json($data, $statusCode, $headers, compact('attributes'));
