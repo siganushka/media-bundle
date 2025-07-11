@@ -9,7 +9,7 @@ use Siganushka\GenericBundle\DependencyInjection\SiganushkaGenericExtension;
 use Siganushka\MediaBundle\Channel;
 use Siganushka\MediaBundle\ChannelRegistry;
 use Siganushka\MediaBundle\Command\MigrateCommand;
-use Siganushka\MediaBundle\Doctrine\MediaListener;
+use Siganushka\MediaBundle\EventListener\MediaRemoveListener;
 use Siganushka\MediaBundle\Storage\LocalStorage;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 use Spatie\ImageOptimizer\OptimizerChainFactory;
@@ -77,8 +77,8 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         $localStorage = $container->findDefinition(LocalStorage::class);
         $localStorage->setArgument('$publicDir', $publicDir);
 
-        $mediaListener = $container->findDefinition(MediaListener::class);
-        $mediaListener->addTag('doctrine.orm.entity_listener', ['event' => Events::postRemove, 'entity' => $config['media_class']]);
+        $mediaRemoveListener = $container->findDefinition(MediaRemoveListener::class);
+        $mediaRemoveListener->addTag('doctrine.orm.entity_listener', ['event' => Events::postRemove, 'entity' => $config['media_class']]);
     }
 
     public function prepend(ContainerBuilder $container): void
