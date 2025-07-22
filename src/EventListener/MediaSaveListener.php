@@ -53,9 +53,17 @@ class MediaSaveListener
         }
 
         $extension = $file->guessExtension() ?? $file->getExtension();
-        $mime = $file->getMimeType() ?? 'n/a';
-        $size = FileUtils::getFormattedSize($file);
-        $info = FileUtils::getImageSize($file);
+        $mime = $file->getMimeType();
+        $size = $file->getSize();
+        if (false === $size || null === $mime) {
+            throw new \RuntimeException('Unable to access file.');
+        }
+
+        try {
+            [$width, $height] = FileUtils::getImageSize($file);
+        } catch (\Throwable) {
+            $width = $height = null;
+        }
 
         $targetFileName = \sprintf('%02s/%02s/%07s.%s',
             mb_substr($event->getHash(), 0, 2),
@@ -71,8 +79,8 @@ class MediaSaveListener
         $media->setExtension($extension);
         $media->setMime($mime);
         $media->setSize($size);
-        $media->setWidth($info[0]);
-        $media->setHeight($info[1]);
+        $media->setWidth($width);
+        $media->setHeight($height);
         $media->setUrl($url);
 
         $event->setMedia($media)->stopPropagation();

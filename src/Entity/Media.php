@@ -34,7 +34,7 @@ class Media implements ResourceInterface, CreatableInterface, \Stringable
     protected ?string $mime = null;
 
     #[ORM\Column]
-    protected ?string $size = null;
+    protected ?int $size = null;
 
     #[ORM\Column(nullable: true)]
     protected ?int $width = null;
@@ -102,12 +102,12 @@ class Media implements ResourceInterface, CreatableInterface, \Stringable
         return $this;
     }
 
-    public function getSize(): ?string
+    public function getSize(): ?int
     {
         return $this->size;
     }
 
-    public function setSize(string $size): static
+    public function setSize(int $size): static
     {
         $this->size = $size;
 
