@@ -101,7 +101,7 @@ class MediaController extends AbstractController
     protected function createResponse(PaginationInterface|Media|null $data, int $statusCode = Response::HTTP_OK, array $headers = []): Response
     {
         $attributes = [
-            'hash', 'url', 'name', 'extension', 'mime', 'size', 'width', 'height', 'image', 'video', 'createdAt',
+            'hash', 'url', 'name', 'extension', 'mime', 'size', 'width', 'height', 'createdAt',
         ];
 
         return $this->json($data, $statusCode, $headers, compact('attributes'));

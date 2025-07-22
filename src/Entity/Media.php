@@ -11,8 +11,6 @@ use Siganushka\Contracts\Doctrine\ResourceInterface;
 use Siganushka\Contracts\Doctrine\ResourceTrait;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 
-use function Symfony\Component\String\u;
-
 #[ORM\Entity(repositoryClass: MediaRepository::class)]
 #[ORM\UniqueConstraint(columns: ['hash'])]
 class Media implements ResourceInterface, CreatableInterface, \Stringable
@@ -138,16 +136,6 @@ class Media implements ResourceInterface, CreatableInterface, \Stringable
         $this->height = $height;
 
         return $this;
-    }
-
-    public function isImage(): bool
-    {
-        return u($this->mime)->startsWith('image');
-    }
-
-    public function isVideo(): bool
-    {
-        return u($this->mime)->startsWith('video');
     }
 
     public function __toString(): string
