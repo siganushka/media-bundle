@@ -11,6 +11,7 @@ use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Siganushka\MediaBundle\Form\MediaUploadType;
 use Siganushka\MediaBundle\Repository\MediaRepository;
+use Siganushka\MediaBundle\Serializer\Normalizer\MediaNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\Util\FormUtil;
@@ -100,10 +101,8 @@ class MediaController extends AbstractController
      */
     protected function createResponse(PaginationInterface|Media|null $data, int $statusCode = Response::HTTP_OK, array $headers = []): Response
     {
-        $attributes = [
-            'hash', 'url', 'name', 'extension', 'mime', 'size', 'width', 'height', 'createdAt',
-        ];
-
-        return $this->json($data, $statusCode, $headers, compact('attributes'));
+        return $this->json($data, $statusCode, $headers, [
+            MediaNormalizer::AS_REFERENCE => false,
+        ]);
     }
 }

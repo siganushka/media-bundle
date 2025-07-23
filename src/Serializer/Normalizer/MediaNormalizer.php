@@ -11,6 +11,8 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class MediaNormalizer implements NormalizerInterface
 {
+    public const AS_REFERENCE = 'media_as_reference';
+
     public function __construct(
         #[Autowire(service: 'serializer.normalizer.object')]
         private readonly NormalizerInterface $normalizer)
@@ -22,10 +24,15 @@ class MediaNormalizer implements NormalizerInterface
      */
     public function normalize($object, ?string $format = null, array $context = []): array|string
     {
+        $asReference = $context[self::AS_REFERENCE] ?? true;
+        if ($asReference && !\array_key_exists(AbstractNormalizer::ATTRIBUTES, $context)) {
+            return $object->__toString();
+        }
+
         /** @var array|string */
-        $data = \array_key_exists(AbstractNormalizer::ATTRIBUTES, $context)
-            ? $this->normalizer->normalize($object, $format, $context)
-            : $object->__toString();
+        $data = $this->normalizer->normalize($object, $format, array_merge_recursive($context, [
+            'ignored_attributes' => ['id'],
+        ]));
 
         return $data;
     }
