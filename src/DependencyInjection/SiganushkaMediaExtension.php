@@ -48,10 +48,6 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
             ;
 
             if ($this->isConfigEnabled($container, $options['resize'])) {
-                if (!class_exists(\Imagick::class)) {
-                    throw new \LogicException('Media resize support cannot be enabled as the php_imagick extension is not installed.');
-                }
-
                 $channel->setArgument('$resizeToMaxWidth', $options['resize']['max_width']);
                 $channel->setArgument('$resizeToMaxHeight', $options['resize']['max_height']);
             }
