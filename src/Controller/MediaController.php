@@ -7,14 +7,17 @@ namespace Siganushka\MediaBundle\Controller;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Siganushka\MediaBundle\Channel;
 use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
+use Siganushka\MediaBundle\Event\MediaSuccessEvent;
 use Siganushka\MediaBundle\Form\MediaUploadType;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Serializer\Normalizer\MediaNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\Util\FormUtil;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -58,10 +61,10 @@ class MediaController extends AbstractController
             throw new BadRequestHttpException(\sprintf('[%s] %s', $error->getOrigin()?->getName() ?? 'form', $error->getMessage()));
         }
 
-        /** @var array */
+        /** @var array{ channel: Channel, file: UploadedFile } */
         $data = $form->getData();
 
-        $event = new MediaSaveEvent(...$data);
+        $event = new MediaSaveEvent($data['channel'], $data['file']);
         $eventDispatcher->dispatch($event);
 
         if (!$media = $event->getMedia()) {
@@ -71,7 +74,10 @@ class MediaController extends AbstractController
         $entityManager->persist($media);
         $entityManager->flush();
 
-        return $this->createResponse($media);
+        $event = new MediaSuccessEvent($data['channel'], $data['file'], $media);
+        $eventDispatcher->dispatch($event);
+
+        return $event->getResponse() ?? $this->createResponse($media);
     }
 
     #[Route('/media/{hash}', methods: 'GET')]
