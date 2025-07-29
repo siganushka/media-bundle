@@ -17,7 +17,6 @@ class MediaSaveEventTest extends TestCase
         $file = new \SplFileInfo('./tests/Fixtures/php.jpg');
 
         $event = new MediaSaveEvent($chnnel, $file);
-        static::assertFalse($event->isPropagationStopped());
         static::assertNull($event->getMedia());
         static::assertSame($chnnel, $event->getChannel());
         static::assertSame($file, $event->getFile());
@@ -25,6 +24,5 @@ class MediaSaveEventTest extends TestCase
 
         $event->setMedia(new Media());
         static::assertInstanceOf(Media::class, $event->getMedia());
-        static::assertTrue($event->isPropagationStopped());
     }
 }

@@ -26,7 +26,7 @@ class MediaSaveListener
     {
         $media = $this->repository->findOneByHash($event->getHash());
         if ($media) {
-            $event->setMedia($media);
+            $event->setMedia($media)->stopPropagation();
         }
     }
 
@@ -76,6 +76,6 @@ class MediaSaveListener
         $media->setHeight($height);
         $media->setUrl($url);
 
-        $event->setMedia($media);
+        $event->setMedia($media)->stopPropagation();
     }
 }

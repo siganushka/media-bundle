@@ -52,7 +52,6 @@ class MediaSaveEvent extends Event
     public function setMedia(?Media $media): self
     {
         $this->media = $media;
-        $this->stopPropagation();
 
         return $this;
     }
