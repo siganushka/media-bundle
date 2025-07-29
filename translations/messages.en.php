@@ -11,5 +11,4 @@ return [
     'media.mime_type' => 'Mime',
     'media.size' => 'Size',
     'media.pixel' => 'Pixel',
-    'media.image' => 'Image',
 ];

@@ -11,5 +11,4 @@ return [
     'media.mime_type' => '类型',
     'media.size' => '大小',
     'media.pixel' => '尺寸',
-    'media.image' => '图象',
 ];
