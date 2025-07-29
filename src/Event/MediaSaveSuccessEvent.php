@@ -8,15 +8,18 @@ use Siganushka\MediaBundle\Channel;
 use Siganushka\MediaBundle\Entity\Media;
 use Symfony\Component\HttpFoundation\Response;
 
-class MediaSaveSuccessEvent extends MediaSaveEvent
+class MediaSaveSuccessEvent extends MediaEvent
 {
     private ?Response $response = null;
 
-    public function __construct(Channel $channel, \SplFileInfo $file, Media $media)
+    public function __construct(Channel $channel, \SplFileInfo $file, private readonly Media $media)
     {
-        $this->setMedia($media);
-
         parent::__construct($channel, $file);
+    }
+
+    public function getMedia(): Media
+    {
+        return $this->media;
     }
 
     public function getResponse(): ?Response

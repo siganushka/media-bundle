@@ -7,7 +7,6 @@ namespace Siganushka\MediaBundle\Controller;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use Siganushka\MediaBundle\Channel;
 use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Siganushka\MediaBundle\Event\MediaSaveSuccessEvent;
@@ -17,7 +16,6 @@ use Siganushka\MediaBundle\Serializer\Normalizer\MediaNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\Util\FormUtil;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -61,12 +59,10 @@ class MediaController extends AbstractController
             throw new BadRequestHttpException(\sprintf('[%s] %s', $error->getOrigin()?->getName() ?? 'form', $error->getMessage()));
         }
 
-        /** @var array{ channel: Channel, file: UploadedFile } */
+        /** @var array */
         $data = $form->getData();
 
-        $event = new MediaSaveEvent($data['channel'], $data['file']);
-        $eventDispatcher->dispatch($event);
-
+        $event = $eventDispatcher->dispatch(new MediaSaveEvent(...$data));
         if (!$media = $event->getMedia()) {
             throw new \RuntimeException('Unable to save file.');
         }
@@ -74,7 +70,7 @@ class MediaController extends AbstractController
         $entityManager->persist($media);
         $entityManager->flush();
 
-        $event = new MediaSaveSuccessEvent($data['channel'], $data['file'], $media);
+        $event = new MediaSaveSuccessEvent(...array_merge($data, compact('media')));
         $eventDispatcher->dispatch($event);
 
         return $event->getResponse() ?? $this->createResponse($media);
