@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\EventListener;
 
-use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Storage\StorageInterface;
@@ -13,8 +12,8 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-#[AsEventListener(MediaSaveEvent::class, method: 'check', priority: 128)]
-#[AsEventListener(MediaSaveEvent::class, method: 'save', priority: -128)]
+#[AsEventListener(method: 'check', priority: 128)]
+#[AsEventListener(method: 'save', priority: -128)]
 class MediaSaveListener
 {
     public function __construct(
@@ -26,14 +25,8 @@ class MediaSaveListener
     public function check(MediaSaveEvent $event): void
     {
         $media = $this->repository->findOneByHash($event->getHash());
-        if ($media instanceof Media) {
-            // Remove the original file if it already exists
-            $file = $event->getFile();
-            if ($file->isFile()) {
-                @unlink($file->getPathname());
-            }
-
-            $event->setMedia($media)->stopPropagation();
+        if ($media) {
+            $event->setMedia($media);
         }
     }
 
@@ -83,6 +76,6 @@ class MediaSaveListener
         $media->setHeight($height);
         $media->setUrl($url);
 
-        $event->setMedia($media)->stopPropagation();
+        $event->setMedia($media);
     }
 }

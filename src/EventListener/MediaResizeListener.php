@@ -9,7 +9,7 @@ use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Siganushka\MediaBundle\Utils\FileUtils;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
-#[AsEventListener(MediaSaveEvent::class, priority: 8)]
+#[AsEventListener(priority: 8)]
 class MediaResizeListener
 {
     public function __construct(private readonly LoggerInterface $logger)

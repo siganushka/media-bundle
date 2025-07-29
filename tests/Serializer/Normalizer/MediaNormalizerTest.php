@@ -40,8 +40,9 @@ class MediaNormalizerTest extends TestCase
             'size' => 1536,
             'width' => 300,
             'height' => null,
+            'createdAt' => null,
         ], $this->normalizer->normalize($media, context: [
-            ObjectNormalizer::ATTRIBUTES => ['hash', 'url', 'name', 'extension', 'mime', 'size', 'width', 'height'],
+            MediaNormalizer::AS_REFERENCE => false,
         ]));
     }
 }

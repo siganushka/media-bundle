@@ -6,24 +6,19 @@ namespace Siganushka\MediaBundle\Event;
 
 use Siganushka\MediaBundle\Channel;
 use Siganushka\MediaBundle\Entity\Media;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class MediaSaveEvent extends Event
 {
+    public const MEDIA_SAVED = 'siganushka_media.saved';
+
+    private ?string $hash = null;
     private ?Media $media = null;
-    private string $hash;
+    private ?Response $response = null;
 
-    final public function __construct(
-        private readonly Channel $channel,
-        private readonly \SplFileInfo $file)
+    public function __construct(private readonly Channel $channel, private readonly \SplFileInfo $file)
     {
-        $fileHash = md5_file($file->getPathname());
-        if (false === $fileHash) {
-            throw new \RuntimeException('Unable to hash file.');
-        }
-
-        // [important] The same source file will generate different HASH in different channels.
-        $this->hash = md5(\sprintf('%s_%32s', $channel->__toString(), $fileHash));
     }
 
     public function getChannel(): Channel
@@ -38,7 +33,15 @@ class MediaSaveEvent extends Event
 
     public function getHash(): string
     {
-        return $this->hash;
+        if (isset($this->hash)) {
+            return $this->hash;
+        }
+
+        $fileHash = md5_file($this->file->getPathname())
+            ?: throw new \RuntimeException('Unable to hash file.');
+
+        // [important] The same source file will generate different HASH in different channels.
+        return $this->hash = md5(\sprintf('%s_%32s', $this->channel->alias, $fileHash));
     }
 
     public function getMedia(): ?Media
@@ -49,6 +52,19 @@ class MediaSaveEvent extends Event
     public function setMedia(?Media $media): self
     {
         $this->media = $media;
+        $this->stopPropagation();
+
+        return $this;
+    }
+
+    public function getResponse(): ?Response
+    {
+        return $this->response;
+    }
+
+    public function setResponse(?Response $response): self
+    {
+        $this->response = $response;
 
         return $this;
     }

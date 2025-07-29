@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Siganushka\MediaBundle\EventListener;
+namespace Siganushka\MediaBundle\Doctrine;
 
 use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 
-class MediaRemoveListener
+class MediaListener
 {
     public function __construct(private readonly StorageInterface $storage)
     {

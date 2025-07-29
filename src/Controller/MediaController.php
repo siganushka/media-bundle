@@ -10,7 +10,7 @@ use Knp\Component\Pager\PaginatorInterface;
 use Siganushka\MediaBundle\Channel;
 use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
-use Siganushka\MediaBundle\Event\MediaSuccessEvent;
+use Siganushka\MediaBundle\Event\MediaSaveSuccessEvent;
 use Siganushka\MediaBundle\Form\MediaUploadType;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Serializer\Normalizer\MediaNormalizer;
@@ -74,7 +74,7 @@ class MediaController extends AbstractController
         $entityManager->persist($media);
         $entityManager->flush();
 
-        $event = new MediaSuccessEvent($data['channel'], $data['file'], $media);
+        $event = new MediaSaveSuccessEvent($data['channel'], $data['file'], $media);
         $eventDispatcher->dispatch($event);
 
         return $event->getResponse() ?? $this->createResponse($media);

@@ -30,10 +30,6 @@ class AliyunOssStorage implements StorageInterface
 
         $result = $this->ossClient->uploadFile($this->bucket, $targetFile ?? $originFile->getBasename(), $originFile->getPathname());
 
-        if ($originFile->isFile()) {
-            @unlink($originFile->getPathname());
-        }
-
         $url = $result['info']['url'] ?? null;
         if ($url && \is_string($url)) {
             return $url;

@@ -40,10 +40,6 @@ class HuaweiObsStorage implements StorageInterface
             'Body' => $originFile->openFile(),
         ]);
 
-        if ($originFile->isFile()) {
-            @unlink($originFile->getPathname());
-        }
-
         $url = $result['ObjectURL'] ?? null;
         if ($url && \is_string($url)) {
             return $url;
