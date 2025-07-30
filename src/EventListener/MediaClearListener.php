@@ -7,7 +7,7 @@ namespace Siganushka\MediaBundle\EventListener;
 use Siganushka\MediaBundle\Event\MediaSaveSuccessEvent;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
-#[AsEventListener]
+#[AsEventListener(priority: -128)]
 class MediaClearListener
 {
     public function __invoke(MediaSaveSuccessEvent $event): void

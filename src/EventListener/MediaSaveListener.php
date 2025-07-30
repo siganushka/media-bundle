@@ -12,8 +12,7 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-#[AsEventListener(method: 'check', priority: 128)]
-#[AsEventListener(method: 'save', priority: -128)]
+#[AsEventListener(priority: -128)]
 class MediaSaveListener
 {
     public function __construct(
@@ -22,15 +21,7 @@ class MediaSaveListener
     {
     }
 
-    public function check(MediaSaveEvent $event): void
-    {
-        $media = $this->repository->findOneByHash($event->getHash());
-        if ($media) {
-            $event->setMedia($media)->stopPropagation();
-        }
-    }
-
-    public function save(MediaSaveEvent $event): void
+    public function __invoke(MediaSaveEvent $event): void
     {
         $file = $event->getFile();
         if (!$file instanceof File) {
@@ -40,17 +31,10 @@ class MediaSaveListener
         // [important] Clears file status cache before access file
         clearstatcache(true, $file->getPathname());
 
-        $name = $file instanceof UploadedFile ? $file->getClientOriginalName() : $file->getFilename();
-        if ($search = mb_substr(pathinfo($name, \PATHINFO_FILENAME), 32)) {
-            $name = str_replace($search, '', $name);
-        }
-
+        $normalizedName = $this->getNormalizedFileName($file);
         $extension = $file->guessExtension() ?? $file->getExtension();
-        $mime = $file->getMimeType();
-        $size = $file->getSize();
-        if (false === $size || null === $mime) {
-            throw new \RuntimeException('Unable to access file.');
-        }
+        $mime = $file->getMimeType() ?? 'n/a';
+        $size = $file->getSize() ?: 0;
 
         try {
             [$width, $height] = FileUtils::getImageSize($file);
@@ -68,7 +52,7 @@ class MediaSaveListener
 
         $media = $this->repository->createNew();
         $media->setHash($event->getHash());
-        $media->setName($name);
+        $media->setName($normalizedName);
         $media->setExtension($extension);
         $media->setMime($mime);
         $media->setSize($size);
@@ -76,6 +60,16 @@ class MediaSaveListener
         $media->setHeight($height);
         $media->setUrl($url);
 
-        $event->setMedia($media)->stopPropagation();
+        $event->setMedia($media);
+    }
+
+    private function getNormalizedFileName(\SplFileInfo $file): string
+    {
+        $name = $file instanceof UploadedFile ? $file->getClientOriginalName() : $file->getFilename();
+        if ($search = mb_substr(pathinfo($name, \PATHINFO_FILENAME), 32)) {
+            $name = str_replace($search, '', $name);
+        }
+
+        return $name;
     }
 }
