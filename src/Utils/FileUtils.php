@@ -13,10 +13,9 @@ class FileUtils
      *
      * @see https://www.jianshu.com/p/42e0c4304b60
      *
-     * @param string $url       Remote file url
-     * @param int    $timeoutMs Timeout in milliseconds
+     * @param string $url Remote file url
      */
-    public static function createFromUrl(string $url, int $timeoutMs = 10000): \SplFileInfo
+    public static function createFromUrl(string $url, int $timeout = 10): \SplFileInfo
     {
         if (false === $curl = curl_init()) {
             throw new \RuntimeException('Failed to initialize CURL.');
@@ -25,7 +24,7 @@ class FileUtils
         curl_setopt($curl, \CURLOPT_URL, $url);
         curl_setopt($curl, \CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($curl, \CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, \CURLOPT_TIMEOUT_MS, $timeoutMs);
+        curl_setopt($curl, \CURLOPT_TIMEOUT, $timeout);
 
         $content = curl_exec($curl);
         if (!\is_string($content)) {
@@ -73,7 +72,9 @@ class FileUtils
         $file = new \SplFileInfo(sys_get_temp_dir().'/'.($fileName ?? uniqid()));
         $fileobj = $file->openFile('a');
 
-        if (0 === $fileobj->fwrite($content)) {
+        /** @var int|false */
+        $result = $fileobj->fwrite($content);
+        if (false === $result) {
             throw new \RuntimeException('Failed to save file.');
         }
 
