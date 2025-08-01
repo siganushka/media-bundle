@@ -12,7 +12,7 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-#[AsEventListener(priority: -128)]
+#[AsEventListener(priority: -8)]
 class MediaSaveListener
 {
     public function __construct(
@@ -50,7 +50,7 @@ class MediaSaveListener
 
         $url = $this->storage->save($file, $targetFileName);
 
-        $media = $this->repository->createNew();
+        $media = $event->getMedia() ?? $this->repository->createNew();
         $media->setHash($event->getHash());
         $media->setName($normalizedName);
         $media->setExtension($extension);

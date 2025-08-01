@@ -9,7 +9,6 @@ use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
-use Siganushka\MediaBundle\Event\MediaSaveSuccessEvent;
 use Siganushka\MediaBundle\Form\MediaUploadType;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Serializer\Normalizer\MediaNormalizer;
@@ -44,11 +43,7 @@ class MediaController extends AbstractController
     #[Route('/media', methods: 'POST')]
     public function postCollection(Request $request, EventDispatcherInterface $eventDispatcher, EntityManagerInterface $entityManager): Response
     {
-        // @see https://github.com/symfony/symfony/blob/7.3/src/Symfony/Component/Form/Extension/HttpFoundation/HttpFoundationRequestHandler.php#L39
-        $formData = FormUtil::mergeParamsAndFiles(
-            $request->request->all(),
-            $request->files->all(),
-        );
+        $formData = FormUtil::mergeParamsAndFiles($request->request->all(), $request->files->all());
 
         $form = $this->createForm(MediaUploadType::class);
         $form->submit($formData);
@@ -70,10 +65,7 @@ class MediaController extends AbstractController
         $entityManager->persist($media);
         $entityManager->flush();
 
-        $event = new MediaSaveSuccessEvent(...array_merge($data, compact('media')));
-        $eventDispatcher->dispatch($event);
-
-        return $event->getResponse() ?? $this->createResponse($media);
+        return $this->createResponse($media);
     }
 
     #[Route('/media/{hash}', methods: 'GET')]
