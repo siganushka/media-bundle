@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Siganushka\MediaBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Siganushka\MediaBundle\Form\MediaUploadType;
 use Siganushka\MediaBundle\Repository\MediaRepository;
@@ -84,10 +86,14 @@ class MediaController extends AbstractController
         $entityManager->remove($entity);
         $entityManager->flush();
 
-        return $this->createResponse(null);
+        // 204 No Content
+        return new Response(status: Response::HTTP_NO_CONTENT);
     }
 
-    protected function createResponse(mixed $data, int $statusCode = Response::HTTP_OK, array $headers = []): Response
+    /**
+     * @param PaginationInterface<int, mixed>|Media|null $data
+     */
+    protected function createResponse(PaginationInterface|Media|null $data, int $statusCode = Response::HTTP_OK, array $headers = []): Response
     {
         return $this->json($data, $statusCode, $headers, [
             MediaNormalizer::AS_REFERENCE => false,
