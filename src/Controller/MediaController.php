@@ -90,10 +90,7 @@ class MediaController extends AbstractController
         return new Response(status: Response::HTTP_NO_CONTENT);
     }
 
-    /**
-     * @param PaginationInterface<int, mixed>|Media|null $data
-     */
-    protected function createResponse(PaginationInterface|Media|null $data, int $statusCode = Response::HTTP_OK, array $headers = []): Response
+    protected function createResponse(mixed $data, int $statusCode = Response::HTTP_OK, array $headers = []): Response
     {
         return $this->json($data, $statusCode, $headers, [
             MediaNormalizer::AS_REFERENCE => false,
