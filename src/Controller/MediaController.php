@@ -6,16 +6,17 @@ namespace Siganushka\MediaBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Siganushka\GenericBundle\Response\ProblemResponse;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Siganushka\MediaBundle\Form\MediaUploadType;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Serializer\Normalizer\MediaNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Util\FormUtil;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
@@ -47,9 +48,7 @@ class MediaController extends AbstractController
         $form->submit($formData);
 
         if (!$form->isValid()) {
-            /** @var FormError */
-            $error = $form->getErrors(true, true)->current();
-            throw new BadRequestHttpException(\sprintf('[%s] %s', $error->getOrigin()?->getName() ?? 'form', $error->getMessage()));
+            return $this->createFormErrorResponse($form, Response::HTTP_BAD_REQUEST);
         }
 
         /** @var array */
@@ -86,6 +85,19 @@ class MediaController extends AbstractController
 
         // 204 No Content
         return new Response(status: Response::HTTP_NO_CONTENT);
+    }
+
+    protected function createFormErrorResponse(FormInterface $form, int $statusCode): Response
+    {
+        /** @var FormError */
+        $error = $form->getErrors(true, true)->current();
+
+        $origin = $error->getOrigin();
+        if ($origin && $origin->isRoot()) {
+            return new ProblemResponse($error->getMessage(), $statusCode);
+        }
+
+        return new ProblemResponse(\sprintf('[%s] %s', $origin?->getName() ?? 'form', $error->getMessage()), $statusCode);
     }
 
     protected function createResponse(mixed $data, int $statusCode = Response::HTTP_OK, array $headers = []): Response

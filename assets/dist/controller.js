@@ -29,7 +29,7 @@ export default class extends Controller {
       const json = await response.json()
       return response.ok
         ? Promise.resolve(json)
-        : Promise.reject(json.detail || json.message || response.statusText)
+        : Promise.reject(json.detail || response.statusText)
     }).then(res => {
       event.target.disabled = true
       this.dataTarget.value = res.hash
