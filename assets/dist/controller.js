@@ -34,9 +34,9 @@ export default class extends Controller {
       event.target.disabled = true
       this.dataTarget.value = res.hash
       this.element.classList.add('media-uploaded')
-      if (res.image) {
+      if (res.mime.startsWith('image/')) {
         this.viewTarget.innerHTML = `<img src="${res.url}" />`
-      } else if (res.video) {
+      } else if (res.mime.startsWith('video/')) {
         this.viewTarget.innerHTML = `<video src="${res.url}" controls />`
       } else {
         this.viewTarget.innerHTML = res.name
