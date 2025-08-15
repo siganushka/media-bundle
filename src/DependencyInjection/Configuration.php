@@ -115,7 +115,7 @@ class Configuration implements ConfigurationInterface
                     ->end()
                     ->children()
                         ->integerNode('max_width')->defaultValue(1000)->end()
-                        ->integerNode('max_height')->defaultValue(1000)->end()
+                        ->integerNode('max_height')->defaultValue(9999)->end()
                     ->end()
                 ->end()
                 ->arrayNode('optimize')

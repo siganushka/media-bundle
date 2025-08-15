@@ -53,19 +53,19 @@ class ConfigurationTest extends TestCase
 
         static::assertSame($processedConfig['channels']['foo']['constraint'], File::class);
         static::assertSame($processedConfig['channels']['foo']['constraint_options'], ['maxSize' => '2MB']);
-        static::assertSame($processedConfig['channels']['foo']['resize'], ['enabled' => false, 'max_width' => 1000, 'max_height' => 1000]);
+        static::assertSame($processedConfig['channels']['foo']['resize'], ['enabled' => false, 'max_width' => 1000, 'max_height' => 9999]);
         static::assertSame($processedConfig['channels']['foo']['optimize'], ['enabled' => false, 'quality' => 85]);
 
         static::assertSame($processedConfig['channels']['bar']['constraint'], Image::class);
         static::assertSame($processedConfig['channels']['bar']['constraint_options'], ['minWidth' => 320, 'allowSquare' => true]);
-        static::assertSame($processedConfig['channels']['bar']['resize'], ['enabled' => false, 'max_width' => 1000, 'max_height' => 1000]);
+        static::assertSame($processedConfig['channels']['bar']['resize'], ['enabled' => false, 'max_width' => 1000, 'max_height' => 9999]);
         static::assertSame($processedConfig['channels']['bar']['optimize'], ['enabled' => false, 'quality' => 85]);
 
         $config['channels']['bar']['resize'] = true;
         $config['channels']['bar']['optimize'] = true;
         $processedConfig = $processor->processConfiguration(new Configuration(), [$config]);
 
-        static::assertEquals($processedConfig['channels']['bar']['resize'], ['enabled' => true, 'max_width' => 1000, 'max_height' => 1000]);
+        static::assertEquals($processedConfig['channels']['bar']['resize'], ['enabled' => true, 'max_width' => 1000, 'max_height' => 9999]);
         static::assertEquals($processedConfig['channels']['bar']['optimize'], ['enabled' => true, 'quality' => 85]);
 
         $config['channels']['bar']['resize'] = 500;
@@ -75,12 +75,19 @@ class ConfigurationTest extends TestCase
         static::assertEquals($processedConfig['channels']['bar']['resize'], ['enabled' => true, 'max_width' => 500, 'max_height' => 500]);
         static::assertEquals($processedConfig['channels']['bar']['optimize'], ['enabled' => true, 'quality' => 75]);
 
+        $config['channels']['bar']['resize'] = ['max_width' => 300];
+        $processedConfig = $processor->processConfiguration(new Configuration(), [$config]);
+
+        static::assertEquals($processedConfig['channels']['bar']['resize'], ['enabled' => true, 'max_width' => 300, 'max_height' => 9999]);
+
+        $config['channels']['bar']['resize'] = ['max_height' => 900];
+        $processedConfig = $processor->processConfiguration(new Configuration(), [$config]);
+        static::assertEquals($processedConfig['channels']['bar']['resize'], ['enabled' => true, 'max_width' => 1000, 'max_height' => 900]);
+
         $config['channels']['bar']['resize'] = ['max_width' => 300, 'max_height' => 900];
-        $config['channels']['bar']['optimize'] = 50;
         $processedConfig = $processor->processConfiguration(new Configuration(), [$config]);
 
         static::assertEquals($processedConfig['channels']['bar']['resize'], ['enabled' => true, 'max_width' => 300, 'max_height' => 900]);
-        static::assertEquals($processedConfig['channels']['bar']['optimize'], ['enabled' => true, 'quality' => 50]);
     }
 
     public function testMediaClassInvalidException(): void
