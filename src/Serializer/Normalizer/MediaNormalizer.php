@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\Serializer\Normalizer;
 
+use Automattic\WooCommerce\GoogleListingsAndAds\Notes\AbstractNote;
 use Siganushka\MediaBundle\Entity\Media;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
@@ -31,7 +32,7 @@ class MediaNormalizer implements NormalizerInterface
 
         /** @var array|string */
         $data = $this->normalizer->normalize($object, $format, array_merge_recursive($context, [
-            'ignored_attributes' => ['id'],
+            AbstractNormalizer::IGNORED_ATTRIBUTES => ['id'],
         ]));
 
         return $data;
