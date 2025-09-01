@@ -48,7 +48,7 @@ class MediaType extends AbstractType implements DataTransformerInterface
         $resolver->setDefaults([
             'icon' => 'plus',
             'style' => null,
-            'invalid_message' => 'The value is not a valid media reference.',
+            'invalid_message' => 'This value is not a valid media reference.',
         ]);
     }
 
