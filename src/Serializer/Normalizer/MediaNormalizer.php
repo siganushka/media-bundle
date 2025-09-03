@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\Serializer\Normalizer;
 
-use Automattic\WooCommerce\GoogleListingsAndAds\Notes\AbstractNote;
 use Siganushka\MediaBundle\Entity\Media;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;

@@ -6,7 +6,7 @@ namespace Siganushka\MediaBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use Siganushka\GenericBundle\Response\ProblemResponse;
+use Siganushka\GenericBundle\Response\ProblemJsonResponse;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Siganushka\MediaBundle\Form\MediaUploadType;
 use Siganushka\MediaBundle\Repository\MediaRepository;
@@ -17,7 +17,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Util\FormUtil;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class MediaController extends AbstractController
@@ -94,10 +94,10 @@ class MediaController extends AbstractController
 
         $origin = $error->getOrigin();
         if ($origin && $origin->isRoot()) {
-            return new ProblemResponse($error->getMessage(), $statusCode);
+            return new ProblemJsonResponse($error->getMessage(), $statusCode);
         }
 
-        return new ProblemResponse(\sprintf('[%s] %s', $origin?->getName() ?? 'form', $error->getMessage()), $statusCode);
+        return new ProblemJsonResponse(\sprintf('[%s] %s', $origin?->getName() ?? 'form', $error->getMessage()), $statusCode);
     }
 
     protected function createResponse(mixed $data, int $statusCode = Response::HTTP_OK, array $headers = []): Response
