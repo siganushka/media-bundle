@@ -47,6 +47,10 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
                 ->setArgument('$constraintOptions', $options['constraint_options'])
             ;
 
+            if ($options['reserve_client_name']) {
+                $channel->setArgument('$reserveClientName', $options['reserve_client_name']);
+            }
+
             if ($this->isConfigEnabled($container, $options['resize'])) {
                 $channel->setArgument('$resizeToMaxWidth', $options['resize']['max_width']);
                 $channel->setArgument('$resizeToMaxHeight', $options['resize']['max_height']);

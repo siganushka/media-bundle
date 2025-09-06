@@ -42,13 +42,16 @@ class MediaSaveListener
             $width = $height = null;
         }
 
-        $targetFileName = \sprintf('%02s/%02s/%07s.%s',
+        $targetFileName = $event->getChannel()->reserveClientName
+            ? $normalizedName
+            : \sprintf('%07s.%s', mb_substr($event->getHash(), 0, 7), $extension);
+
+        $targetFile = \sprintf('%02s/%02s/%s',
             mb_substr($event->getHash(), 0, 2),
             mb_substr($event->getHash(), 2, 2),
-            mb_substr($event->getHash(), 0, 7),
-            $extension);
+            $targetFileName);
 
-        $url = $this->storage->save($file, $targetFileName);
+        $url = $this->storage->save($file, $targetFile);
 
         $media = $event->getMedia() ?? $this->repository->createNew();
         $media->setHash($event->getHash());
