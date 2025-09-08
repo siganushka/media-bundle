@@ -6,9 +6,8 @@ namespace Siganushka\MediaBundle\Command;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\Mapping\ClassMetadataFactory;
 use Siganushka\Contracts\Doctrine\ResourceInterface;
 use Siganushka\MediaBundle\Channel;
 use Siganushka\MediaBundle\ChannelRegistry;
@@ -218,7 +217,7 @@ class MigrateCommand extends Command
     {
         $entities = [];
         foreach ($this->managerRegistry->getManagers() as $em) {
-            /** @var ClassMetadataFactory<ClassMetadata> */
+            /** @var ClassMetadataFactory */
             $factory = $em->getMetadataFactory();
             foreach ($factory->getAllMetadata() as $metadata) {
                 $name = $metadata->getName();

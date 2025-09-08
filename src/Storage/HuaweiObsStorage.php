@@ -9,11 +9,11 @@ use Obs\ObsClient;
 /**
  * @see https://support.huaweicloud.com/obs/index.html
  */
-class HuaweiObsStorage implements StorageInterface
+class HuaweiObsStorage extends AbstractStorage
 {
     private readonly ObsClient $client;
 
-    public function __construct(string $accessKeyId, string $accessKeySecret, string $endpoint, private readonly string $bucket)
+    public function __construct(string $accessKeyId, string $accessKeySecret, string $endpoint, private readonly string $bucket, ?string $prefix = null)
     {
         if (!class_exists(ObsClient::class)) {
             throw new \LogicException(\sprintf('The "%s" class requires the "obs/esdk-obs-php" component. Try running "composer require obs/esdk-obs-php".', self::class));
@@ -26,17 +26,15 @@ class HuaweiObsStorage implements StorageInterface
             'socket_timeout' => 30,
             'connect_timeout' => 10,
         ]);
+
+        parent::__construct($prefix);
     }
 
-    public function save(string|\SplFileInfo $originFile, ?string $targetFile = null): string
+    public function doSave(\SplFileInfo $originFile, string $targetFileToSave): string
     {
-        if (\is_string($originFile)) {
-            $originFile = new \SplFileInfo($originFile);
-        }
-
         $result = $this->client->putObject([
             'Bucket' => $this->bucket,
-            'Key' => $targetFile ?? $originFile->getBasename(),
+            'Key' => $targetFileToSave,
             'Body' => $originFile->openFile(),
         ]);
 
@@ -48,13 +46,8 @@ class HuaweiObsStorage implements StorageInterface
         throw new \LogicException('Invalid response.');
     }
 
-    public function delete(string $url): void
+    public function doDelete(string $path): void
     {
-        $object = parse_url($url, \PHP_URL_PATH);
-        if (!\is_string($object)) {
-            throw new \RuntimeException('Unable parse file.');
-        }
-
-        $this->client->deleteObject(['Bucket' => $this->bucket, 'Key' => ltrim($object, '/')]);
+        $this->client->deleteObject(['Bucket' => $this->bucket, 'Key' => ltrim($path, '/')]);
     }
 }
