@@ -78,7 +78,10 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         $localStorage->setArgument('$uploadDir', 'uploads');
 
         $mediaListener = $container->findDefinition(MediaListener::class);
-        $mediaListener->addTag('doctrine.orm.entity_listener', ['event' => Events::postRemove, 'entity' => $config['media_class']]);
+        $mediaListener->addTag('doctrine.orm.entity_listener', [
+            'event' => Events::postRemove,
+            'entity' => $config['media_class'],
+        ]);
     }
 
     public function prepend(ContainerBuilder $container): void

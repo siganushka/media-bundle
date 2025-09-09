@@ -17,7 +17,8 @@ class FileUtils
      */
     public static function createFromUrl(string $url, int $timeout = 10): \SplFileInfo
     {
-        if (false === $curl = curl_init()) {
+        $curl = curl_init();
+        if (false === $curl) {
             throw new \RuntimeException('Failed to initialize CURL.');
         }
 
