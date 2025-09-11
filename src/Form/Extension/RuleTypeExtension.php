@@ -34,13 +34,7 @@ class RuleTypeExtension extends AbstractTypeExtension
         $resolver->setRequired('rule');
         $resolver->setAllowedTypes('rule', ['string', Rule::class]);
 
-        $resolver->setNormalizer('rule', function (Options $options, string|Rule $rule): Rule {
-            if ($rule instanceof Rule) {
-                return $rule;
-            }
-
-            return $this->registry->get($rule);
-        });
+        $resolver->setNormalizer('rule', fn (Options $options, string|Rule $rule): Rule => $rule instanceof Rule ? $rule : $this->registry->get($rule));
     }
 
     public static function getExtendedTypes(): iterable
