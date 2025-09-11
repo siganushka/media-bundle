@@ -9,10 +9,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Doctrine\Persistence\ManagerRegistry;
 use Siganushka\Contracts\Doctrine\ResourceInterface;
-use Siganushka\MediaBundle\Channel;
 use Siganushka\MediaBundle\ChannelRegistry;
 use Siganushka\MediaBundle\Entity\Media;
-use Siganushka\MediaBundle\Event\MediaSaveEvent;
+use Siganushka\MediaBundle\MediaManagerInterface;
 use Siganushka\MediaBundle\Utils\FileUtils;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -23,15 +22,14 @@ use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 #[AsCommand('siganushka:media:migrate', 'Migrate existing media data to SiganushkaMediaBundle.')]
 class MigrateCommand extends Command
 {
     public function __construct(
-        private readonly EventDispatcherInterface $eventDispatcher,
         private readonly ManagerRegistry $managerRegistry,
         private readonly ChannelRegistry $channelRegistry,
+        private readonly MediaManagerInterface $mediaManager,
         private readonly string $publicDir)
     {
         parent::__construct();
@@ -71,7 +69,6 @@ class MigrateCommand extends Command
             throw new \InvalidArgumentException(\sprintf('The "to-field" with value "%s" is not mapped for "%s".', $toField, $entityClass));
         }
 
-        $channel = $this->channelRegistry->get($channelAlias);
         $queryBuilder = $entityManager->getRepository($entityClass)
             ->createQueryBuilder('t')
             // ->where(sprintf('t.%s IS NULL', $toField))
@@ -103,7 +100,7 @@ class MigrateCommand extends Command
 
             try {
                 $toValue = $propertyAccessor->getValue($entity, $toField);
-            } catch (\Throwable $th) {
+            } catch (\Throwable) {
                 $toValue = null;
             }
 
@@ -114,7 +111,7 @@ class MigrateCommand extends Command
 
             try {
                 $fromValue = $propertyAccessor->getValue($entity, $fromField);
-            } catch (\Throwable $th) {
+            } catch (\Throwable) {
                 $fromValue = null;
             }
 
@@ -129,22 +126,9 @@ class MigrateCommand extends Command
             }
 
             try {
-                $event = $this->createMediaSaveEvent($channel, $fromValue);
+                $media = $this->mediaManager->save($channelAlias, $this->createFile($fromValue));
             } catch (\Throwable $th) {
-                $output->writeln(\sprintf('<comment>%s unable to create event (%s).</comment>', $message, $th->getMessage()));
-                continue;
-            }
-
-            try {
-                $this->eventDispatcher->dispatch($event);
-            } catch (\Throwable $th) {
-                $output->writeln(\sprintf('<comment>%s unable to migrate.</comment>', $message));
-                continue;
-            }
-
-            $media = $event->getMedia();
-            if (!$media instanceof Media) {
-                $output->writeln(\sprintf('<comment>%s unable to migrate.</comment>', $message));
+                $output->writeln(\sprintf('<comment>%s unable to migrate (%s).</comment>', $message, $th->getMessage()));
                 continue;
             }
 
@@ -194,10 +178,10 @@ class MigrateCommand extends Command
         return $anwser;
     }
 
-    protected function createMediaSaveEvent(Channel $channel, string $value): MediaSaveEvent
+    protected function createFile(string $value): \SplFileInfo
     {
         if (str_contains($value, '://') || str_starts_with($value, '//')) {
-            return new MediaSaveEvent($channel, FileUtils::createFromUrl($value));
+            return FileUtils::createFromUrl($value);
         }
 
         $originFile = \sprintf('%s/%s', $this->publicDir, ltrim($value, '/'));
@@ -210,7 +194,7 @@ class MigrateCommand extends Command
         $filesystem = new Filesystem();
         $filesystem->copy($originFile, $targetFile, true);
 
-        return new MediaSaveEvent($channel, new \SplFileInfo($targetFile));
+        return new \SplFileInfo($targetFile);
     }
 
     protected function getEntities(): array
@@ -221,7 +205,9 @@ class MigrateCommand extends Command
             $factory = $em->getMetadataFactory();
             foreach ($factory->getAllMetadata() as $metadata) {
                 $name = $metadata->getName();
-                if (is_subclass_of($name, Media::class, true)) {
+                if ($metadata->isMappedSuperclass
+                    || $metadata->isEmbeddedClass
+                    || is_subclass_of($name, Media::class, true)) {
                     continue;
                 }
 

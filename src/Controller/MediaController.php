@@ -7,8 +7,8 @@ namespace Siganushka\MediaBundle\Controller;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Siganushka\GenericBundle\Response\ProblemJsonResponse;
-use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Siganushka\MediaBundle\Form\MediaUploadType;
+use Siganushka\MediaBundle\MediaManagerInterface;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Serializer\Normalizer\MediaNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,7 +18,6 @@ use Symfony\Component\Form\Util\FormUtil;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class MediaController extends AbstractController
 {
@@ -40,7 +39,7 @@ class MediaController extends AbstractController
     }
 
     #[Route('/media', methods: 'POST')]
-    public function postCollection(Request $request, EventDispatcherInterface $eventDispatcher, EntityManagerInterface $entityManager): Response
+    public function postCollection(Request $request, EntityManagerInterface $entityManager, MediaManagerInterface $mediaManager): Response
     {
         $formData = FormUtil::mergeParamsAndFiles($request->request->all(), $request->files->all());
 
@@ -53,16 +52,12 @@ class MediaController extends AbstractController
 
         /** @var array */
         $data = $form->getData();
+        $entity = $mediaManager->save(...$data);
 
-        $event = $eventDispatcher->dispatch(new MediaSaveEvent(...$data));
-        if (!$media = $event->getMedia()) {
-            throw new \RuntimeException('Unable to save file.');
-        }
-
-        $entityManager->persist($media);
+        $entityManager->persist($entity);
         $entityManager->flush();
 
-        return $this->createResponse($media);
+        return $this->createResponse($entity);
     }
 
     #[Route('/media/{hash}', methods: 'GET')]

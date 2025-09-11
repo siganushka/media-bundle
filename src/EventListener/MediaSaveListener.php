@@ -28,7 +28,7 @@ class MediaSaveListener
             $file = new File($file->getPathname());
         }
 
-        // [important] Clears file status cache before access file
+        // [important] Clears file status cache before access file.
         clearstatcache(true, $file->getPathname());
 
         $normalizedName = $this->getNormalizedFileName($file);
