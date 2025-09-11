@@ -39,7 +39,7 @@ class Configuration implements ConfigurationInterface
         }
 
         $this->addStorageSection($rootNode);
-        $this->addChannelsSection($rootNode);
+        $this->addRulesSection($rootNode);
 
         return $treeBuilder;
     }
@@ -57,13 +57,13 @@ class Configuration implements ConfigurationInterface
         ;
     }
 
-    public function addChannelsSection(ArrayNodeDefinition $rootNode): void
+    public function addRulesSection(ArrayNodeDefinition $rootNode): void
     {
         /** @var ArrayNodeDefinition */
-        $channelNode = $rootNode
-            ->fixXmlConfig('channel')
+        $ruleNode = $rootNode
+            ->fixXmlConfig('rule')
             ->children()
-                ->arrayNode('channels')
+                ->arrayNode('rules')
                     ->example([
                         'foo' => [
                             'constraint' => 'file',
@@ -81,7 +81,7 @@ class Configuration implements ConfigurationInterface
                     ->prototype('array')
         ;
 
-        $channelNode
+        $ruleNode
             ->children()
                 ->scalarNode('constraint')
                     ->info('This value will be used for validation when uploading files.')

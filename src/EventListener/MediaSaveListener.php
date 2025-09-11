@@ -42,7 +42,7 @@ class MediaSaveListener
             $width = $height = null;
         }
 
-        $targetFileName = $event->getChannel()->reserveClientName
+        $targetFileName = $event->getRule()->reserveClientName
             ? $normalizedName
             : \sprintf('%07s.%s', mb_substr($event->getHash(), 0, 7), $extension);
 

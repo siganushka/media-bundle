@@ -22,11 +22,11 @@ class MediaResizeListener
             return;
         }
 
-        $channel = $event->getChannel();
+        $rule = $event->getRule();
         $file = $event->getFile();
 
         try {
-            $channel->resizeToMaxWidth && $this->resizeByMaxWidth($file, $channel->resizeToMaxWidth);
+            $rule->resizeToMaxWidth && $this->resizeByMaxWidth($file, $rule->resizeToMaxWidth);
         } catch (\Throwable $th) {
             $this->logger->error('Error on resize file by max width.', [
                 'msg' => $th->getMessage(),
@@ -34,7 +34,7 @@ class MediaResizeListener
         }
 
         try {
-            $channel->resizeToMaxHeight && $this->resizeByMaxHeight($file, $channel->resizeToMaxHeight);
+            $rule->resizeToMaxHeight && $this->resizeByMaxHeight($file, $rule->resizeToMaxHeight);
         } catch (\Throwable $th) {
             $this->logger->error('Error on resize file by max height.', [
                 'msg' => $th->getMessage(),

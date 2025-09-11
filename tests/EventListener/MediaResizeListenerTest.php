@@ -6,9 +6,9 @@ namespace Siganushka\MediaBundle\Tests\EventListener;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
-use Siganushka\MediaBundle\Channel;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Siganushka\MediaBundle\EventListener\MediaResizeListener;
+use Siganushka\MediaBundle\Rule;
 use Siganushka\MediaBundle\Utils\FileUtils;
 
 class MediaResizeListenerTest extends TestCase
@@ -40,28 +40,28 @@ class MediaResizeListenerTest extends TestCase
         static::assertSame(500, $width);
         static::assertSame(300, $height);
 
-        $this->listener->__invoke(new MediaSaveEvent(new Channel('foo'), $file));
+        $this->listener->__invoke(new MediaSaveEvent(new Rule('foo'), $file));
 
         [$width, $height] = FileUtils::getImageSize($file);
         static::assertSame(500, $width);
         static::assertSame(300, $height);
         static::assertSame($size, $file->getSize());
 
-        $this->listener->__invoke(new MediaSaveEvent(new Channel('foo', resizeToMaxWidth: 500), $file));
+        $this->listener->__invoke(new MediaSaveEvent(new Rule('foo', resizeToMaxWidth: 500), $file));
 
         [$width, $height] = FileUtils::getImageSize($file);
         static::assertSame(500, $width);
         static::assertSame(300, $height);
         static::assertSame($size, $file->getSize());
 
-        $this->listener->__invoke(new MediaSaveEvent(new Channel('foo', resizeToMaxWidth: 250), $file));
+        $this->listener->__invoke(new MediaSaveEvent(new Rule('foo', resizeToMaxWidth: 250), $file));
 
         [$width, $height] = FileUtils::getImageSize($file);
         static::assertSame(250, $width);
         static::assertSame(150, $height);
         static::assertNotSame($size, $file->getSize());
 
-        $this->listener->__invoke(new MediaSaveEvent(new Channel('foo', resizeToMaxWidth: 50), $file));
+        $this->listener->__invoke(new MediaSaveEvent(new Rule('foo', resizeToMaxWidth: 50), $file));
 
         [$width, $height] = FileUtils::getImageSize($file);
         static::assertSame(50, $width);
@@ -87,28 +87,28 @@ class MediaResizeListenerTest extends TestCase
         static::assertSame(300, $width);
         static::assertSame(500, $height);
 
-        $this->listener->__invoke(new MediaSaveEvent(new Channel('foo'), $file));
+        $this->listener->__invoke(new MediaSaveEvent(new Rule('foo'), $file));
 
         [$width, $height] = FileUtils::getImageSize($file);
         static::assertSame(300, $width);
         static::assertSame(500, $height);
         static::assertSame($size, $file->getSize());
 
-        $this->listener->__invoke(new MediaSaveEvent(new Channel('foo', resizeToMaxHeight: 500), $file));
+        $this->listener->__invoke(new MediaSaveEvent(new Rule('foo', resizeToMaxHeight: 500), $file));
 
         [$width, $height] = FileUtils::getImageSize($file);
         static::assertSame(300, $width);
         static::assertSame(500, $height);
         static::assertSame($size, $file->getSize());
 
-        $this->listener->__invoke(new MediaSaveEvent(new Channel('foo', resizeToMaxHeight: 250), $file));
+        $this->listener->__invoke(new MediaSaveEvent(new Rule('foo', resizeToMaxHeight: 250), $file));
 
         [$width, $height] = FileUtils::getImageSize($file);
         static::assertSame(150, $width);
         static::assertSame(250, $height);
         static::assertNotSame($size, $file->getSize());
 
-        $this->listener->__invoke(new MediaSaveEvent(new Channel('foo', resizeToMaxHeight: 50), $file));
+        $this->listener->__invoke(new MediaSaveEvent(new Rule('foo', resizeToMaxHeight: 50), $file));
 
         [$width, $height] = FileUtils::getImageSize($file);
         static::assertSame(30, $width);

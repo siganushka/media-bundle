@@ -8,5 +8,5 @@ use Siganushka\MediaBundle\Entity\Media;
 
 interface MediaManagerInterface
 {
-    public function save(string|Channel $channel, string|\SplFileInfo $file): Media;
+    public function save(string|Rule $rule, string|\SplFileInfo $file): Media;
 }

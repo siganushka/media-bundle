@@ -17,10 +17,10 @@ class MediaClearListener
 
     public function __invoke(MediaSaveEvent $event): void
     {
-        $channel = $event->getChannel();
+        $rule = $event->getRule();
         $file = $event->getFile();
 
-        $this->logger->info(\sprintf('Clear processed media file "%s" in channel "%s".', $file->getPathname(), $channel->alias), [
+        $this->logger->info(\sprintf('Clear processed media file "%s" in rule "%s".', $file->getPathname(), $rule->alias), [
             'exists' => $file->isFile(),
         ]);
 

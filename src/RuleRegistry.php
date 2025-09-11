@@ -6,10 +6,10 @@ namespace Siganushka\MediaBundle;
 
 use Symfony\Component\DependencyInjection\ServiceLocator;
 
-final class ChannelRegistry
+final class RuleRegistry
 {
     /**
-     * @param ServiceLocator<Channel> $locator
+     * @param ServiceLocator<Rule> $locator
      */
     public function __construct(private readonly ServiceLocator $locator)
     {
@@ -20,7 +20,7 @@ final class ChannelRegistry
         return iterator_to_array($this->locator);
     }
 
-    public function get(string $alias): Channel
+    public function get(string $alias): Rule
     {
         return $this->locator->get($alias);
     }

@@ -9,9 +9,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Doctrine\Persistence\ManagerRegistry;
 use Siganushka\Contracts\Doctrine\ResourceInterface;
-use Siganushka\MediaBundle\ChannelRegistry;
 use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\MediaManagerInterface;
+use Siganushka\MediaBundle\RuleRegistry;
 use Siganushka\MediaBundle\Utils\FileUtils;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -28,7 +28,7 @@ class MigrateCommand extends Command
 {
     public function __construct(
         private readonly ManagerRegistry $managerRegistry,
-        private readonly ChannelRegistry $channelRegistry,
+        private readonly RuleRegistry $ruleRegistry,
         private readonly MediaManagerInterface $mediaManager,
         private readonly string $publicDir)
     {
@@ -41,7 +41,7 @@ class MigrateCommand extends Command
             ->addArgument('entity-class', InputArgument::OPTIONAL, 'Which entity do you want to migrate (fully-qualified class name)?')
             ->addArgument('from-field', InputArgument::OPTIONAL, 'Which field do you want to migrate from?')
             ->addArgument('to-field', InputArgument::OPTIONAL, 'Which field do you want to migrate to?')
-            ->addArgument('channel-alias', InputArgument::OPTIONAL, 'Which channel to use?')
+            ->addArgument('rule-alias', InputArgument::OPTIONAL, 'Which rule to use?')
         ;
     }
 
@@ -53,7 +53,7 @@ class MigrateCommand extends Command
         $entityClass = $this->getArgumentForAsk('entity-class', $input, $output, array_keys($entities), false);
         $fromField = $this->getArgumentForAsk('from-field', $input, $output, $entities[$entityClass] ?? []);
         $toField = $this->getArgumentForAsk('to-field', $input, $output, $entities[$entityClass] ?? []);
-        $channelAlias = $this->getArgumentForAsk('channel-alias', $input, $output, $this->channelRegistry->aliases());
+        $ruleAlias = $this->getArgumentForAsk('rule-alias', $input, $output, $this->ruleRegistry->aliases());
 
         /** @var EntityManagerInterface|null */
         $entityManager = $this->managerRegistry->getManagerForClass($entityClass);
@@ -126,7 +126,7 @@ class MigrateCommand extends Command
             }
 
             try {
-                $media = $this->mediaManager->save($channelAlias, $this->createFile($fromValue));
+                $media = $this->mediaManager->save($ruleAlias, $this->createFile($fromValue));
             } catch (\Throwable $th) {
                 $output->writeln(\sprintf('<comment>%s unable to migrate (%s).</comment>', $message, $th->getMessage()));
                 continue;

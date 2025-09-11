@@ -6,10 +6,10 @@ namespace Siganushka\MediaBundle\DependencyInjection;
 
 use Doctrine\ORM\Events;
 use Siganushka\GenericBundle\DependencyInjection\SiganushkaGenericExtension;
-use Siganushka\MediaBundle\Channel;
-use Siganushka\MediaBundle\ChannelRegistry;
 use Siganushka\MediaBundle\Command\MigrateCommand;
 use Siganushka\MediaBundle\Doctrine\MediaListener;
+use Siganushka\MediaBundle\Rule;
+use Siganushka\MediaBundle\RuleRegistry;
 use Siganushka\MediaBundle\Storage\LocalStorage;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 use Spatie\ImageOptimizer\OptimizerChainFactory;
@@ -37,23 +37,23 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         }
 
         $servicesMap = [];
-        foreach ($config['channels'] as $alias => $options) {
-            $id = \sprintf('siganushka_media.channel.%s', $alias);
+        foreach ($config['rules'] as $alias => $options) {
+            $id = \sprintf('siganushka_media.rule.%s', $alias);
             $servicesMap[$alias] = new Reference($id);
 
-            $channel = $container->register($id, Channel::class)
+            $rule = $container->register($id, Rule::class)
                 ->setArgument('$alias', $alias)
                 ->setArgument('$constraint', $options['constraint'])
                 ->setArgument('$constraintOptions', $options['constraint_options'])
             ;
 
             if ($options['reserve_client_name']) {
-                $channel->setArgument('$reserveClientName', $options['reserve_client_name']);
+                $rule->setArgument('$reserveClientName', $options['reserve_client_name']);
             }
 
             if ($this->isConfigEnabled($container, $options['resize'])) {
-                $channel->setArgument('$resizeToMaxWidth', $options['resize']['max_width']);
-                $channel->setArgument('$resizeToMaxHeight', $options['resize']['max_height']);
+                $rule->setArgument('$resizeToMaxWidth', $options['resize']['max_width']);
+                $rule->setArgument('$resizeToMaxHeight', $options['resize']['max_height']);
             }
 
             if ($this->isConfigEnabled($container, $options['optimize'])) {
@@ -61,14 +61,14 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
                     throw new \LogicException('Media optimize support cannot be enabled as the optimize component is not installed. Try running "composer require spatie/image-optimizer".');
                 }
 
-                $channel->setArgument('$optimizeToQuality', $options['optimize']['quality']);
+                $rule->setArgument('$optimizeToQuality', $options['optimize']['quality']);
             }
         }
 
         $container->setAlias(StorageInterface::class, $config['storage']);
 
-        $channelRegistry = $container->findDefinition(ChannelRegistry::class);
-        $channelRegistry->setArgument(0, ServiceLocatorTagPass::register($container, $servicesMap));
+        $ruleRegistry = $container->findDefinition(RuleRegistry::class);
+        $ruleRegistry->setArgument(0, ServiceLocatorTagPass::register($container, $servicesMap));
 
         $migrateCommand = $container->findDefinition(MigrateCommand::class);
         $migrateCommand->setArgument('$publicDir', '%kernel.project_dir%/public');

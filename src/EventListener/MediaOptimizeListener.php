@@ -18,13 +18,13 @@ class MediaOptimizeListener
 
     public function __invoke(MediaSaveEvent $event): void
     {
-        $channel = $event->getChannel();
-        if (null === $channel->optimizeToQuality) {
+        $rule = $event->getRule();
+        if (null === $rule->optimizeToQuality) {
             return;
         }
 
         try {
-            $optimizerChain = OptimizerChainFactory::create(['quality' => $channel->optimizeToQuality]);
+            $optimizerChain = OptimizerChainFactory::create(['quality' => $rule->optimizeToQuality]);
             $optimizerChain->useLogger($this->logger);
             $optimizerChain->optimize($event->getFile()->getPathname());
         } catch (\Throwable $th) {

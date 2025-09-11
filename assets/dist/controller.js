@@ -6,7 +6,7 @@ export default class extends Controller {
 
   static values = {
     url: String,
-    channel: String,
+    rule: String,
     confirm: String,
   }
 
@@ -15,7 +15,7 @@ export default class extends Controller {
     if (!files.length) return false
 
     const formData = new FormData()
-    formData.append('channel', this.channelValue)
+    formData.append('rule', this.rule)
     formData.append('file', files[0])
 
     // Add loading before send

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\Event;
 
-use Siganushka\MediaBundle\Channel;
 use Siganushka\MediaBundle\Entity\Media;
+use Siganushka\MediaBundle\Rule;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class MediaSaveEvent extends Event
@@ -13,13 +13,13 @@ class MediaSaveEvent extends Event
     private ?string $hash = null;
     private ?Media $media = null;
 
-    public function __construct(private readonly Channel $channel, private readonly \SplFileInfo $file)
+    public function __construct(private readonly Rule $rule, private readonly \SplFileInfo $file)
     {
     }
 
-    public function getChannel(): Channel
+    public function getRule(): Rule
     {
-        return $this->channel;
+        return $this->rule;
     }
 
     public function getFile(): \SplFileInfo
@@ -34,10 +34,10 @@ class MediaSaveEvent extends Event
         }
 
         $fileHash = md5_file($this->file->getPathname()) ?: throw new \RuntimeException('Unable to hash file.');
-        $channelHash = \sprintf('%s_%32s', $this->channel->alias, $fileHash);
+        $ruleHash = \sprintf('%s_%32s', $this->rule->alias, $fileHash);
 
-        // [important] The same source file will generate different HASH in different channels.
-        return $this->hash = md5($channelHash);
+        // [important] The same source file will generate different HASH in different rules.
+        return $this->hash = md5($ruleHash);
     }
 
     public function getMedia(): ?Media

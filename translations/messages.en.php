@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 return [
-    'media.channel' => 'Channel',
+    'media.rule' => 'Rule',
     'media.file' => 'File',
 
     'media.name' => 'Name',

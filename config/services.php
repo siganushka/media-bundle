@@ -23,7 +23,7 @@ return static function (ContainerConfigurator $container): void {
             '../src/Storage/AliyunOssStorage.php',
             '../src/Storage/HuaweiObsStorage.php',
             '../src/Utils/FileUtils.php',
-            '../src/Channel.php',
+            '../src/Rule.php',
             '../src/SiganushkaMediaBundle.php',
         ]);
 };

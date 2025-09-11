@@ -18,8 +18,6 @@ class MediaCheckListener
     public function __invoke(MediaSaveEvent $event): void
     {
         $media = $this->repository->findOneByHash($event->getHash());
-        if ($media) {
-            $event->setMedia($media)->stopPropagation();
-        }
+        $media && $event->setMedia($media)->stopPropagation();
     }
 }

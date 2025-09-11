@@ -6,7 +6,7 @@ namespace Siganushka\MediaBundle;
 
 use Symfony\Component\Validator\Constraints\File as AssertFile;
 
-final class Channel implements \Stringable
+final class Rule implements \Stringable
 {
     public function __construct(
         public readonly string $alias,

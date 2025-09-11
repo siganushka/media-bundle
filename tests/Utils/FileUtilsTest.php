@@ -5,18 +5,10 @@ declare(strict_types=1);
 namespace Siganushka\MediaBundle\Tests\Utils;
 
 use PHPUnit\Framework\TestCase;
-use Siganushka\MediaBundle\Channel;
 use Siganushka\MediaBundle\Utils\FileUtils;
 
 class FileUtilsTest extends TestCase
 {
-    protected Channel $channel;
-
-    protected function setUp(): void
-    {
-        $this->channel = new Channel('foo');
-    }
-
     public function testCreateFromUrl(): void
     {
         try {

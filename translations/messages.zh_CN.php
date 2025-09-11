@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 return [
-    'media.channel' => '类型',
+    'media.rule' => '规则',
     'media.file' => '文件',
 
     'media.name' => '名称',

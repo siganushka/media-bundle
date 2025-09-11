@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\Form\Extension;
 
-use Siganushka\MediaBundle\Channel;
-use Siganushka\MediaBundle\ChannelRegistry;
 use Siganushka\MediaBundle\Form\Type\MediaType;
+use Siganushka\MediaBundle\Rule;
+use Siganushka\MediaBundle\RuleRegistry;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -14,32 +14,32 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 
-class ChannelTypeExtension extends AbstractTypeExtension
+class RuleTypeExtension extends AbstractTypeExtension
 {
-    public function __construct(private readonly ChannelRegistry $registry)
+    public function __construct(private readonly RuleRegistry $registry)
     {
     }
 
     /**
-     * @param array{ channel: Channel } $options
+     * @param array{ rule: Rule } $options
      */
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
-        $view->vars['channel'] = $options['channel'];
-        $view->vars['accept'] = static::getAcceptFromFile($options['channel']->getConstraint());
+        $view->vars['rule'] = $options['rule'];
+        $view->vars['accept'] = static::getAcceptFromFile($options['rule']->getConstraint());
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setRequired('channel');
-        $resolver->setAllowedTypes('channel', ['string', Channel::class]);
+        $resolver->setRequired('rule');
+        $resolver->setAllowedTypes('rule', ['string', Rule::class]);
 
-        $resolver->setNormalizer('channel', function (Options $options, string|Channel $channel): Channel {
-            if ($channel instanceof Channel) {
-                return $channel;
+        $resolver->setNormalizer('rule', function (Options $options, string|Rule $rule): Rule {
+            if ($rule instanceof Rule) {
+                return $rule;
             }
 
-            return $this->registry->get($channel);
+            return $this->registry->get($rule);
         });
     }
 
