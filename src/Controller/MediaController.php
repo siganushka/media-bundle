@@ -33,7 +33,9 @@ class MediaController extends AbstractController
         $queryBuilder = $this->mediaRepository->createQueryBuilder('m');
         $pagination = $paginator->paginate($queryBuilder, $dto->page, $dto->size);
 
-        return $this->createResponse($pagination);
+        return $this->json($pagination, context: [
+            MediaNormalizer::AS_REFERENCE => false,
+        ]);
     }
 
     #[Route('/media', methods: 'POST')]
@@ -50,12 +52,16 @@ class MediaController extends AbstractController
 
         /** @var array */
         $data = $form->getData();
+
         $entity = $mediaManager->save(...$data);
+        $status = $entityManager->contains($entity) ? Response::HTTP_OK : Response::HTTP_CREATED;
 
         $entityManager->persist($entity);
         $entityManager->flush();
 
-        return $this->createResponse($entity);
+        return $this->json($entity, $status, context: [
+            MediaNormalizer::AS_REFERENCE => false,
+        ]);
     }
 
     #[Route('/media/{hash}', methods: 'GET')]
@@ -64,7 +70,9 @@ class MediaController extends AbstractController
         $entity = $this->mediaRepository->findOneByHash($hash)
             ?? throw $this->createNotFoundException();
 
-        return $this->createResponse($entity);
+        return $this->json($entity, context: [
+            MediaNormalizer::AS_REFERENCE => false,
+        ]);
     }
 
     #[Route('/media/{hash}', methods: 'DELETE')]
@@ -91,12 +99,5 @@ class MediaController extends AbstractController
         }
 
         return new ProblemJsonResponse(\sprintf('[%s] %s', $origin?->getName() ?? 'form', $error->getMessage()), $statusCode);
-    }
-
-    protected function createResponse(mixed $data, int $statusCode = Response::HTTP_OK, array $headers = []): Response
-    {
-        return $this->json($data, $statusCode, $headers, [
-            MediaNormalizer::AS_REFERENCE => false,
-        ]);
     }
 }
