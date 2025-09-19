@@ -10,7 +10,6 @@ use Siganushka\MediaBundle\Storage\StorageInterface;
 use Siganushka\MediaBundle\Utils\FileUtils;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[AsEventListener(priority: -8)]
 class MediaSaveListener
@@ -31,7 +30,7 @@ class MediaSaveListener
         // [important] Clears file status cache before access file.
         clearstatcache(true, $file->getPathname());
 
-        $normalizedName = $this->getNormalizedFileName($file);
+        $normalizedName = FileUtils::getNormalizedName($file);
         $extension = $file->guessExtension() ?? $file->getExtension();
         $mime = $file->getMimeType() ?? 'n/a';
         $size = $file->getSize() ?: 0;
@@ -64,15 +63,5 @@ class MediaSaveListener
         $media->setUrl($url);
 
         $event->setMedia($media);
-    }
-
-    private function getNormalizedFileName(\SplFileInfo $file): string
-    {
-        $name = $file instanceof UploadedFile ? $file->getClientOriginalName() : $file->getFilename();
-        if ($search = mb_substr(pathinfo($name, \PATHINFO_FILENAME), 32)) {
-            $name = str_replace($search, '', $name);
-        }
-
-        return $name;
     }
 }

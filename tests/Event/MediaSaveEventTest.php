@@ -32,4 +32,16 @@ class MediaSaveEventTest extends TestCase
         $event->setMedia(new Media());
         static::assertInstanceOf(Media::class, $event->getMedia());
     }
+
+    public function testHashException(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Unable to hash file.');
+
+        $rule = new Rule('foo');
+        $file = new \SplFileInfo('./non_exists_file.jpg');
+
+        $event = new MediaSaveEvent($rule, $file);
+        $event->getHash();
+    }
 }

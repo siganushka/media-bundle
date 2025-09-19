@@ -51,6 +51,21 @@ class FileUtilsTest extends TestCase
         @unlink($file->getPathname());
     }
 
+    public function testGetNormalizedName(): void
+    {
+        $file = new \SplFileInfo('./tests/Fixtures/php.jpg');
+        static::assertSame('php.jpg', FileUtils::getNormalizedName($file));
+
+        $file = new \SplFileInfo('./tests/Fixtures/php00000000000000000000000000000000000000000000000000.jpg');
+        static::assertSame('php00000000000000000000000000000.jpg', FileUtils::getNormalizedName($file));
+
+        $file = new \SplFileInfo('./tests/Fixtures/php01234567890123456789012345678901234567890123456789.jpg');
+        static::assertSame('php0123456789012.jpg', FileUtils::getNormalizedName($file, 16));
+
+        $file = new \SplFileInfo('./tests/Fixtures/php');
+        static::assertSame('php', FileUtils::getNormalizedName($file));
+    }
+
     public function testDataUriInvalidArgumentException(): void
     {
         $this->expectException(\InvalidArgumentException::class);

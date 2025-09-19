@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\Utils;
 
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+
 class FileUtils
 {
     /**
@@ -80,6 +82,22 @@ class FileUtils
         }
 
         return $file;
+    }
+
+    /**
+     * Gets normalized filename.
+     *
+     * @return string normalized filename
+     */
+    public static function getNormalizedName(\SplFileInfo $file, int $maxLength = 32): string
+    {
+        $name = $file instanceof UploadedFile ? $file->getClientOriginalName() : $file->getFilename();
+        $normalizedName = mb_substr(pathinfo($name, \PATHINFO_FILENAME), 0, $maxLength);
+        if ($extension = pathinfo($name, \PATHINFO_EXTENSION)) {
+            $normalizedName .= '.'.$extension;
+        }
+
+        return $normalizedName;
     }
 
     /**
