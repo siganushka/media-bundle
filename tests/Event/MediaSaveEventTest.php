@@ -42,6 +42,6 @@ class MediaSaveEventTest extends TestCase
         $file = new \SplFileInfo('./non_exists_file.jpg');
 
         $event = new MediaSaveEvent($rule, $file);
-        $event->getHash();
+        @$event->getHash();
     }
 }

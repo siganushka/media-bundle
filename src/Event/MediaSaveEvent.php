@@ -33,7 +33,7 @@ class MediaSaveEvent extends Event
             return $this->hash;
         }
 
-        $fileHash = @md5_file($this->file->getPathname()) ?: throw new \RuntimeException('Unable to hash file.');
+        $fileHash = md5_file($this->file->getPathname()) ?: throw new \RuntimeException('Unable to hash file.');
         $ruleHash = \sprintf('%s_%32s', $this->rule->alias, $fileHash);
 
         // [important] The same source file will generate different HASH in different rules.
