@@ -31,8 +31,8 @@ class MediaSaveListener
         clearstatcache(true, $file->getPathname());
 
         $normalizedName = FileUtils::getNormalizedName($file);
-        $extension = $file->guessExtension() ?? $file->getExtension();
-        $mime = $file->getMimeType() ?? 'n/a';
+        $extension = $file->guessExtension() ?? throw new \RuntimeException('Unable to guess extension.');
+        $mime = $file->getMimeType() ?? throw new \RuntimeException('Unable to get mime type.');
         $size = $file->getSize() ?: 0;
 
         try {
