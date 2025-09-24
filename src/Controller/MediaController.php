@@ -30,7 +30,7 @@ class MediaController extends AbstractController
     #[Route('/media', methods: 'GET')]
     public function getCollection(PaginatorInterface $paginator, #[MapQueryString] PaginationDto $dto): Response
     {
-        $queryBuilder = $this->mediaRepository->createQueryBuilder('m');
+        $queryBuilder = $this->mediaRepository->createQueryBuilderWithOrderBy('m');
         $pagination = $paginator->paginate($queryBuilder, $dto->page, $dto->size);
 
         return $this->json($pagination, context: [
