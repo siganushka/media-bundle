@@ -13,21 +13,19 @@ class HuaweiObsStorage extends AbstractStorage
 {
     private readonly ObsClient $client;
 
-    public function __construct(string $accessKeyId, string $accessKeySecret, string $endpoint, private readonly string $bucket, ?string $prefix = null)
+    public function __construct(string $accessKeyId, string $accessKeySecret, string $endpoint, private readonly string $bucket, array $options = [])
     {
         if (!class_exists(ObsClient::class)) {
             throw new \LogicException(\sprintf('The "%s" class requires the "obs/esdk-obs-php" component. Try running "composer require obs/esdk-obs-php".', self::class));
         }
 
-        $this->client = ObsClient::factory([
+        $this->client = new ObsClient([
             'key' => $accessKeyId,
             'secret' => $accessKeySecret,
             'endpoint' => $endpoint,
-            'socket_timeout' => 30,
-            'connect_timeout' => 10,
-        ]);
+        ] + $options);
 
-        parent::__construct($prefix);
+        parent::__construct($options[self::PREFIX_DIR] ?? null);
     }
 
     public function doSave(\SplFileInfo $originFile, string $targetFileToSave): string

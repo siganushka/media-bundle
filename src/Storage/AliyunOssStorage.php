@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\Storage;
 
+use OSS\Credentials\StaticCredentialsProvider;
 use OSS\OssClient;
 
 /**
@@ -11,22 +12,43 @@ use OSS\OssClient;
  */
 class AliyunOssStorage extends AbstractStorage
 {
-    private readonly OssClient $ossClient;
+    public const TIMEOUT = 'timeout';
+    public const CONNECT_TIMEOUT = 'connect_timeout';
+    public const MAX_RETRIES = 'max_retries';
+    public const USE_SSL = 'use_ssl';
 
-    public function __construct(string $accessKeyId, string $accessKeySecret, string $endpoint, private readonly string $bucket, ?string $prefix = null)
+    private readonly OssClient $client;
+
+    public function __construct(string $accessKeyId, string $accessKeySecret, string $endpoint, private readonly string $bucket, array $options = [])
     {
         if (!class_exists(OssClient::class)) {
             throw new \LogicException(\sprintf('The "%s" class requires the "aliyuncs/oss-sdk-php" component. Try running "composer require aliyuncs/oss-sdk-php".', self::class));
         }
 
-        $this->ossClient = new OssClient($accessKeyId, $accessKeySecret, $endpoint);
+        $options[self::USE_SSL] ??= true;
 
-        parent::__construct($prefix);
+        $provider = new StaticCredentialsProvider($accessKeyId, $accessKeySecret);
+        $config = compact('provider', 'endpoint') + $options;
+
+        $this->client = new OssClient($config);
+
+        foreach ([
+            self::TIMEOUT => $this->client->setTimeout(...),
+            self::CONNECT_TIMEOUT => $this->client->setConnectTimeout(...),
+            self::MAX_RETRIES => $this->client->setMaxTries(...),
+            self::USE_SSL => $this->client->setUseSSL(...),
+        ] as $name => $callable) {
+            if (\array_key_exists($name, $options)) {
+                \call_user_func($callable, $options[$name]);
+            }
+        }
+
+        parent::__construct($options[self::PREFIX_DIR] ?? null);
     }
 
     public function doSave(\SplFileInfo $originFile, string $targetFileToSave): string
     {
-        $result = $this->ossClient->uploadFile($this->bucket, $targetFileToSave, $originFile->getPathname());
+        $result = $this->client->uploadFile($this->bucket, $targetFileToSave, $originFile->getPathname());
 
         $url = $result['info']['url'] ?? null;
         if ($url && \is_string($url)) {
@@ -38,6 +60,6 @@ class AliyunOssStorage extends AbstractStorage
 
     public function doDelete(string $path): void
     {
-        $this->ossClient->deleteObject($this->bucket, ltrim($path, '/'));
+        $this->client->deleteObject($this->bucket, ltrim($path, '/'));
     }
 }

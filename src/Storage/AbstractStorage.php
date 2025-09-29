@@ -8,6 +8,8 @@ use Symfony\Component\HttpFoundation\File\File;
 
 abstract class AbstractStorage implements StorageInterface
 {
+    public const PREFIX_DIR = 'prefix_dir';
+
     public function __construct(private readonly ?string $prefixDir = null)
     {
     }

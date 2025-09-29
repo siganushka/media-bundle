@@ -9,9 +9,9 @@ use Symfony\Component\HttpFoundation\UrlHelper;
 
 class LocalStorage extends AbstractStorage
 {
-    public function __construct(private readonly UrlHelper $urlHelper, private readonly string $publicDir, string $uploadDir)
+    public function __construct(private readonly UrlHelper $urlHelper, private readonly string $publicDir, array $options = [])
     {
-        parent::__construct($uploadDir);
+        parent::__construct($options[self::PREFIX_DIR] ?? 'uploads');
     }
 
     public function doSave(\SplFileInfo $originFile, string $targetFileToSave): string
