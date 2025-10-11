@@ -6,7 +6,7 @@ namespace Siganushka\MediaBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use Siganushka\GenericBundle\Dto\PaginationDto;
+use Siganushka\GenericBundle\Dto\PageQueryDto;
 use Siganushka\GenericBundle\Response\ProblemJsonResponse;
 use Siganushka\MediaBundle\Form\MediaUploadType;
 use Siganushka\MediaBundle\MediaManagerInterface;
@@ -28,7 +28,7 @@ class MediaController extends AbstractController
     }
 
     #[Route('/media', methods: 'GET')]
-    public function getCollection(PaginatorInterface $paginator, #[MapQueryString] PaginationDto $dto): Response
+    public function getCollection(PaginatorInterface $paginator, #[MapQueryString] PageQueryDto $dto): Response
     {
         $queryBuilder = $this->mediaRepository->createQueryBuilderWithOrderBy('m');
         $pagination = $paginator->paginate($queryBuilder, $dto->page, $dto->size);
