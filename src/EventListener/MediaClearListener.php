@@ -20,9 +20,7 @@ class MediaClearListener
         $rule = $event->getRule();
         $file = $event->getFile();
 
-        $this->logger->info(\sprintf('Clear processed media file "%s" in rule "%s".', $file->getPathname(), $rule->alias), [
-            'exists' => $file->isFile(),
-        ]);
+        $this->logger->info(\sprintf('Clear processed media file "%s" in rule "%s".', $file->getPathname(), $rule->alias));
 
         if ($file->isFile()) {
             @unlink($file->getPathname());
