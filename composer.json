@@ -17,10 +17,10 @@
         "knplabs/knp-components": "^4.4|^5.0",
         "siganushka/doctrine-contracts": "dev-main",
         "siganushka/generic-bundle": "dev-main",
-        "symfony/form": "^6.4|^7.0",
-        "symfony/framework-bundle": "^6.4|^7.0",
-        "symfony/serializer": "^6.4|^7.0",
-        "symfony/validator": "^6.4|^7.0"
+        "symfony/form": "^6.4|^7.0|^8.0",
+        "symfony/framework-bundle": "^6.4|^7.0|^8.0",
+        "symfony/serializer": "^6.4|^7.0|^8.0",
+        "symfony/validator": "^6.4|^7.0|^8.0"
     },
     "require-dev": {
         "aliyuncs/oss-sdk-php": "^2.7",
