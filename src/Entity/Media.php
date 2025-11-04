@@ -13,6 +13,7 @@ use Siganushka\MediaBundle\Repository\MediaRepository;
 
 #[ORM\Entity(repositoryClass: MediaRepository::class)]
 #[ORM\UniqueConstraint(columns: ['hash'])]
+#[ORM\Cache(usage: 'NONSTRICT_READ_WRITE')]
 class Media implements ResourceInterface, CreatableInterface, \Stringable
 {
     use CreatableTrait;
