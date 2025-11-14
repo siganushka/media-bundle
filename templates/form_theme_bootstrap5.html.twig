@@ -25,7 +25,7 @@
     {% endif %}
   </div>
 
-  {# Using width=0, height=0 (not display=none) to keep keyboard events #}
+  {# Using opacity=0 (not display=none) to keep keyboard events #}
   <input
     type="file"
     id="{{ id }}_uploader"
@@ -33,6 +33,7 @@
     data-siganushka-media-target='file'
     data-action="change->siganushka-media#change"
     {% if disabled or data %}disabled{% endif ~%}
+    {% if required %}required{% endif ~%}
   />
 
   {# Using required=false to fix chrome error (An invalid form control with name='xxx' is not focusable) #}
