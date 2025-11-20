@@ -7,8 +7,8 @@ return [
     'media.file' => '文件',
 
     'media.name' => '名称',
-    'media.extension' => '后缀',
-    'media.mime_type' => '类型',
+    'media.extension' => '格式',
+    'media.mime' => '类型',
     'media.size' => '大小',
     'media.pixel' => '尺寸',
 ];
