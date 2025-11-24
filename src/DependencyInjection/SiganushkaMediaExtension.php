@@ -65,8 +65,6 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
             }
         }
 
-        $container->setAlias(StorageInterface::class, $config['storage']);
-
         $ruleRegistry = $container->findDefinition(RuleRegistry::class);
         $ruleRegistry->setArgument(0, ServiceLocatorTagPass::register($container, $servicesMap));
 
@@ -78,6 +76,8 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
 
         $mediaListener = $container->findDefinition(MediaListener::class);
         $mediaListener->addTag('doctrine.orm.entity_listener', ['event' => Events::postRemove, 'entity' => $config['media_class']]);
+
+        $container->setAlias(StorageInterface::class, $config['storage']);
     }
 
     public function prepend(ContainerBuilder $container): void
