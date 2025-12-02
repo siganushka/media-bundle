@@ -9,6 +9,7 @@ use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Storage\LocalStorage;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeParentInterface;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Validator\Constraints\File;
@@ -20,10 +21,12 @@ class Configuration implements ConfigurationInterface
         'media_class' => [Media::class, MediaRepository::class],
     ];
 
+    /**
+     * @return TreeBuilder<'array'>
+     */
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('siganushka_media');
-        /** @var ArrayNodeDefinition */
         $rootNode = $treeBuilder->getRootNode();
 
         foreach (static::$resourceMapping as $configName => [$entityClass]) {
@@ -44,6 +47,9 @@ class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
+    /**
+     * @param ArrayNodeDefinition<NodeParentInterface> $rootNode
+     */
     public function addStorageSection(ArrayNodeDefinition $rootNode): void
     {
         $rootNode->children()
@@ -57,9 +63,11 @@ class Configuration implements ConfigurationInterface
         ;
     }
 
+    /**
+     * @param ArrayNodeDefinition<NodeParentInterface> $rootNode
+     */
     public function addRulesSection(ArrayNodeDefinition $rootNode): void
     {
-        /** @var ArrayNodeDefinition */
         $ruleNode = $rootNode
             ->fixXmlConfig('rule')
             ->children()

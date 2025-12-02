@@ -10,3 +10,5 @@ parameters:
     ignoreErrors:
         - '#no value type specified in iterable type array#'
         - '#no value type specified in iterable type iterable#'
+        - '#does not specify its types: TData#'
+        - { message: '#with string will always evaluate to true#', path: src/Form/DataTransformer/MediaReferenceToHashTransformer.php }

@@ -20,7 +20,7 @@ class FileUtils
     public static function createFromUrl(string $url, int $timeout = 10): \SplFileInfo
     {
         $curl = curl_init();
-        if (false === $curl) {
+        if (false === $curl || empty($url)) {
             throw new \RuntimeException('Failed to initialize CURL.');
         }
 
@@ -75,7 +75,6 @@ class FileUtils
         $file = new \SplFileInfo(sys_get_temp_dir().'/'.($fileName ?? uniqid()));
         $fileobj = $file->openFile('a');
 
-        /** @var int|false */
         $result = $fileobj->fwrite($content);
         if (false === $result) {
             throw new \RuntimeException('Failed to save file.');

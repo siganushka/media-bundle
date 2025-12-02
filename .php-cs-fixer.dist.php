@@ -12,9 +12,9 @@ $finder = (new PhpCsFixer\Finder())
 return (new PhpCsFixer\Config())
     ->setParallelConfig(PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect())
     ->setRules([
-        '@PHP74Migration' => true,
-        '@PHP74Migration:risky' => true,
-        '@PHPUnit75Migration:risky' => true,
+        '@PHP8x1Migration' => true,
+        '@PHP8x1Migration:risky' => true,
+        '@PHPUnit9x1Migration:risky' => true,
         '@Symfony' => true,
         '@Symfony:risky' => true,
         'protected_to_private' => false,
