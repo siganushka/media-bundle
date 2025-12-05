@@ -20,13 +20,13 @@ return static function (RoutingConfigurator $routes): void {
         ->stateless(true)
     ;
 
-    $routes->add('siganushka_media_getitem', '/media/{hash}')
+    $routes->add('siganushka_media_getitem', '/media/{hash<[0-9a-fA-F]{32}>}')
         ->controller([MediaController::class, 'getItem'])
         ->methods(['GET'])
         ->stateless(true)
     ;
 
-    $routes->add('siganushka_media_deleteitem', '/media/{hash}')
+    $routes->add('siganushka_media_deleteitem', '/media/{hash<[0-9a-fA-F]{32}>}')
         ->controller([MediaController::class, 'deleteItem'])
         ->methods(['DELETE'])
         ->stateless(true)
