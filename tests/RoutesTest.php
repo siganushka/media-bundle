@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Siganushka\MediaBundle\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Siganushka\MediaBundle\Controller\MediaController;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Routing\Loader\PhpFileLoader;
 use Symfony\Component\Routing\Route;
@@ -22,32 +23,31 @@ class RoutesTest extends TestCase
 
     public function testAll(): void
     {
-        static::assertSame([
-            'siganushka_media_getcollection',
-            'siganushka_media_postcollection',
-            'siganushka_media_getitem',
-            'siganushka_media_deleteitem',
-        ], array_keys($this->routes->all()));
+        $routes = iterator_to_array(self::routesProvider());
+        $routeNames = array_map(fn (array $route) => $route[0], $routes);
+
+        static::assertSame($routeNames, array_keys($this->routes->all()));
     }
 
     /**
      * @dataProvider routesProvider
      */
-    public function testRotues(string $routeName, string $path, array $methods): void
+    public function testRotues(string $routeName, string $path, array $methods, array $controller): void
     {
         /** @var Route */
         $route = $this->routes->get($routeName);
 
         static::assertSame($path, $route->getPath());
         static::assertSame($methods, $route->getMethods());
+        static::assertSame($controller, $route->getDefault('_controller'));
         static::assertTrue($route->getDefault('_stateless'));
     }
 
     public static function routesProvider(): iterable
     {
-        yield ['siganushka_media_getcollection', '/media', ['GET']];
-        yield ['siganushka_media_postcollection', '/media', ['POST']];
-        yield ['siganushka_media_getitem', '/media/{hash}', ['GET']];
-        yield ['siganushka_media_deleteitem', '/media/{hash}', ['DELETE']];
+        yield ['siganushka_media_getcollection', '/media', ['GET'], [MediaController::class, 'getCollection']];
+        yield ['siganushka_media_postcollection', '/media', ['POST'], [MediaController::class, 'postCollection']];
+        yield ['siganushka_media_getitem', '/media/{hash}', ['GET'], [MediaController::class, 'getItem']];
+        yield ['siganushka_media_deleteitem', '/media/{hash}', ['DELETE'], [MediaController::class, 'deleteItem']];
     }
 }
