@@ -19,7 +19,6 @@ use Symfony\Component\Form\Util\FormUtil;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
-use Symfony\Component\Routing\Attribute\Route;
 
 class MediaController extends AbstractController
 {
@@ -27,7 +26,6 @@ class MediaController extends AbstractController
     {
     }
 
-    #[Route('/media', methods: 'GET')]
     public function getCollection(PaginatorInterface $paginator, #[MapQueryString] PageQueryDto $dto): Response
     {
         $queryBuilder = $this->mediaRepository->createQueryBuilderWithOrderBy('m');
@@ -38,7 +36,6 @@ class MediaController extends AbstractController
         ]);
     }
 
-    #[Route('/media', methods: 'POST')]
     public function postCollection(Request $request, EntityManagerInterface $entityManager, MediaManagerInterface $mediaManager): Response
     {
         $formData = FormUtil::mergeParamsAndFiles($request->request->all(), $request->files->all());
@@ -64,7 +61,6 @@ class MediaController extends AbstractController
         ]);
     }
 
-    #[Route('/media/{hash}', methods: 'GET')]
     public function getItem(string $hash): Response
     {
         $entity = $this->mediaRepository->findOneByHash($hash)
@@ -75,7 +71,6 @@ class MediaController extends AbstractController
         ]);
     }
 
-    #[Route('/media/{hash}', methods: 'DELETE')]
     public function deleteItem(EntityManagerInterface $entityManager, string $hash): Response
     {
         $entity = $this->mediaRepository->findOneByHash($hash)
