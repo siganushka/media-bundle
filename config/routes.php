@@ -11,24 +11,20 @@ return static function (RoutingConfigurator $routes): void {
     $routes->add('siganushka_media_getcollection', '/media')
         ->controller([MediaController::class, 'getCollection'])
         ->methods(['GET'])
-        ->stateless(true)
     ;
 
     $routes->add('siganushka_media_postcollection', '/media')
         ->controller([MediaController::class, 'postCollection'])
         ->methods(['POST'])
-        ->stateless(true)
     ;
 
     $routes->add('siganushka_media_getitem', '/media/{hash<[0-9a-fA-F]{32}>}')
         ->controller([MediaController::class, 'getItem'])
         ->methods(['GET'])
-        ->stateless(true)
     ;
 
     $routes->add('siganushka_media_deleteitem', '/media/{hash<[0-9a-fA-F]{32}>}')
         ->controller([MediaController::class, 'deleteItem'])
         ->methods(['DELETE'])
-        ->stateless(true)
     ;
 };

@@ -40,7 +40,6 @@ class RoutesTest extends TestCase
         static::assertSame($path, $route->getPath());
         static::assertSame($methods, $route->getMethods());
         static::assertSame($controller, $route->getDefault('_controller'));
-        static::assertTrue($route->getDefault('_stateless'));
     }
 
     public static function routesProvider(): iterable
