@@ -42,10 +42,10 @@
     },
     "scripts": {
         "tools:run": [
-            "tools/vendor/bin/php-cs-fixer fix -vvv",
-            "tools/vendor/bin/twigcs -vvv",
-            "tools/vendor/bin/simple-phpunit -vvv",
-            "tools/vendor/bin/phpstan analyse -vvv"
+            "tools/vendor/bin/php-cs-fixer fix",
+            "tools/vendor/bin/twigcs",
+            "tools/vendor/bin/simple-phpunit",
+            "tools/vendor/bin/phpstan"
         ]
     }
 }
