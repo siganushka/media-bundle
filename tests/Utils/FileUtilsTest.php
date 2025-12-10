@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\Tests\Utils;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Siganushka\MediaBundle\Utils\FileUtils;
 
@@ -86,9 +87,7 @@ class FileUtilsTest extends TestCase
         FileUtils::getFormattedSize(new \SplFileInfo('./non_existing_file'));
     }
 
-    /**
-     * @dataProvider bytesProvider
-     */
+    #[DataProvider('bytesProvider')]
     public function testFormatBytes(string $formatted, int $bytes): void
     {
         static::assertSame($formatted, FileUtils::formatBytes($bytes));

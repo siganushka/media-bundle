@@ -1,16 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<phpunit
-    colors="true"
-    bootstrap="vendor/autoload.php">
-
-    <testsuites>
-        <testsuite name="Siganushka MediaBundle Test Suite">
-            <directory>tests</directory>
-        </testsuite>
-    </testsuites>
-
-    <listeners>
-        <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener"/>
-    </listeners>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.5/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         executionOrder="depends,defects"
+         beStrictAboutOutputDuringTests="true"
+         failOnRisky="true"
+         failOnWarning="true"
+         failOnDeprecation="true"
+         failOnPhpunitDeprecation="true"
+         beStrictAboutCoverageMetadata="true"
+>
+  <php>
+    <ini name="error_reporting" value="-1"/>
+    <server name="SYMFONY_PHPUNIT_VERSION" value="11.5"/>
+  </php>
+  <testsuites>
+    <testsuite name="default">
+      <directory>tests</directory>
+    </testsuite>
+  </testsuites>
+  <source>
+    <include>
+      <directory suffix=".php">src</directory>
+    </include>
+  </source>
 </phpunit>
