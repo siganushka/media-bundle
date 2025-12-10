@@ -18,10 +18,6 @@ class MediaResizeListener
 
     public function __invoke(MediaSaveEvent $event): void
     {
-        if (!class_exists(\Imagick::class)) {
-            return;
-        }
-
         $rule = $event->getRule();
         $file = $event->getFile();
 
@@ -42,7 +38,7 @@ class MediaResizeListener
         }
     }
 
-    public function resizeByMaxWidth(\SplFileInfo $file, int $maxWidth): void
+    private function resizeByMaxWidth(\SplFileInfo $file, int $maxWidth): void
     {
         [$width, $height] = FileUtils::getImageSize($file);
         if ($width <= $maxWidth) {
@@ -71,7 +67,7 @@ class MediaResizeListener
         ));
     }
 
-    public function resizeByMaxHeight(\SplFileInfo $file, int $maxHeight): void
+    private function resizeByMaxHeight(\SplFileInfo $file, int $maxHeight): void
     {
         [$width, $height] = FileUtils::getImageSize($file);
         if ($height <= $maxHeight) {
