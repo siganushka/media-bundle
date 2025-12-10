@@ -14,6 +14,7 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\Image;
+use Symfony\Component\Validator\Constraints\Video;
 
 class Configuration implements ConfigurationInterface
 {
@@ -82,6 +83,10 @@ class Configuration implements ConfigurationInterface
                             'constraint_options' => ['minWidth' => 320, 'allowSquare' => true],
                         ],
                         'baz' => [
+                            'constraint' => 'video',
+                            'constraint_options' => ['minWidth' => 1280, 'minHeight' => 720, 'allowedContainers' => ['mp4', 'webm']],
+                        ],
+                        'custom_rule' => [
                             'constraint' => 'App\Validator\MyCustomConstraint',
                             'constraint_options' => ['abc' => 1],
                         ],
@@ -100,6 +105,7 @@ class Configuration implements ConfigurationInterface
                         ->then(fn (string $v): string => match ($v) {
                             'file' => File::class,
                             'image' => Image::class,
+                            'video' => Video::class,
                             default => $v,
                         })
                     ->end()
