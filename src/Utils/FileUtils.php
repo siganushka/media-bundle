@@ -45,7 +45,7 @@ class FileUtils
      *
      * @see https://en.wikipedia.org/wiki/Data_URI_scheme
      * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URLs
-     * @see https://github.com/symfony/serializer/blob/7.2/Normalizer/DataUriNormalizer.php#L88
+     * @see https://github.com/symfony/serializer/blob/7.4/Normalizer/DataUriNormalizer.php#L88
      *
      * @param string      $dataUri  Data URI content
      * @param string|null $fileName Temporary file name

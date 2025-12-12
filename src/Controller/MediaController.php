@@ -47,7 +47,7 @@ class MediaController extends AbstractController
         $form = $this->createForm(MediaUploadType::class);
         $form->submit($formData);
 
-        /* @see HttpFoundationRequestHandler::handleRequest */
+        /* @see HttpFoundationRequestHandler::handleRequest() */
         if ($this->serverParams->hasPostMaxSizeBeenExceeded()) {
             $form->addError(new FormError($form->getConfig()->getOption('upload_max_size_message')()));
         }
@@ -88,7 +88,6 @@ class MediaController extends AbstractController
         $entityManager->remove($entity);
         $entityManager->flush();
 
-        // 204 No Content
         return new Response(status: Response::HTTP_NO_CONTENT);
     }
 
