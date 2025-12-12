@@ -10,6 +10,7 @@ use Siganushka\Contracts\Doctrine\CreatableTrait;
 use Siganushka\Contracts\Doctrine\ResourceInterface;
 use Siganushka\Contracts\Doctrine\ResourceTrait;
 use Siganushka\MediaBundle\Repository\MediaRepository;
+use Siganushka\MediaBundle\Utils\FileUtils;
 
 #[ORM\Entity(repositoryClass: MediaRepository::class)]
 #[ORM\UniqueConstraint(columns: ['hash'])]
@@ -106,6 +107,11 @@ class Media implements ResourceInterface, CreatableInterface, \Stringable
     public function getSize(): ?int
     {
         return $this->size;
+    }
+
+    public function getSizeStr(): ?string
+    {
+        return null === $this->size ? null : FileUtils::formatBytes($this->size);
     }
 
     public function setSize(int $size): static

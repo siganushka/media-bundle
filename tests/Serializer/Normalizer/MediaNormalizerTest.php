@@ -38,6 +38,7 @@ class MediaNormalizerTest extends TestCase
             'extension' => 'jpg',
             'mime' => 'image/jpeg',
             'size' => 1536,
+            'sizeStr' => '1.5KB',
             'width' => 300,
             'height' => null,
             'createdAt' => null,
