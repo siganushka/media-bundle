@@ -24,9 +24,9 @@ class MediaOptimizeListener
         }
 
         try {
-            $optimizerChain = OptimizerChainFactory::create(['quality' => $rule->optimizeToQuality]);
-            $optimizerChain->useLogger($this->logger);
-            $optimizerChain->optimize($event->getFile()->getPathname());
+            $optimizer = OptimizerChainFactory::create(['quality' => $rule->optimizeToQuality]);
+            $optimizer->useLogger($this->logger);
+            $optimizer->optimize($event->getFile()->getPathname());
         } catch (\Throwable $th) {
             $this->logger->error('Error on optimize file.', [
                 'msg' => $th->getMessage(),

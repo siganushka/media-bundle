@@ -8,7 +8,7 @@ use Psr\Log\LoggerInterface;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
-#[AsEventListener(priority: -256)]
+#[AsEventListener(priority: -128)]
 class MediaClearListener
 {
     public function __construct(private readonly LoggerInterface $logger)
@@ -20,7 +20,10 @@ class MediaClearListener
         $rule = $event->getRule();
         $file = $event->getFile();
 
-        $this->logger->info(\sprintf('Clear processed media file "%s" in rule "%s".', $file->getPathname(), $rule->alias));
+        $this->logger->info(\sprintf('Clear processed media file "%s" in rule "%s".',
+            $file->getPathname(),
+            $rule->alias,
+        ));
 
         if ($file->isFile()) {
             @unlink($file->getPathname());
