@@ -25,11 +25,11 @@ class MediaNormalizer implements NormalizerInterface
     public function normalize($object, ?string $format = null, array $context = []): array|string
     {
         $asReference = $context[self::AS_REFERENCE] ?? true;
-        if ($asReference && !\array_key_exists(AbstractNormalizer::ATTRIBUTES, $context)) {
+        if ($asReference) {
             return $object->__toString();
         }
 
-        /** @var array|string */
+        /** @var array */
         $data = $this->normalizer->normalize($object, $format, array_merge_recursive($context, [
             AbstractNormalizer::IGNORED_ATTRIBUTES => ['id'],
         ]));
