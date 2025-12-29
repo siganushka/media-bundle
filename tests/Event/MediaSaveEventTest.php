@@ -17,20 +17,13 @@ class MediaSaveEventTest extends TestCase
         $file = new \SplFileInfo('./tests/Fixtures/php.jpg');
 
         $event = new MediaSaveEvent($rule, $file);
-
-        // Assert lazy hash file.
-        $rp = new \ReflectionProperty(MediaSaveEvent::class, 'hash');
-        static::assertNull($rp->getValue($event));
-
-        static::assertSame('7e0bd17a39cf13a8db65d27fdc2de64c', $event->getHash());
-        static::assertSame('7e0bd17a39cf13a8db65d27fdc2de64c', $rp->getValue($event));
-
-        static::assertNull($event->getMedia());
         static::assertSame($rule, $event->getRule());
         static::assertSame($file, $event->getFile());
+        static::assertSame('7e0bd17a39cf13a8db65d27fdc2de64c', $event->getHash());
+        static::assertNull($event->getMedia());
 
-        $event->setMedia(new Media());
-        static::assertInstanceOf(Media::class, $event->getMedia());
+        $event->setMedia($media = new Media());
+        static::assertSame($media, $event->getMedia());
     }
 
     public function testHashException(): void
@@ -42,6 +35,6 @@ class MediaSaveEventTest extends TestCase
         $file = new \SplFileInfo('./non_exists_file.jpg');
 
         $event = new MediaSaveEvent($rule, $file);
-        @$event->getHash();
+        $event->getHash();
     }
 }

@@ -10,12 +10,14 @@ use Siganushka\GenericBundle\Response\ProblemJsonResponse;
 use Siganushka\MediaBundle\Form\MediaUploadType;
 use Siganushka\MediaBundle\MediaManagerInterface;
 use Siganushka\MediaBundle\Repository\MediaRepository;
+use Siganushka\MediaBundle\Rule;
 use Siganushka\MediaBundle\Serializer\Normalizer\MediaNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Util\FormUtil;
 use Symfony\Component\Form\Util\ServerParams;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -54,7 +56,7 @@ class MediaController extends AbstractController
             return $this->createFormErrorResponse($form, Response::HTTP_BAD_REQUEST);
         }
 
-        /** @var array */
+        /** @var array{ rule: Rule, file: UploadedFile } */
         $data = $form->getData();
 
         $entity = $mediaManager->save(...$data);
