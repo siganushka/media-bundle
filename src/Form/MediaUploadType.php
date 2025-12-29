@@ -35,8 +35,8 @@ class MediaUploadType extends AbstractType
         ;
 
         $builder->get('rule')
-            ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'formModifier'])
-            ->addEventListener(FormEvents::POST_SUBMIT, [$this, 'formModifier'])
+            ->addEventListener(FormEvents::PRE_SET_DATA, $this->formModifier(...))
+            ->addEventListener(FormEvents::POST_SUBMIT, $this->formModifier(...))
         ;
     }
 
