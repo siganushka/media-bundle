@@ -22,7 +22,7 @@ abstract class AbstractStorage implements StorageInterface
 
         $targetFileToSave = $targetFile ?? $originFile->getBasename();
         if ($this->prefixDir) {
-            $targetFileToSave = $this->prefixDir.'/'.$targetFileToSave;
+            $targetFileToSave = ltrim($this->prefixDir.'/'.$targetFileToSave, '/');
         }
 
         return $this->doSave($originFile, $targetFileToSave);
