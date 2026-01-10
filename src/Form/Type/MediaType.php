@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Siganushka\MediaBundle\Form\Type;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Siganushka\GenericBundle\Form\DataTransformer\EntityToIdentifierTransformer;
-use Siganushka\MediaBundle\Form\DataTransformer\MediaReferenceToHashTransformer;
+use Siganushka\MediaBundle\Form\DataTransformer\MediaToReferenceTransformer;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -25,8 +24,7 @@ class MediaType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->addViewTransformer(new MediaReferenceToHashTransformer(), true);
-        $builder->addViewTransformer(new EntityToIdentifierTransformer($this->registry, $this->repository->getClassName(), 'hash'), true);
+        $builder->addViewTransformer(new MediaToReferenceTransformer($this->registry, $this->repository->getClassName()));
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options): void

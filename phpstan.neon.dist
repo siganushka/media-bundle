@@ -11,5 +11,4 @@ parameters:
         - '#no value type specified in iterable type array#'
         - '#no value type specified in iterable type iterable#'
         - '#does not specify its types: TData#'
-        - { message: '#Call to function is_string\(\) with string will always evaluate to true#', path: src/Form/DataTransformer/MediaReferenceToHashTransformer.php }
         - { message: '#Trying to invoke mixed but it''s not a callable#', path: src/Controller/MediaController.php }
