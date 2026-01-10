@@ -19,7 +19,7 @@ class AliyunOssStorage extends AbstractStorage
 
     public readonly OssClient $client;
 
-    public function __construct(string $accessKeyId, string $accessKeySecret, string $endpoint, private readonly string $bucket, array $options = [])
+    public function __construct(string $accessKeyId, string $accessKeySecret, string $endpoint, public readonly string $bucket, array $options = [])
     {
         if (!class_exists(OssClient::class)) {
             throw new \LogicException(\sprintf('The "%s" class requires the "aliyuncs/oss-sdk-php" component. Try running "composer require aliyuncs/oss-sdk-php".', self::class));
