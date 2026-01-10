@@ -17,7 +17,7 @@ class AliyunOssStorage extends AbstractStorage
     public const MAX_RETRIES = 'max_retries';
     public const USE_SSL = 'use_ssl';
 
-    private readonly OssClient $client;
+    public readonly OssClient $client;
 
     public function __construct(string $accessKeyId, string $accessKeySecret, string $endpoint, private readonly string $bucket, array $options = [])
     {

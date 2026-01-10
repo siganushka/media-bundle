@@ -11,7 +11,7 @@ use Obs\ObsClient;
  */
 class HuaweiObsStorage extends AbstractStorage
 {
-    private readonly ObsClient $client;
+    public readonly ObsClient $client;
 
     public function __construct(string $accessKeyId, string $accessKeySecret, string $endpoint, private readonly string $bucket, array $options = [])
     {
