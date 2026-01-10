@@ -3,7 +3,7 @@
   height: 100px;
   background-position: center center;
   background-repeat: no-repeat;
-  background-size: 35% 35%;
+  background-size: 40% 40%;
   cursor: pointer;
   padding: 1px;
 }
@@ -38,13 +38,11 @@
 }
 
 .media-uploader .spinner-border {
-  margin-left: -0.8rem;
-  margin-top: -0.8rem;
+  margin-left: -1rem;
+  margin-top: -1rem;
 }
 
 .media-uploader.media-loading .spinner-border {
-  width: 1.6rem !important;
-  height: 1.6rem !important;
   display: block !important;
 }
 
