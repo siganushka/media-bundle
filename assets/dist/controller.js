@@ -18,7 +18,7 @@ export default class extends Controller {
     formData.append('rule', this.ruleValue)
     formData.append('file', files[0])
 
-    // Add loading before send
+    event.target.disabled = true
     this.element.classList.add('media-loading')
 
     fetch(this.urlValue, {
@@ -31,7 +31,6 @@ export default class extends Controller {
         ? Promise.resolve(json)
         : Promise.reject(json.detail || response.statusText)
     }).then(res => {
-      event.target.disabled = true
       this.dataTarget.value = res.hash
       this.element.classList.add('media-uploaded')
       if (res.mime.startsWith('image/')) {
@@ -43,6 +42,7 @@ export default class extends Controller {
       }
     }).catch(err => {
       alert(err)
+      event.target.disabled = false
     }).finally(() => {
       // Reset input file
       event.target.value = ''
