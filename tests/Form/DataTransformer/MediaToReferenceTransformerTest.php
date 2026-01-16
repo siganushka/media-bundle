@@ -6,10 +6,10 @@ namespace Siganushka\MediaBundle\Tests\Form\DataTransformer;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
-use Doctrine\Persistence\ObjectRepository;
 use PHPUnit\Framework\TestCase;
 use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Form\DataTransformer\MediaToReferenceTransformer;
+use Siganushka\MediaBundle\Repository\MediaRepository;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 
 class MediaToReferenceTransformerTest extends TestCase
@@ -53,8 +53,13 @@ class MediaToReferenceTransformerTest extends TestCase
         $media = new Media();
         $media->setHash('test_hash');
 
-        $objectRepository = $this->createMock(ObjectRepository::class);
-        $objectRepository->expects(static::any())
+        $repository = $this->createMock(MediaRepository::class);
+        $repository->expects(static::any())
+            ->method('getClassName')
+            ->willReturn(Media::class)
+        ;
+
+        $repository->expects(static::any())
             ->method('findOneBy')
             ->willReturnCallback(fn (array $value) => $value === ['hash' => 'test_hash'] ? $media : null)
         ;
@@ -62,7 +67,7 @@ class MediaToReferenceTransformerTest extends TestCase
         $objectManager = $this->createMock(ObjectManager::class);
         $objectManager->expects(static::any())
             ->method('getRepository')
-            ->willReturn($objectRepository)
+            ->willReturn($repository)
         ;
 
         $managerRegistry = $this->createMock(ManagerRegistry::class);
@@ -71,6 +76,6 @@ class MediaToReferenceTransformerTest extends TestCase
             ->willReturn($objectManager)
         ;
 
-        return new MediaToReferenceTransformer($managerRegistry, Media::class);
+        return new MediaToReferenceTransformer($managerRegistry, $repository);
     }
 }

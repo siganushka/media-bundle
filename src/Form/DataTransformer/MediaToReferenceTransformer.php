@@ -6,12 +6,13 @@ namespace Siganushka\MediaBundle\Form\DataTransformer;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Siganushka\GenericBundle\Form\DataTransformer\EntityToIdentifierTransformer;
+use Siganushka\MediaBundle\Repository\MediaRepository;
 
 class MediaToReferenceTransformer extends EntityToIdentifierTransformer
 {
-    public function __construct(ManagerRegistry $registry, string $className)
+    public function __construct(ManagerRegistry $registry, MediaRepository $repository)
     {
-        parent::__construct($registry, $className, 'hash');
+        parent::__construct($registry, $repository->getClassName(), 'hash');
     }
 
     public function transform(mixed $value): mixed

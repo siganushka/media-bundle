@@ -42,10 +42,11 @@ class MediaController extends AbstractController
 
     public function postCollection(Request $request, EntityManagerInterface $entityManager, MediaManagerInterface $mediaManager): Response
     {
-        $formData = FormUtil::mergeParamsAndFiles($request->request->all(), $request->files->all());
+        $params = array_replace($request->query->all(), $request->request->all());
+        $submittedData = FormUtil::mergeParamsAndFiles($params, $request->files->all());
 
         $form = $this->createForm(MediaUploadType::class);
-        $form->submit($formData);
+        $form->submit($submittedData);
 
         /* @see HttpFoundationRequestHandler::handleRequest() */
         if ($this->serverParams->hasPostMaxSizeBeenExceeded()) {

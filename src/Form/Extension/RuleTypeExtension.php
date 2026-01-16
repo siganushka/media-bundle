@@ -21,20 +21,32 @@ class RuleTypeExtension extends AbstractTypeExtension
     }
 
     /**
-     * @param array{ rule: Rule } $options
+     * @param array{ rule: Rule, icon: string, style: string } $options
      */
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
-        $view->vars['rule'] = $options['rule'];
-        $view->vars['accept'] = static::getAcceptFromFile($options['rule']->getConstraint());
+        $view->vars['style'] = $options['style'];
+        $view->vars['icon'] = $options['icon'];
+        $view->vars['rule'] = $options['rule']->__toString();
+        $view->vars['accept'] = self::getAcceptFromFile($options['rule']->getConstraint());
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
+        $resolver->setDefaults([
+            'style' => null,
+            'icon' => 'plus',
+        ]);
+
         $resolver->setRequired('rule');
         $resolver->setAllowedTypes('rule', ['string', Rule::class]);
+        $resolver->setNormalizer('rule', function (Options $options, string|Rule $rule): Rule {
+            if ($rule instanceof Rule) {
+                return $rule;
+            }
 
-        $resolver->setNormalizer('rule', fn (Options $options, string|Rule $rule): Rule => $rule instanceof Rule ? $rule : $this->registry->get($rule));
+            return $this->registry->get($rule);
+        });
     }
 
     public static function getExtendedTypes(): iterable

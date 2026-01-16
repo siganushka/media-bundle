@@ -6,7 +6,6 @@ export default class extends Controller {
 
   static values = {
     url: String,
-    rule: String,
     confirm: String,
   }
 
@@ -15,7 +14,6 @@ export default class extends Controller {
     if (!files.length) return false
 
     const formData = new FormData()
-    formData.append('rule', this.ruleValue)
     formData.append('file', files[0])
 
     event.target.disabled = true
@@ -27,9 +25,7 @@ export default class extends Controller {
       headers: { Accept: 'application/json' },
     }).then(async response => {
       const json = await response.json()
-      return response.ok
-        ? Promise.resolve(json)
-        : Promise.reject(json.detail || response.statusText)
+      return response.ok ? Promise.resolve(json) : Promise.reject(json.detail || response.statusText)
     }).then(res => {
       this.dataTarget.value = res.hash
       this.element.classList.add('media-uploaded')
@@ -44,7 +40,6 @@ export default class extends Controller {
       alert(err)
       event.target.disabled = false
     }).finally(() => {
-      // Reset input file
       event.target.value = ''
       this.element.classList.remove('media-loading')
     })

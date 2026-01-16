@@ -6,8 +6,7 @@
   {%- if value %} media-uploaded{% endif %}"
   {% if style %}style="{{ style }}"{% endif %}
   data-controller="siganushka-media"
-  data-siganushka-media-url-value="{{ path('siganushka_media_postcollection') }}"
-  data-siganushka-media-rule-value="{{ rule }}"
+  data-siganushka-media-url-value="{{ path('siganushka_media_postcollection', {rule}) }}"
   data-siganushka-media-confirm-value="{{ 'generic.remove_confirmation'|trans }}"
 >
   <div class="spinner-border position-absolute top-50 start-50 d-none"></div>
@@ -32,7 +31,7 @@
     accept="{{ accept }}"
     data-siganushka-media-target='file'
     data-action="change->siganushka-media#change"
-    {% if disabled or data %}disabled{% endif ~%}
+    {% if disabled %}disabled{% endif ~%}
     {% if required %}required{% endif ~%}
   />
 
