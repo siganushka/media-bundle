@@ -6,7 +6,6 @@ export default class extends Controller {
 
   static values = {
     url: String,
-    confirm: String,
   }
 
   change(event) {
@@ -16,8 +15,7 @@ export default class extends Controller {
     const formData = new FormData()
     formData.append('file', files[0])
 
-    event.target.disabled = true
-    this.element.classList.add('media-loading')
+    this.element.classList.add('siganushka-media-loading')
 
     fetch(this.urlValue, {
       method: 'POST',
@@ -27,8 +25,9 @@ export default class extends Controller {
       const json = await response.json()
       return response.ok ? Promise.resolve(json) : Promise.reject(json.detail || response.statusText)
     }).then(res => {
+      event.target.disabled = true
       this.dataTarget.value = res.hash
-      this.element.classList.add('media-uploaded')
+      this.element.classList.add('siganushka-media-uploaded')
       if (res.mime.startsWith('image/')) {
         this.viewTarget.innerHTML = `<img src="${res.url}" />`
       } else if (res.mime.startsWith('video/')) {
@@ -41,17 +40,15 @@ export default class extends Controller {
       event.target.disabled = false
     }).finally(() => {
       event.target.value = ''
-      this.element.classList.remove('media-loading')
+      this.element.classList.remove('siganushka-media-loading')
     })
   }
 
   remove(event) {
     event.preventDefault()
-    if (confirm(this.confirmValue)) {
-      this.fileTarget.disabled = false
-      this.dataTarget.value = ''
-      this.viewTarget.replaceChildren()
-      this.element.classList.remove('media-uploaded')
-    }
+    this.fileTarget.disabled = false
+    this.dataTarget.value = ''
+    this.viewTarget.replaceChildren()
+    this.element.classList.remove('siganushka-media-uploaded')
   }
 }

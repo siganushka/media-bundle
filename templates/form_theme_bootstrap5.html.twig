@@ -1,42 +1,33 @@
 {% block media_widget %}
-<label
-  for="{{ id }}_uploader"
-  class="media-uploader d-flex justify-content-center align-items-center text-body-tertiary border bg-white rounded overflow-hidden position-relative icon-{{ icon }}
-  {%- if errors|length %} media-error{% endif %}
-  {%- if value %} media-uploaded{% endif %}"
-  {% if style %}style="{{ style }}"{% endif %}
-  data-controller="siganushka-media"
-  data-siganushka-media-url-value="{{ path('siganushka_media_postcollection', {rule}) }}"
-  data-siganushka-media-confirm-value="{{ 'generic.remove_confirmation'|trans }}"
->
-  <div class="spinner-border position-absolute top-50 start-50 d-none"></div>
-  <span class="btn-close rounded-circle position-absolute top-50 start-50 translate-middle z-1 d-none" data-action="click->siganushka-media#remove"></span>
+  <label for="{{ id }}_file" class="siganushka-media d-flex justify-content-center align-items-center text-body-tertiary border bg-white rounded position-relative icon-{{ icon }}
+    {{- data ? ' siganushka-media-uploaded' }}
+    {{- disabled ? ' siganushka-media-disabled' }}"
+    {% if style %}style="{{ style }}"{% endif %}
+    data-controller="siganushka-media"
+    data-siganushka-media-url-value="{{ path('siganushka_media_postcollection', {rule}) }}"
+  >
+    <div class="text-center text-break lh-ms" data-siganushka-media-target="view">
+      {% if data %}
+        {%- if data.mime starts with 'image/' -%}
+          <img src="{{ data.url }}" />
+        {%- elseif data.mime starts with 'video/' -%}
+          <video src="{{ data.url }}" controls />
+        {%- else -%}
+          {{ data.name }}
+        {%- endif -%}
+      {% endif %}
+    </div>
 
-  <div class="media-preview d-flex justify-content-center align-items-center text-center text-break lh-ms h-100 w-100" data-siganushka-media-target="view">
-    {% if data %}
-      {%- if data.mime starts with 'image/' -%}
-        <img src="{{ data.url }}" />
-      {%- elseif data.mime starts with 'video/' -%}
-        <video src="{{ data.url }}" controls />
-      {%- else -%}
-        {{ data.name }}
-      {%- endif -%}
-    {% endif %}
-  </div>
+    <div class="spinner-border position-absolute top-50 start-50 d-none"></div>
+    <button class="btn-close rounded-circle bg-white position-absolute top-50 start-50 translate-middle z-1 d-none" data-action="click->siganushka-media#remove"></button>
 
-  {# Using opacity=0 (not display=none) to keep keyboard events #}
-  <input
-    type="file"
-    id="{{ id }}_uploader"
-    accept="{{ accept }}"
-    data-siganushka-media-target='file'
-    data-action="change->siganushka-media#change"
-    {% if disabled %}disabled{% endif ~%}
-    {% if required %}required{% endif ~%}
-  />
+    <input type="file" class="position-absolute top-100 start-50 translate-middle z-3" id="{{ id }}_file" accept="{{ accept }}"
+      data-siganushka-media-target='file'
+      data-action="change->siganushka-media#change"
+      {{- disabled or data ? ' disabled' }}
+      {{- required ? ' required' }}
+    />
 
-  {# Using required=false to fix chrome error (An invalid form control with name='xxx' is not focusable) #}
-  {# Using display=none (not type=hidden) to fix chrome error #}
-  {{ form_widget(form, {required: false, attr: {class: 'd-none', 'data-siganushka-media-target': 'data'}}) }}
-</label>
+    {{ form_widget(form, {required: false, attr: {class: 'd-none', 'data-siganushka-media-target': 'data'}}) }}
+  </label>
 {% endblock %}
