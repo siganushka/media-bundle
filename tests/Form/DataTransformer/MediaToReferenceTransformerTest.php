@@ -61,7 +61,7 @@ class MediaToReferenceTransformerTest extends TestCase
 
         $repository->expects(static::any())
             ->method('findOneBy')
-            ->willReturnCallback(fn (array $value) => $value === ['hash' => 'test_hash'] ? $media : null)
+            ->willReturnCallback(static fn (array $value) => $value === ['hash' => 'test_hash'] ? $media : null)
         ;
 
         $objectManager = $this->createMock(ObjectManager::class);

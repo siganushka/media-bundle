@@ -25,7 +25,7 @@ class RoutesTest extends TestCase
     public function testAll(): void
     {
         $routes = iterator_to_array(self::routesProvider());
-        $routeNames = array_map(fn (array $route) => $route[0], $routes);
+        $routeNames = array_map(static fn (array $route) => $route[0], $routes);
 
         static::assertSame($routeNames, array_keys($this->routes->all()));
     }

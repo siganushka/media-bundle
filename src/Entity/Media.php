@@ -111,7 +111,7 @@ class Media implements ResourceInterface, CreatableInterface, \Stringable
 
     public function getSizeStr(): ?string
     {
-        return null === $this->size ? null : FileUtils::formatBytes($this->size);
+        return FileUtils::formatBytes($this->size ?? 0);
     }
 
     public function setSize(int $size): static

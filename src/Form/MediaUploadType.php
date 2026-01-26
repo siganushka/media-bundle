@@ -28,7 +28,7 @@ class MediaUploadType extends AbstractType
             ->add('rule', ChoiceType::class, [
                 'label' => 'media.rule',
                 'choices' => $this->registry->all(),
-                'choice_value' => fn (?string $choice) => $choice,
+                'choice_value' => static fn (?string $choice) => $choice,
                 'choice_translation_domain' => false,
                 'constraints' => new NotBlank(),
             ])

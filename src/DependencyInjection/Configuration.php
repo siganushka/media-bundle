@@ -102,7 +102,7 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue(File::class)
                     ->beforeNormalization()
                         ->ifString()
-                        ->then(fn (string $v): string => match ($v) {
+                        ->then(static fn (string $v): string => match ($v) {
                             'file' => File::class,
                             'image' => Image::class,
                             'video' => Video::class,
@@ -128,8 +128,8 @@ class Configuration implements ConfigurationInterface
                     ->info('This value is used when resizing the image.')
                     ->canBeEnabled()
                     ->beforeNormalization()
-                        ->ifTrue(fn (mixed $v) => \is_int($v))
-                        ->then(fn (int $v): array => ['max_width' => $v, 'max_height' => $v, 'enabled' => true])
+                        ->ifTrue(static fn (mixed $v) => \is_int($v))
+                        ->then(static fn (int $v): array => ['max_width' => $v, 'max_height' => $v, 'enabled' => true])
                     ->end()
                     ->children()
                         ->integerNode('max_width')->defaultValue(1920)->end()
@@ -140,8 +140,8 @@ class Configuration implements ConfigurationInterface
                     ->info('This value is used to optimize the image quality.')
                     ->canBeEnabled()
                     ->beforeNormalization()
-                        ->ifTrue(fn (mixed $v) => \is_int($v))
-                        ->then(fn (int $v): array => ['quality' => $v, 'enabled' => true])
+                        ->ifTrue(static fn (mixed $v) => \is_int($v))
+                        ->then(static fn (int $v): array => ['quality' => $v, 'enabled' => true])
                     ->end()
                     ->children()
                         ->integerNode('quality')->defaultValue(90)->min(1)->max(100)->end()
