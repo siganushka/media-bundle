@@ -21,6 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Path;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 #[AsCommand('siganushka:media:migrate', 'Migrate existing media data to SiganushkaMediaBundle.')]
@@ -184,15 +185,15 @@ class MigrateCommand extends Command
             return FileUtils::createFromUrl($value);
         }
 
-        $originFile = \sprintf('%s/%s', $this->publicDir, ltrim($value, '/'));
+        $originFile = Path::join($this->publicDir, $value);
         if (!is_file($originFile)) {
             throw new \InvalidArgumentException('invalid file like');
         }
 
         $targetFile = \sprintf('%s/%s', sys_get_temp_dir(), pathinfo($originFile, \PATHINFO_BASENAME));
 
-        $filesystem = new Filesystem();
-        $filesystem->copy($originFile, $targetFile, true);
+        $fs = new Filesystem();
+        $fs->copy($originFile, $targetFile, true);
 
         return new \SplFileInfo($targetFile);
     }

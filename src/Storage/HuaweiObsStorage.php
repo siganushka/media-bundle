@@ -63,17 +63,17 @@ class HuaweiObsStorage extends AbstractStorage
         parent::__construct($options[self::PREFIX_DIR] ?? null);
     }
 
-    public function doSave(\SplFileInfo $originFile, string $targetFileToSave): string
+    public function doSave(\SplFileInfo $originFile, string $targetFile): string
     {
         $result = $this->client->putObject([
             'Bucket' => $this->bucket,
-            'Key' => $targetFileToSave,
-            'Body' => $originFile->openFile(),
+            'Key' => self::normalize($targetFile),
+            'SourceFile' => $originFile->getPathname(),
         ]);
 
         $url = $result['ObjectURL'] ?? null;
         if ($url && \is_string($url)) {
-            return $url;
+            return preg_replace('/(https?:\/\/[^\/]+):(443|80)\//', '$1/', $url) ?? $url;
         }
 
         throw new \LogicException('Invalid response.');
@@ -81,6 +81,11 @@ class HuaweiObsStorage extends AbstractStorage
 
     public function doDelete(string $path): void
     {
-        $this->client->deleteObject(['Bucket' => $this->bucket, 'Key' => ltrim($path, '/')]);
+        $this->client->deleteObject(['Bucket' => $this->bucket, 'Key' => self::normalize($path)]);
+    }
+
+    public static function normalize(string $key): string
+    {
+        return ltrim($key, '/');
     }
 }

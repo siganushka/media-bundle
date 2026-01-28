@@ -46,9 +46,9 @@ class AliyunOssStorage extends AbstractStorage
         parent::__construct($options[self::PREFIX_DIR] ?? null);
     }
 
-    public function doSave(\SplFileInfo $originFile, string $targetFileToSave): string
+    public function doSave(\SplFileInfo $originFile, string $targetFile): string
     {
-        $result = $this->client->uploadFile($this->bucket, $targetFileToSave, $originFile->getPathname());
+        $result = $this->client->uploadFile($this->bucket, self::normalize($targetFile), $originFile->getPathname());
 
         $url = $result['info']['url'] ?? null;
         if ($url && \is_string($url)) {
@@ -60,6 +60,11 @@ class AliyunOssStorage extends AbstractStorage
 
     public function doDelete(string $path): void
     {
-        $this->client->deleteObject($this->bucket, ltrim($path, '/'));
+        $this->client->deleteObject($this->bucket, self::normalize($path));
+    }
+
+    public static function normalize(string $object): string
+    {
+        return ltrim($object, '/');
     }
 }

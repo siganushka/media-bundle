@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\Utils;
 
+use Symfony\Component\Filesystem\Path;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class FileUtils
@@ -72,11 +73,10 @@ class FileUtils
      */
     public static function createFromContent(string $content, ?string $fileName = null): \SplFileInfo
     {
-        $file = new \SplFileInfo(sys_get_temp_dir().'/'.($fileName ?? uniqid()));
-        $fileobj = $file->openFile('a');
+        $file = new \SplFileInfo(Path::join(sys_get_temp_dir(), $fileName ?? uniqid()));
 
-        $result = $fileobj->fwrite($content);
-        if (false === $result) {
+        $fileobj = $file->openFile('a');
+        if (false === $fileobj->fwrite($content)) {
             throw new \RuntimeException('Failed to save file.');
         }
 
