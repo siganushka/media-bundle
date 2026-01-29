@@ -39,8 +39,8 @@ class LocalStorage extends AbstractStorage
         }
     }
 
-    public function buildUrl(string $targetFile): string
+    public function buildUrl(string $path): string
     {
-        return $this->urlHelper->getAbsoluteUrl($targetFile);
+        return $this->urlHelper->getAbsoluteUrl($path);
     }
 }

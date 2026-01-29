@@ -37,11 +37,6 @@ abstract class AbstractStorage implements StorageInterface
         $this->doDelete($path);
     }
 
-    public static function normalize(string $key): string
-    {
-        return Path::normalize(ltrim($key, '/'));
-    }
-
     abstract public function doSave(\SplFileInfo $originFile, string $targetFile): string;
 
     abstract public function doDelete(string $path): void;

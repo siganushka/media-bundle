@@ -26,7 +26,7 @@ interface StorageInterface
     public function delete(string $url): void;
 
     /**
-     * Build file URL from target file.
+     * Build file URL from path.
      */
-    public function buildUrl(string $targetFile): string;
+    public function buildUrl(string $path): string;
 }

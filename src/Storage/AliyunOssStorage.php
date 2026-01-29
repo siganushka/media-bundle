@@ -61,13 +61,18 @@ class AliyunOssStorage extends AbstractStorage
         $this->client->deleteObject($this->bucket, self::normalize($path));
     }
 
-    public function buildUrl(string $targetFile): string
+    public function buildUrl(string $path): string
     {
         $scheme = $this->client->isUseSSL() ? 'https' : 'http';
         $domain = parse_url($this->endpoint, \PHP_URL_HOST) ?? $this->endpoint;
 
         return $this->cname
-            ? \sprintf('%s://%s/%s', $scheme, $domain, self::normalize($targetFile))
-            : \sprintf('%s://%s.%s/%s', $scheme, $this->bucket, $domain, self::normalize($targetFile));
+            ? \sprintf('%s://%s/%s', $scheme, $domain, self::normalize($path))
+            : \sprintf('%s://%s.%s/%s', $scheme, $this->bucket, $domain, self::normalize($path));
+    }
+
+    public static function normalize(string $key): string
+    {
+        return ltrim($key, '/');
     }
 }
