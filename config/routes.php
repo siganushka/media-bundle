@@ -18,12 +18,12 @@ return static function (RoutingConfigurator $routes): void {
         ->methods(['POST'])
     ;
 
-    $routes->add('siganushka_media_getitem', '/media/{hash<[0-9a-fA-F]{32}>}')
+    $routes->add('siganushka_media_getitem', '/media/{hash<[0-9a-fA-F]+>}')
         ->controller([MediaController::class, 'getItem'])
         ->methods(['GET'])
     ;
 
-    $routes->add('siganushka_media_deleteitem', '/media/{hash<[0-9a-fA-F]{32}>}')
+    $routes->add('siganushka_media_deleteitem', '/media/{hash<[0-9a-fA-F]+>}')
         ->controller([MediaController::class, 'deleteItem'])
         ->methods(['DELETE'])
     ;
