@@ -73,10 +73,10 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         $ruleRegistry->setArgument(0, ServiceLocatorTagPass::register($container, $servicesMap));
 
         $migrateCommand = $container->findDefinition(MigrateCommand::class);
-        $migrateCommand->setArgument('$publicDir', '%kernel.project_dir%/public');
+        $migrateCommand->setArgument('$storageDir', '%kernel.project_dir%/public');
 
         $localStorage = $container->findDefinition(LocalStorage::class);
-        $localStorage->setArgument('$publicDir', '%kernel.project_dir%/public');
+        $localStorage->setArgument('$storageDir', '%kernel.project_dir%/public');
 
         $mediaListener = $container->findDefinition(MediaListener::class);
         $mediaListener->addTag('doctrine.orm.entity_listener', ['event' => Events::postRemove, 'entity' => $config['media_class']]);

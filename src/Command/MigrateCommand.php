@@ -31,8 +31,8 @@ class MigrateCommand extends Command
         private readonly ManagerRegistry $managerRegistry,
         private readonly RuleRegistry $ruleRegistry,
         private readonly MediaManagerInterface $mediaManager,
-        private readonly string $publicDir)
-    {
+        private readonly string $storageDir,
+    ) {
         parent::__construct();
     }
 
@@ -185,7 +185,7 @@ class MigrateCommand extends Command
             return FileUtils::createFromUrl($value);
         }
 
-        $originFile = Path::join($this->publicDir, $value);
+        $originFile = Path::join($this->storageDir, $value);
         if (!is_file($originFile)) {
             throw new \InvalidArgumentException('invalid file like');
         }

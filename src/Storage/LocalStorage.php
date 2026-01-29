@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\UrlHelper;
 
 class LocalStorage extends AbstractStorage
 {
-    public function __construct(private readonly UrlHelper $urlHelper, private readonly string $publicDir, array $options = [])
+    public function __construct(private readonly UrlHelper $urlHelper, private readonly string $storageDir, array $options = [])
     {
         parent::__construct($options[self::PREFIX_DIR] ?? 'uploads');
     }
@@ -22,7 +22,7 @@ class LocalStorage extends AbstractStorage
             $originFile = new File($originFile->getPathname());
         }
 
-        $filename = Path::join($this->publicDir, $targetFile);
+        $filename = Path::join($this->storageDir, $targetFile);
         $pathinfo = pathinfo($filename);
 
         $originFile->move($pathinfo['dirname'] ?? '', $pathinfo['basename']);
@@ -32,7 +32,7 @@ class LocalStorage extends AbstractStorage
 
     public function doDelete(string $path): void
     {
-        $file = Path::join($this->publicDir, $path);
+        $file = Path::join($this->storageDir, $path);
         if (is_file($file) && !is_dir($file)) {
             $fs = new Filesystem();
             $fs->remove($file);

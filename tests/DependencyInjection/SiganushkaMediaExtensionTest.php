@@ -22,9 +22,15 @@ class SiganushkaMediaExtensionTest extends TestCase
 
     private function createContainerWithConfig(array $config = []): ContainerBuilder
     {
-        $container = new ContainerBuilder(new EnvPlaceholderParameterBag(['kernel.project_dir' => __DIR__]));
-        $container->registerExtension(new SiganushkaMediaExtension());
-        $container->loadFromExtension('siganushka_media', $config);
+        $parameters = [
+            'kernel.project_dir' => __DIR__,
+        ];
+
+        $extension = new SiganushkaMediaExtension();
+
+        $container = new ContainerBuilder(new EnvPlaceholderParameterBag($parameters));
+        $container->registerExtension($extension);
+        $container->loadFromExtension($extension->getAlias(), $config);
 
         $container->getCompilerPassConfig()->setOptimizationPasses([new ResolveChildDefinitionsPass()]);
         $container->getCompilerPassConfig()->setRemovingPasses([]);
