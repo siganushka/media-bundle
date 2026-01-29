@@ -16,8 +16,8 @@ class MediaSaveListener
 {
     public function __construct(
         private readonly StorageInterface $storage,
-        private readonly MediaRepository $repository)
-    {
+        private readonly MediaRepository $repository,
+    ) {
     }
 
     public function __invoke(MediaSaveEvent $event): void

@@ -24,4 +24,9 @@ interface StorageInterface
      * @throws \RuntimeException Thrown when deletion fails
      */
     public function delete(string $url): void;
+
+    /**
+     * Build file URL from target file.
+     */
+    public function buildUrl(string $targetFile): string;
 }

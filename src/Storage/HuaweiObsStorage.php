@@ -13,13 +13,18 @@ use Obs\ObsClient;
  */
 class HuaweiObsStorage extends AbstractStorage
 {
-    public readonly ObsClient $client;
+    public const CNAME = 'is_cname';
 
-    public function __construct(string $accessKeyId, string $accessKeySecret, string $endpoint, public readonly string $bucket, array $options = [])
+    public readonly ObsClient $client;
+    public readonly bool $cname;
+
+    public function __construct(string $accessKeyId, string $accessKeySecret, public readonly string $endpoint, public readonly string $bucket, array $options = [])
     {
         if (!class_exists(ObsClient::class)) {
             throw new \LogicException(\sprintf('The "%s" class requires the "obs/esdk-obs-php" component. Try running "composer require obs/esdk-obs-php".', self::class));
         }
+
+        $this->cname = $options[self::CNAME] ?? false;
 
         /*
          * 由于 obs/esdk-obs-php 源码中对 GuzzleHttp\Client 的初始化参数 timeout=0 使用了硬编码，因此无法通过外部
@@ -65,18 +70,13 @@ class HuaweiObsStorage extends AbstractStorage
 
     public function doSave(\SplFileInfo $originFile, string $targetFile): string
     {
-        $result = $this->client->putObject([
+        $this->client->putObject([
             'Bucket' => $this->bucket,
             'Key' => self::normalize($targetFile),
             'SourceFile' => $originFile->getPathname(),
         ]);
 
-        $url = $result['ObjectURL'] ?? null;
-        if ($url && \is_string($url)) {
-            return preg_replace('/(https?:\/\/[^\/]+):(443|80)\//', '$1/', $url) ?? $url;
-        }
-
-        throw new \LogicException('Invalid response.');
+        return $this->buildUrl($targetFile);
     }
 
     public function doDelete(string $path): void
@@ -84,8 +84,15 @@ class HuaweiObsStorage extends AbstractStorage
         $this->client->deleteObject(['Bucket' => $this->bucket, 'Key' => self::normalize($path)]);
     }
 
-    public static function normalize(string $key): string
+    public function buildUrl(string $targetFile): string
     {
-        return ltrim($key, '/');
+        $result = parse_url($this->endpoint);
+
+        $scheme = $result['scheme'] ?? 'https';
+        $domain = $result['host'] ?? $this->endpoint;
+
+        return $this->cname
+            ? \sprintf('%s://%s/%s', $scheme, $domain, self::normalize($targetFile))
+            : \sprintf('%s://%s.%s/%s', $scheme, $this->bucket, $domain, self::normalize($targetFile));
     }
 }

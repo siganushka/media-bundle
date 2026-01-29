@@ -16,16 +16,19 @@ class AliyunOssStorage extends AbstractStorage
     public const CONNECT_TIMEOUT = 'connect_timeout';
     public const MAX_RETRIES = 'max_retries';
     public const USE_SSL = 'use_ssl';
+    public const CNAME = 'cname';
 
     public readonly OssClient $client;
+    public readonly bool $cname;
 
-    public function __construct(string $accessKeyId, string $accessKeySecret, string $endpoint, public readonly string $bucket, array $options = [])
+    public function __construct(string $accessKeyId, string $accessKeySecret, public readonly string $endpoint, public readonly string $bucket, array $options = [])
     {
         if (!class_exists(OssClient::class)) {
             throw new \LogicException(\sprintf('The "%s" class requires the "aliyuncs/oss-sdk-php" component. Try running "composer require aliyuncs/oss-sdk-php".', self::class));
         }
 
         $options[self::USE_SSL] ??= true;
+        $this->cname = $options[self::CNAME] ?? false;
 
         $provider = new StaticCredentialsProvider($accessKeyId, $accessKeySecret);
         $config = compact('provider', 'endpoint') + $options;
@@ -48,14 +51,9 @@ class AliyunOssStorage extends AbstractStorage
 
     public function doSave(\SplFileInfo $originFile, string $targetFile): string
     {
-        $result = $this->client->uploadFile($this->bucket, self::normalize($targetFile), $originFile->getPathname());
+        $this->client->uploadFile($this->bucket, self::normalize($targetFile), $originFile->getPathname());
 
-        $url = $result['info']['url'] ?? null;
-        if ($url && \is_string($url)) {
-            return $url;
-        }
-
-        throw new \LogicException('Invalid response.');
+        return $this->buildUrl($targetFile);
     }
 
     public function doDelete(string $path): void
@@ -63,8 +61,13 @@ class AliyunOssStorage extends AbstractStorage
         $this->client->deleteObject($this->bucket, self::normalize($path));
     }
 
-    public static function normalize(string $object): string
+    public function buildUrl(string $targetFile): string
     {
-        return ltrim($object, '/');
+        $scheme = $this->client->isUseSSL() ? 'https' : 'http';
+        $domain = parse_url($this->endpoint, \PHP_URL_HOST) ?? $this->endpoint;
+
+        return $this->cname
+            ? \sprintf('%s://%s/%s', $scheme, $domain, self::normalize($targetFile))
+            : \sprintf('%s://%s.%s/%s', $scheme, $this->bucket, $domain, self::normalize($targetFile));
     }
 }

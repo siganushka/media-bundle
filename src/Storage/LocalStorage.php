@@ -27,7 +27,7 @@ class LocalStorage extends AbstractStorage
 
         $originFile->move($pathinfo['dirname'] ?? '', $pathinfo['basename']);
 
-        return $this->urlHelper->getAbsoluteUrl($targetFile);
+        return $this->buildUrl($targetFile);
     }
 
     public function doDelete(string $path): void
@@ -37,5 +37,10 @@ class LocalStorage extends AbstractStorage
             $fs = new Filesystem();
             $fs->remove($file);
         }
+    }
+
+    public function buildUrl(string $targetFile): string
+    {
+        return $this->urlHelper->getAbsoluteUrl($targetFile);
     }
 }
