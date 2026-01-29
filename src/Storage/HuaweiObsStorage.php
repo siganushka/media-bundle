@@ -98,6 +98,6 @@ class HuaweiObsStorage extends AbstractStorage
 
     public static function normalize(string $key): string
     {
-        return ltrim($key, '/');
+        return ltrim($key, '/\\');
     }
 }
