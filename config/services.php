@@ -7,6 +7,9 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use Siganushka\MediaBundle\SiganushkaMediaBundle;
 
 return static function (ContainerConfigurator $container): void {
+    $parameters = $container->parameters();
+    $parameters->set('siganushka_media.storage_dir', '%kernel.project_dir%/public');
+
     $services = $container->services()
         ->defaults()
             ->autowire()
