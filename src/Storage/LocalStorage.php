@@ -34,8 +34,7 @@ class LocalStorage extends AbstractStorage
     {
         $file = Path::join($this->storageDir, $path);
         if (is_file($file) && !is_dir($file)) {
-            $fs = new Filesystem();
-            $fs->remove($file);
+            (new Filesystem())->remove($file);
         }
     }
 

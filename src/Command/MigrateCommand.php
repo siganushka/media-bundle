@@ -191,9 +191,7 @@ class MigrateCommand extends Command
         }
 
         $targetFile = \sprintf('%s/%s', sys_get_temp_dir(), pathinfo($originFile, \PATHINFO_BASENAME));
-
-        $fs = new Filesystem();
-        $fs->copy($originFile, $targetFile, true);
+        (new Filesystem())->copy($originFile, $targetFile, true);
 
         return new \SplFileInfo($targetFile);
     }
