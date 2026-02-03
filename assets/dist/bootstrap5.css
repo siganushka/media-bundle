@@ -52,6 +52,10 @@
   height: 1px;
 }
 
+.siganushka-media input[type=file]:focus {
+  outline: none;
+}
+
 /** Disabled */
 .siganushka-media-disabled {
   cursor: not-allowed !important;
