@@ -16,8 +16,13 @@ class MediaListener
     public function __invoke(Media $entity): void
     {
         $url = $entity->getUrl();
-        if (\is_string($url)) {
+        if (!\is_string($url)) {
+            return;
+        }
+
+        try {
             $this->storage->delete($url);
+        } catch (\Throwable) {
         }
     }
 }

@@ -28,6 +28,7 @@ class FileUtils
         curl_setopt($curl, \CURLOPT_URL, $url);
         curl_setopt($curl, \CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($curl, \CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, \CURLOPT_FAILONERROR, true);
         curl_setopt($curl, \CURLOPT_TIMEOUT, $timeout);
 
         $content = curl_exec($curl);
@@ -62,7 +63,12 @@ class FileUtils
             throw new \InvalidArgumentException('Invalid data URI file.');
         }
 
-        return self::createFromContent(base64_decode($content), $fileName);
+        $data = base64_decode($content, true);
+        if (false === $data) {
+            throw new \InvalidArgumentException('Invalid data URI file.');
+        }
+
+        return self::createFromContent($data, $fileName);
     }
 
     /**
@@ -73,14 +79,13 @@ class FileUtils
      */
     public static function createFromContent(string $content, ?string $fileName = null): \SplFileInfo
     {
-        $file = new \SplFileInfo(Path::join(sys_get_temp_dir(), $fileName ?? uniqid()));
+        $file = Path::join(sys_get_temp_dir(), $fileName ?? uniqid('tmp_', true));
 
-        $fileobj = $file->openFile('a');
-        if (false === $fileobj->fwrite($content)) {
+        if (false === file_put_contents($file, $content)) {
             throw new \RuntimeException('Failed to save file.');
         }
 
-        return $file;
+        return new \SplFileInfo($file);
     }
 
     /**
