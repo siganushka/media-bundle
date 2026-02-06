@@ -41,14 +41,22 @@ class MediaSaveListener
             $width = $height = null;
         }
 
-        $targetFileName = $event->getRule()->reserveClientName
-            ? $normalizedName
-            : \sprintf('%07s.%s', mb_substr($event->getHash(), 0, 7), $extension);
+        $namingStrategy = $event->getRule()->namingStrategy ?? '[hash:2:0]/[hash:13:2].[ext]';
+        $result = preg_replace_callback('/\[hash:(\d+)(?::(\d+))?\]/', static fn (array $matches) => mb_substr($event->getHash(), (int) ($matches[2] ?? 0), (int) $matches[1]), $namingStrategy);
 
-        $targetFile = \sprintf('%02s/%02s/%s',
-            mb_substr($event->getHash(), 0, 2),
-            mb_substr($event->getHash(), 2, 2),
-            $targetFileName);
+        $targetFile = strtr($result ?? $normalizedName, [
+            '[yy]' => date('y'),
+            '[yyyy]' => date('Y'),
+            '[m]' => date('n'),
+            '[mm]' => date('m'),
+            '[d]' => date('j'),
+            '[dd]' => date('d'),
+            '[timestamp]' => time(),
+            '[hash]' => $event->getHash(),
+            '[rule]' => $event->getRule()->__toString(),
+            '[original_name]' => $normalizedName,
+            '[ext]' => $extension,
+        ]);
 
         $url = $this->storage->save($file, $targetFile);
 

@@ -13,7 +13,7 @@ final class Rule implements \Stringable
         /** @var class-string<AssertFile> */
         public readonly string $constraint = AssertFile::class,
         public readonly array $constraintOptions = [],
-        public readonly bool $reserveClientName = false,
+        public readonly ?string $namingStrategy = null,
         public readonly ?int $resizeToMaxWidth = null,
         public readonly ?int $resizeToMaxHeight = null,
         public readonly ?int $optimizeToQuality = null)
@@ -22,9 +22,7 @@ final class Rule implements \Stringable
 
     public function getConstraint(): AssertFile
     {
-        $ref = new \ReflectionClass($this->constraint);
-
-        return $ref->newInstanceArgs($this->constraintOptions);
+        return (new \ReflectionClass($this->constraint))->newInstanceArgs($this->constraintOptions);
     }
 
     public function __toString(): string

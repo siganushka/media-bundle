@@ -47,8 +47,8 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
                 ->setArgument('$constraintOptions', $options['constraint_options'])
             ;
 
-            if ($options['reserve_client_name']) {
-                $rule->setArgument('$reserveClientName', $options['reserve_client_name']);
+            if ($options['naming']) {
+                $rule->setArgument('$namingStrategy', $options['naming']);
             }
 
             if ($this->isConfigEnabled($container, $options['resize'])) {
