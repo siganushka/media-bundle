@@ -17,6 +17,7 @@ class MediaSaveListener
     public function __construct(
         private readonly StorageInterface $storage,
         private readonly MediaRepository $repository,
+        private readonly string $defaultNamingStrategy,
     ) {
     }
 
@@ -41,10 +42,10 @@ class MediaSaveListener
             $width = $height = null;
         }
 
-        $namingStrategy = $event->getRule()->namingStrategy ?? '[hash:2:0]/[hash:13:2].[ext]';
-        $result = preg_replace_callback('/\[hash:(\d+)(?::(\d+))?\]/', static fn (array $matches) => mb_substr($event->getHash(), (int) ($matches[2] ?? 0), (int) $matches[1]), $namingStrategy);
+        $namingStrategy = $event->getRule()->namingStrategy ?? $this->defaultNamingStrategy;
+        $naming = preg_replace_callback('/\[hash:(\d+)(?::(\d+))?\]/', static fn (array $matches) => mb_substr($event->getHash(), (int) ($matches[2] ?? 0), (int) $matches[1]), $namingStrategy);
 
-        $targetFile = strtr($result ?? $normalizedName, [
+        $targetFile = strtr($naming ?? $normalizedName, [
             '[yy]' => date('y'),
             '[yyyy]' => date('Y'),
             '[m]' => date('n'),

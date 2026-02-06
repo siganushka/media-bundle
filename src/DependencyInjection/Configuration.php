@@ -18,6 +18,8 @@ use Symfony\Component\Validator\Constraints\Video;
 
 class Configuration implements ConfigurationInterface
 {
+    public const DEFAULT_NAMING = '[hash:2]/[hash:13:2].[ext]';
+
     public static array $resourceMapping = [
         'media_class' => [Media::class, MediaRepository::class],
     ];
@@ -43,6 +45,7 @@ class Configuration implements ConfigurationInterface
         }
 
         $this->addStorageSection($rootNode);
+        $this->addNamingSection($rootNode);
         $this->addRulesSection($rootNode);
 
         return $treeBuilder;
@@ -61,6 +64,19 @@ class Configuration implements ConfigurationInterface
                 ->ifTrue(static fn (mixed $v): bool => \is_string($v) && !is_a($v, StorageInterface::class, true))
                 ->thenInvalid('The value must be instanceof '.StorageInterface::class.', %s given.')
             ->end()
+        ;
+    }
+
+    /**
+     * @param ArrayNodeDefinition<NodeParentInterface> $rootNode
+     */
+    public function addNamingSection(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode->children()
+            ->scalarNode('naming')
+            ->info('This value defines the default file naming strategy (Available placeholders: yy/yyyy/m/mm/d/dd/timestamp/hash/hash:{LENGTH}:{START}/rule/original_name/ext).')
+            ->defaultValue(self::DEFAULT_NAMING)
+            ->cannotBeEmpty()
         ;
     }
 

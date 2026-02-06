@@ -25,6 +25,7 @@ class ConfigurationTest extends TestCase
         static::assertSame($processedConfig, [
             'media_class' => Media::class,
             'storage' => LocalStorage::class,
+            'naming' => '[hash:2]/[hash:13:2].[ext]',
             'rules' => [],
         ]);
     }
@@ -34,6 +35,7 @@ class ConfigurationTest extends TestCase
         $config = [
             'media_class' => FooMedia::class,
             'storage' => AliyunOssStorage::class,
+            'naming' => '[yyyy][mm]/[hash].[ext]',
             'rules' => [
                 'foo' => [
                     'constraint_options' => ['maxSize' => '2MB'],
@@ -50,6 +52,7 @@ class ConfigurationTest extends TestCase
 
         static::assertSame($processedConfig['media_class'], $config['media_class']);
         static::assertSame($processedConfig['storage'], $config['storage']);
+        static::assertSame($processedConfig['naming'], $config['naming']);
 
         static::assertSame($processedConfig['rules']['foo']['constraint'], File::class);
         static::assertSame($processedConfig['rules']['foo']['constraint_options'], ['maxSize' => '2MB']);
