@@ -97,11 +97,6 @@ class MediaController extends AbstractController
         /** @var FormError */
         $error = $form->getErrors(true, true)->current();
 
-        $origin = $error->getOrigin();
-        if ($origin && $origin->isRoot()) {
-            return new ProblemJsonResponse($error->getMessage(), $statusCode);
-        }
-
-        return new ProblemJsonResponse(\sprintf('[%s] %s', $origin?->getName() ?? 'form', $error->getMessage()), $statusCode);
+        return new ProblemJsonResponse($error->getMessage(), $statusCode);
     }
 }

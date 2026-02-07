@@ -30,7 +30,8 @@ class MediaUploadType extends AbstractType
                 'choices' => $this->registry->all(),
                 'choice_value' => static fn (?string $choice) => $choice,
                 'choice_translation_domain' => false,
-                'constraints' => new NotBlank(),
+                'constraints' => new NotBlank(message: 'Media rule should not be blank.'),
+                'invalid_message' => 'Media rule is not valid.',
             ])
         ;
 
@@ -45,7 +46,7 @@ class MediaUploadType extends AbstractType
         $form = $event->getForm();
         $rule = $event instanceof PostSubmitEvent ? $form->getData() : $event->getData();
 
-        $constraints = [new NotBlank()];
+        $constraints = [new NotBlank(message: 'Media file should not be blank.')];
         if ($rule instanceof Rule) {
             $constraints[] = $rule->getConstraint();
         }
