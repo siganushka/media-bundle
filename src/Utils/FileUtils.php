@@ -18,7 +18,7 @@ class FileUtils
      *
      * @param string $url Remote file url
      */
-    public static function createFromUrl(string $url, int $timeout = 30): \SplFileInfo
+    public static function createFromUrl(string $url, int $timeout = 60): \SplFileInfo
     {
         $curl = curl_init();
         if (false === $curl || empty($url)) {
@@ -36,7 +36,6 @@ class FileUtils
             throw new \RuntimeException(curl_error($curl));
         }
 
-        // Close curl resource.
         curl_close($curl);
 
         return self::createFromContent($content, pathinfo($url, \PATHINFO_BASENAME));
