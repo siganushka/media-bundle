@@ -7,6 +7,7 @@ namespace Siganushka\MediaBundle\EventListener;
 use Psr\Log\LoggerInterface;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+use Symfony\Component\Filesystem\Filesystem;
 
 #[AsEventListener(priority: -128)]
 class MediaClearListener
@@ -26,7 +27,7 @@ class MediaClearListener
         ));
 
         if ($file->isFile()) {
-            @unlink($file->getPathname());
+            (new Filesystem())->remove($file->getPathname());
         }
     }
 }
