@@ -24,6 +24,8 @@ return (new PhpCsFixer\Config())
         'get_class_to_class_keyword' => true,
         'declare_strict_types' => true,
         'phpdoc_separation' => false,
+        'ordered_imports' => true,
+        'ordered_traits' => false,
     ])
     ->setRiskyAllowed(true)
     ->setFinder($finder)
