@@ -6,7 +6,7 @@ namespace Siganushka\MediaBundle;
 
 use Symfony\Component\DependencyInjection\ServiceLocator;
 
-final class RuleRegistry
+class RuleRegistry
 {
     /**
      * @param ServiceLocator<Rule> $locator

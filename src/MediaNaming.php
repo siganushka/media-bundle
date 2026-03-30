@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle;
 
-use Siganushka\MediaBundle\Event\MediaEvent;
+use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Siganushka\MediaBundle\Utils\FileUtils;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -12,12 +12,19 @@ class MediaNaming
 {
     public const DEFAULT_NAMING = '[hash:2]/[hash:13:2].[ext]';
 
-    public function __construct(private readonly string $defaultNamingStrategy = self::DEFAULT_NAMING)
-    {
+    public function __construct(
+        private readonly RuleRegistry $ruleRegistry,
+        private readonly string $defaultNamingStrategy = self::DEFAULT_NAMING,
+    ) {
     }
 
-    public function getTargetFile(MediaEvent $event): string
+    public function getTargetFile(string|Rule $rule, string|\SplFileInfo $file): string
     {
+        if (\is_string($rule)) {
+            $rule = $this->ruleRegistry->get($rule);
+        }
+
+        $event = new MediaSaveEvent($rule, $file);
         $file = $event->getFile();
 
         $name = $file instanceof UploadedFile ? $file->getClientOriginalName() : $file->getFilename();
@@ -25,7 +32,7 @@ class MediaNaming
         $extension = $file->guessExtension() ?? $file->getExtension();
 
         $callback = static fn (array $matches) => mb_substr($event->getHash(), (int) ($matches[2] ?? 0), (int) $matches[1]);
-        $namingStrategy = $event->getRule()->namingStrategy ?? $this->defaultNamingStrategy;
+        $namingStrategy = $rule->namingStrategy ?? $this->defaultNamingStrategy;
 
         if ($naming = preg_replace_callback('/\[hash:(\d+)(?::(\d+))?\]/', $callback, $namingStrategy)) {
             return strtr($naming, [
@@ -37,7 +44,7 @@ class MediaNaming
                 '[dd]' => date('d'),
                 '[timestamp]' => time(),
                 '[hash]' => $event->getHash(),
-                '[rule]' => $event->getRule(),
+                '[rule]' => $rule->__toString(),
                 '[original_name]' => $normalizedName,
                 '[ext]' => $extension,
             ]);

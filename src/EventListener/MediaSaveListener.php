@@ -10,7 +10,6 @@ use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 use Siganushka\MediaBundle\Utils\FileUtils;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[AsEventListener(priority: -8)]
@@ -25,6 +24,7 @@ class MediaSaveListener
 
     public function __invoke(MediaSaveEvent $event): void
     {
+        $rule = $event->getRule();
         $file = $event->getFile();
 
         // [important] Clears file status cache before access file.
@@ -42,7 +42,7 @@ class MediaSaveListener
             $width = $height = null;
         }
 
-        $targetFile = $this->naming->getTargetFile($event);
+        $targetFile = $this->naming->getTargetFile($rule, $file);
         $url = $this->storage->save($file, $targetFile);
 
         $media = $event->getMedia() ?? $this->repository->createNew();
