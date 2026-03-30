@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Siganushka\MediaBundle\Storage;
 
 use Symfony\Component\Filesystem\Path;
-use Symfony\Component\HttpFoundation\File\File;
 
 abstract class AbstractStorage implements StorageInterface
 {
@@ -17,14 +16,10 @@ abstract class AbstractStorage implements StorageInterface
 
     public function save(string|\SplFileInfo $originFile, ?string $targetFile = null): string
     {
-        if (\is_string($originFile)) {
-            $originFile = new File($originFile);
-        }
+        $targetFile ??= \is_string($originFile) ? pathinfo($originFile, \PATHINFO_BASENAME) : $originFile->getBasename();
+        $targetFileName = Path::join('/', $this->prefixDir ?? '', $targetFile);
 
-        $targetFile ??= $originFile->getBasename();
-        $normalized = Path::join('/', $this->prefixDir ?? '', $targetFile);
-
-        return $this->doSave($originFile, $normalized);
+        return $this->doSave($originFile, $targetFileName);
     }
 
     public function delete(string $url): void
@@ -37,7 +32,7 @@ abstract class AbstractStorage implements StorageInterface
         $this->doDelete($path);
     }
 
-    abstract public function doSave(\SplFileInfo $originFile, string $targetFile): string;
+    abstract public function doSave(string|\SplFileInfo $originFile, string $targetFile): string;
 
     abstract public function doDelete(string $path): void;
 }

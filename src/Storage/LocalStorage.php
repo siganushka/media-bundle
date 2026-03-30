@@ -16,10 +16,10 @@ class LocalStorage extends AbstractStorage
         parent::__construct($options[self::PREFIX_DIR] ?? 'uploads');
     }
 
-    public function doSave(\SplFileInfo $originFile, string $targetFile): string
+    public function doSave(string|\SplFileInfo $originFile, string $targetFile): string
     {
         if (!$originFile instanceof File) {
-            $originFile = new File($originFile->getPathname());
+            $originFile = new File($originFile instanceof \SplFileInfo ? $originFile->getPathname() : $originFile);
         }
 
         $filename = Path::join($this->storageDir, $targetFile);

@@ -32,12 +32,16 @@ class HuaweiObsStorage extends AbstractStorage
         parent::__construct($options[self::PREFIX_DIR] ?? null);
     }
 
-    public function doSave(\SplFileInfo $originFile, string $targetFile): string
+    public function doSave(string|\SplFileInfo $originFile, string $targetFile): string
     {
+        if ($originFile instanceof \SplFileInfo) {
+            $originFile = $originFile->getPathname();
+        }
+
         $this->client->putObject([
             'Bucket' => $this->bucket,
             'Key' => self::normalize($targetFile),
-            'SourceFile' => $originFile->getPathname(),
+            'SourceFile' => $originFile,
         ]);
 
         return $this->buildUrl($targetFile);

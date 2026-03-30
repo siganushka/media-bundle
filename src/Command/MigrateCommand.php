@@ -179,7 +179,7 @@ class MigrateCommand extends Command
         return $anwser;
     }
 
-    protected function createFile(string $value): \SplFileInfo
+    protected function createFile(string $value): string
     {
         if (str_contains($value, '://') || str_starts_with($value, '//')) {
             return FileUtils::createFromUrl($value);
@@ -193,7 +193,7 @@ class MigrateCommand extends Command
         $targetFile = \sprintf('%s/%s', sys_get_temp_dir(), pathinfo($originFile, \PATHINFO_BASENAME));
         (new Filesystem())->copy($originFile, $targetFile, true);
 
-        return new \SplFileInfo($targetFile);
+        return $targetFile;
     }
 
     protected function getEntities(): array

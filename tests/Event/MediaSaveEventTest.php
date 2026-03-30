@@ -14,11 +14,11 @@ class MediaSaveEventTest extends TestCase
     public function testAll(): void
     {
         $rule = new Rule('foo');
-        $file = new \SplFileInfo('./tests/Fixtures/php.jpg');
+        $file = './tests/Fixtures/php.jpg';
 
         $event = new MediaSaveEvent($rule, $file);
         static::assertSame($rule, $event->getRule());
-        static::assertSame($file, $event->getFile());
+        static::assertSame($file, $event->getFile()->getPathname());
         static::assertSame('7e0bd17a39cf13a8db65d27fdc2de64c', $event->getHash());
         static::assertNull($event->getMedia());
 
@@ -32,7 +32,7 @@ class MediaSaveEventTest extends TestCase
         $this->expectExceptionMessage('Unable to hash file.');
 
         $rule = new Rule('foo');
-        $file = new \SplFileInfo('./non_exists_file.jpg');
+        $file = './non_exists_file.jpg';
 
         $event = new MediaSaveEvent($rule, $file);
         $event->getHash();

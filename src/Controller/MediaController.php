@@ -13,6 +13,7 @@ use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Rule;
 use Siganushka\MediaBundle\Serializer\Normalizer\MediaNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Util\FormUtil;
@@ -23,11 +24,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class MediaController extends AbstractController
 {
-    private readonly ServerParams $serverParams;
-
     public function __construct(private readonly MediaRepository $mediaRepository)
     {
-        $this->serverParams = new ServerParams();
     }
 
     public function getCollection(PaginatorInterface $paginator): Response
@@ -40,7 +38,7 @@ class MediaController extends AbstractController
         ]);
     }
 
-    public function postCollection(Request $request, EntityManagerInterface $entityManager, MediaManagerInterface $mediaManager): Response
+    public function postCollection(Request $request, EntityManagerInterface $entityManager, MediaManagerInterface $mediaManager, #[Autowire(service: 'form.server_params')] ServerParams $serverParams): Response
     {
         $params = array_replace($request->query->all(), $request->request->all());
         $submittedData = FormUtil::mergeParamsAndFiles($params, $request->files->all());
@@ -48,8 +46,7 @@ class MediaController extends AbstractController
         $form = $this->createForm(MediaUploadType::class);
         $form->submit($submittedData);
 
-        /* @see HttpFoundationRequestHandler::handleRequest() */
-        if ($this->serverParams->hasPostMaxSizeBeenExceeded()) {
+        if ($serverParams->hasPostMaxSizeBeenExceeded()) {
             $form->addError(new FormError($form->getConfig()->getOption('upload_max_size_message')()));
         }
 

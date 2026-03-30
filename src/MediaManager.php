@@ -6,7 +6,6 @@ namespace Siganushka\MediaBundle;
 
 use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class MediaManager implements MediaManagerInterface
@@ -21,10 +20,6 @@ class MediaManager implements MediaManagerInterface
     {
         if (\is_string($rule)) {
             $rule = $this->ruleRegistry->get($rule);
-        }
-
-        if (\is_string($file)) {
-            $file = new File($file);
         }
 
         $event = new MediaSaveEvent($rule, $file);

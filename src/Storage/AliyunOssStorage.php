@@ -49,9 +49,13 @@ class AliyunOssStorage extends AbstractStorage
         parent::__construct($options[self::PREFIX_DIR] ?? null);
     }
 
-    public function doSave(\SplFileInfo $originFile, string $targetFile): string
+    public function doSave(string|\SplFileInfo $originFile, string $targetFile): string
     {
-        $this->client->uploadFile($this->bucket, self::normalize($targetFile), $originFile->getPathname());
+        if ($originFile instanceof \SplFileInfo) {
+            $originFile = $originFile->getPathname();
+        }
+
+        $this->client->uploadFile($this->bucket, self::normalize($targetFile), $originFile);
 
         return $this->buildUrl($targetFile);
     }

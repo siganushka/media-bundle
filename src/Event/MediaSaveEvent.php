@@ -10,11 +10,13 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class MediaSaveEvent extends Event
 {
+    private readonly \SplFileInfo $file;
     private string $hash;
     private ?Media $media = null;
 
-    public function __construct(private readonly Rule $rule, private readonly \SplFileInfo $file)
+    public function __construct(private readonly Rule $rule, string|\SplFileInfo $file)
     {
+        $this->file = \is_string($file) ? new \SplFileInfo($file) : $file;
     }
 
     public function getRule(): Rule
