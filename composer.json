@@ -19,6 +19,7 @@
         "siganushka/generic-bundle": "dev-main",
         "symfony/form": "^7.4|^8.0",
         "symfony/framework-bundle": "^7.4|^8.0",
+        "symfony/mime": "^7.4|^8.0",
         "symfony/serializer": "^7.4|^8.0",
         "symfony/validator": "^7.4|^8.0"
     },

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Siganushka\MediaBundle\DependencyInjection;
 
 use Siganushka\MediaBundle\Entity\Media;
+use Siganushka\MediaBundle\MediaNaming;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Storage\LocalStorage;
 use Siganushka\MediaBundle\Storage\StorageInterface;
@@ -18,8 +19,6 @@ use Symfony\Component\Validator\Constraints\Video;
 
 class Configuration implements ConfigurationInterface
 {
-    public const DEFAULT_NAMING = '[hash:2]/[hash:13:2].[ext]';
-
     public static array $resourceMapping = [
         'media_class' => [Media::class, MediaRepository::class],
     ];
@@ -75,7 +74,7 @@ class Configuration implements ConfigurationInterface
         $rootNode->children()
             ->scalarNode('naming')
             ->info('This value defines the default file naming strategy (Available placeholders: yy/yyyy/m/mm/d/dd/timestamp/hash/hash:{LENGTH}:{START}/rule/original_name/ext).')
-            ->defaultValue(self::DEFAULT_NAMING)
+            ->defaultValue(MediaNaming::DEFAULT_NAMING)
             ->cannotBeEmpty()
         ;
     }

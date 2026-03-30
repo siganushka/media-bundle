@@ -18,14 +18,16 @@ class LocalStorage extends AbstractStorage
 
     public function doSave(string|\SplFileInfo $originFile, string $targetFile): string
     {
-        if (!$originFile instanceof File) {
-            $originFile = new File($originFile instanceof \SplFileInfo ? $originFile->getPathname() : $originFile);
-        }
+        $file = match (true) {
+            $originFile instanceof File => $originFile,
+            $originFile instanceof \SplFileInfo => new File($originFile->getPathname()),
+            default => new File($originFile),
+        };
 
         $filename = Path::join($this->storageDir, $targetFile);
         $pathinfo = pathinfo($filename);
 
-        $originFile->move($pathinfo['dirname'] ?? '', $pathinfo['basename']);
+        $file->move($pathinfo['dirname'] ?? '', $pathinfo['basename']);
 
         return $this->buildUrl($targetFile);
     }

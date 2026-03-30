@@ -8,7 +8,7 @@ use Doctrine\ORM\Events;
 use Siganushka\GenericBundle\DependencyInjection\SiganushkaGenericExtension;
 use Siganushka\MediaBundle\Command\MigrateCommand;
 use Siganushka\MediaBundle\Doctrine\MediaListener;
-use Siganushka\MediaBundle\EventListener\MediaSaveListener;
+use Siganushka\MediaBundle\MediaNaming;
 use Siganushka\MediaBundle\Rule;
 use Siganushka\MediaBundle\RuleRegistry;
 use Siganushka\MediaBundle\Storage\LocalStorage;
@@ -79,11 +79,11 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         $localStorage = $container->findDefinition(LocalStorage::class);
         $localStorage->setArgument('$storageDir', '%siganushka_media.storage_dir%');
 
-        $mediaSaveListener = $container->findDefinition(MediaSaveListener::class);
-        $mediaSaveListener->setArgument('$defaultNamingStrategy', $config['naming']);
-
         $mediaListener = $container->findDefinition(MediaListener::class);
         $mediaListener->addTag('doctrine.orm.entity_listener', ['event' => Events::postRemove, 'entity' => $config['media_class']]);
+
+        $mediaNaming = $container->findDefinition(MediaNaming::class);
+        $mediaNaming->setArgument('$defaultNamingStrategy', $config['naming']);
 
         $container->setAlias(StorageInterface::class, $config['storage']);
     }
