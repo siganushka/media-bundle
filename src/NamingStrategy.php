@@ -8,7 +8,7 @@ use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Siganushka\MediaBundle\Utils\FileUtils;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class MediaNaming
+class NamingStrategy
 {
     public const DEFAULT_NAMING = '[hash:2]/[hash:13:2].[ext]';
 
@@ -45,8 +45,8 @@ class MediaNaming
                 '[timestamp]' => time(),
                 '[hash]' => $event->getHash(),
                 '[rule]' => $rule->__toString(),
-                '[original_name]' => $normalizedName,
                 '[ext]' => $extension,
+                '[original_name_with_ext]' => $normalizedName,
             ]);
         }
 

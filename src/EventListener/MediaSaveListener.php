@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Siganushka\MediaBundle\EventListener;
 
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
-use Siganushka\MediaBundle\MediaNaming;
+use Siganushka\MediaBundle\NamingStrategy;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 use Siganushka\MediaBundle\Utils\FileUtils;
@@ -18,13 +18,12 @@ class MediaSaveListener
     public function __construct(
         private readonly StorageInterface $storage,
         private readonly MediaRepository $repository,
-        private readonly MediaNaming $naming,
+        private readonly NamingStrategy $naming,
     ) {
     }
 
     public function __invoke(MediaSaveEvent $event): void
     {
-        $rule = $event->getRule();
         $file = $event->getFile();
 
         // [important] Clears file status cache before access file.
@@ -42,7 +41,7 @@ class MediaSaveListener
             $width = $height = null;
         }
 
-        $targetFile = $this->naming->getTargetFile($rule, $file);
+        $targetFile = $this->naming->getTargetFile($event->getRule(), $file);
         $url = $this->storage->save($file, $targetFile);
 
         $media = $event->getMedia() ?? $this->repository->createNew();

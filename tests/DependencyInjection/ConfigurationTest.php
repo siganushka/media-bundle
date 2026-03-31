@@ -7,7 +7,7 @@ namespace Siganushka\MediaBundle\Tests\DependencyInjection;
 use PHPUnit\Framework\TestCase;
 use Siganushka\MediaBundle\DependencyInjection\Configuration;
 use Siganushka\MediaBundle\Entity\Media;
-use Siganushka\MediaBundle\MediaNaming;
+use Siganushka\MediaBundle\NamingStrategy;
 use Siganushka\MediaBundle\Storage\AliyunOssStorage;
 use Siganushka\MediaBundle\Storage\LocalStorage;
 use Siganushka\MediaBundle\Storage\StorageInterface;
@@ -26,7 +26,7 @@ class ConfigurationTest extends TestCase
         static::assertSame($processedConfig, [
             'media_class' => Media::class,
             'storage' => LocalStorage::class,
-            'naming' => MediaNaming::DEFAULT_NAMING,
+            'naming' => NamingStrategy::DEFAULT_NAMING,
             'rules' => [],
         ]);
     }

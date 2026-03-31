@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Siganushka\MediaBundle\DependencyInjection;
 
 use Siganushka\MediaBundle\Entity\Media;
-use Siganushka\MediaBundle\MediaNaming;
+use Siganushka\MediaBundle\NamingStrategy;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Storage\LocalStorage;
 use Siganushka\MediaBundle\Storage\StorageInterface;
@@ -74,7 +74,7 @@ class Configuration implements ConfigurationInterface
         $rootNode->children()
             ->scalarNode('naming')
             ->info('This value defines the default file naming strategy (Available placeholders: yy/yyyy/m/mm/d/dd/timestamp/hash/hash:{LENGTH}:{START}/rule/original_name/ext).')
-            ->defaultValue(MediaNaming::DEFAULT_NAMING)
+            ->defaultValue(NamingStrategy::DEFAULT_NAMING)
             ->cannotBeEmpty()
         ;
     }
