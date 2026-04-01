@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle;
 
-use Siganushka\MediaBundle\Event\MediaSaveEvent;
+use Siganushka\MediaBundle\Event\MediaEvent;
 use Siganushka\MediaBundle\Utils\FileUtils;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -18,13 +18,13 @@ class NamingStrategy
     ) {
     }
 
-    public function getTargetFile(string|Rule $rule, string|\SplFileInfo $file): string
+    public function getTargetFile(string|Rule $rule, string|\SplFileInfo $file, array $placeholders = []): string
     {
         if (\is_string($rule)) {
             $rule = $this->ruleRegistry->get($rule);
         }
 
-        $event = new MediaSaveEvent($rule, $file);
+        $event = new MediaEvent($rule, $file);
         $file = $event->getFile();
 
         $name = $file instanceof UploadedFile ? $file->getClientOriginalName() : $file->getFilename();
@@ -35,7 +35,7 @@ class NamingStrategy
         $namingStrategy = $rule->namingStrategy ?? $this->defaultNamingStrategy;
 
         if ($naming = preg_replace_callback('/\[hash:(\d+)(?::(\d+))?\]/', $callback, $namingStrategy)) {
-            return strtr($naming, [
+            return strtr($naming, $placeholders + [
                 '[yy]' => date('y'),
                 '[yyyy]' => date('Y'),
                 '[m]' => date('n'),
@@ -43,6 +43,7 @@ class NamingStrategy
                 '[d]' => date('j'),
                 '[dd]' => date('d'),
                 '[timestamp]' => time(),
+                '[uniqid]' => uniqid(),
                 '[hash]' => $event->getHash(),
                 '[rule]' => $rule->__toString(),
                 '[ext]' => $extension,

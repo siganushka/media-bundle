@@ -25,8 +25,14 @@ class NamingStrategyTest extends TestCase
         $rule1 = new Rule('foo', namingStrategy: $namingStrategy);
         $rule2 = new Rule('foo');
 
-        static::assertSame($targetFile, $naming1->getTargetFile($rule1, $file));
-        static::assertSame($targetFile, $naming2->getTargetFile($rule2, $file));
+        $placeholders = [
+            '[foo]' => 'test111',
+            '[timestamp]' => 'test222',
+            '[uniqid]' => 'test333',
+        ];
+
+        static::assertSame($targetFile, $naming1->getTargetFile($rule1, $file, $placeholders));
+        static::assertSame($targetFile, $naming2->getTargetFile($rule2, $file, $placeholders));
     }
 
     public static function namingStrategyProvider(): iterable
@@ -38,10 +44,12 @@ class NamingStrategyTest extends TestCase
         yield [\sprintf('%s.jpg', date('m')), '[mm].[ext]'];
         yield [\sprintf('%s.jpg', date('j')), '[d].[ext]'];
         yield [\sprintf('%s.jpg', date('d')), '[dd].[ext]'];
-        yield [\sprintf('%s.jpg', time()), '[timestamp].[ext]'];
+        yield ['test222.jpg', '[timestamp].[ext]'];
+        yield ['test333.jpg', '[uniqid].[ext]'];
         yield ['7e0bd17a39cf13a8db65d27fdc2de64c.jpg', '[hash].[ext]'];
         yield ['foo.jpg', '[rule].[ext]'];
         yield ['php.jpg', '[original_name_with_ext]'];
         yield ['[invalid_placeholder]', '[invalid_placeholder]'];
+        yield ['test111', '[foo]'];
     }
 }
