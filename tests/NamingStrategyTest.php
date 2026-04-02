@@ -17,22 +17,22 @@ class NamingStrategyTest extends TestCase
     {
         $file = './tests/Fixtures/php.jpg';
 
-        $registry = $this->createMock(RuleRegistry::class);
-
-        $naming1 = new NamingStrategy($registry);
-        $naming2 = new NamingStrategy($registry, $namingStrategy);
-
-        $rule1 = new Rule('foo', namingStrategy: $namingStrategy);
-        $rule2 = new Rule('foo');
-
         $placeholders = [
             '[foo]' => 'test111',
             '[timestamp]' => 'test222',
             '[uniqid]' => 'test333',
         ];
 
-        static::assertSame($targetFile, $naming1->getTargetFile($rule1, $file, $placeholders));
-        static::assertSame($targetFile, $naming2->getTargetFile($rule2, $file, $placeholders));
+        $registry = $this->createMock(RuleRegistry::class);
+
+        $naming1 = new NamingStrategy($registry, $namingStrategy, $placeholders);
+        $naming2 = new NamingStrategy($registry, $namingStrategy, $placeholders);
+
+        $rule1 = new Rule('foo', namingStrategy: $namingStrategy);
+        $rule2 = new Rule('foo');
+
+        static::assertSame($targetFile, $naming1->getTargetFile($rule1, $file));
+        static::assertSame($targetFile, $naming2->getTargetFile($rule2, $file));
     }
 
     public static function namingStrategyProvider(): iterable

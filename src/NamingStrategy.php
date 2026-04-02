@@ -15,10 +15,11 @@ class NamingStrategy
     public function __construct(
         private readonly RuleRegistry $ruleRegistry,
         private readonly string $defaultNamingStrategy = self::DEFAULT_NAMING,
+        private readonly array $defaultPlaceholders = [],
     ) {
     }
 
-    public function getTargetFile(string|Rule $rule, string|\SplFileInfo $file, array $placeholders = []): string
+    public function getTargetFile(string|Rule $rule, string|\SplFileInfo $file): string
     {
         if (\is_string($rule)) {
             $rule = $this->ruleRegistry->get($rule);
@@ -35,7 +36,7 @@ class NamingStrategy
         $namingStrategy = $rule->namingStrategy ?? $this->defaultNamingStrategy;
 
         if ($naming = preg_replace_callback('/\[hash:(\d+)(?::(\d+))?\]/', $callback, $namingStrategy)) {
-            return strtr($naming, $placeholders + [
+            return strtr($naming, $this->defaultPlaceholders + [
                 '[yy]' => date('y'),
                 '[yyyy]' => date('Y'),
                 '[m]' => date('n'),
