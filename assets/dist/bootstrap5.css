@@ -29,10 +29,6 @@
 }
 
 /** Preview */
-[data-siganushka-media-target=view] {
-  font-size: .75rem;
-}
-
 [data-siganushka-media-target=view] img,
 [data-siganushka-media-target=view] video {
   max-width: 100%;
