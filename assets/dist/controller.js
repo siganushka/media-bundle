@@ -15,15 +15,6 @@ export default class extends Controller {
     const formData = new FormData()
     formData.append('file', files[0])
 
-    // CSRF compatibility for stateful forms
-    if (event.target.form) {
-      const csrf = event.target.form.querySelector('input[data-controller="csrf-protection"], input[name="_csrf_token"]')
-      if (csrf && csrf.name) {
-        const [, csrfName] = csrf.name.match(/\[([^\[\]]+)\]$/) || [, csrf.name]
-        formData.append(csrfName, csrf.value)
-      }
-    }
-
     this.element.classList.add('siganushka-media-loading')
 
     fetch(this.urlValue, {
