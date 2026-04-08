@@ -6,7 +6,7 @@
     data-controller="siganushka-media"
     data-siganushka-media-url-value="{{ path('siganushka_media_postcollection', {rule}) }}"
   >
-    <div class="text-center text-break lh-ms" data-siganushka-media-target="view">
+    <div class="text-center text-break lh-ms" data-siganushka-media-target="view" style="display: contents">
       {% if data %}
         {%- if data.mime starts with 'image/' -%}
           <img src="{{ data.url }}" />
