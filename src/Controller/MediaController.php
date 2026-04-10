@@ -12,12 +12,14 @@ use Siganushka\MediaBundle\MediaManagerInterface;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Rule;
 use Siganushka\MediaBundle\Serializer\Normalizer\MediaNormalizer;
+use Siganushka\MediaBundle\Utils\FileUtils;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Util\FormUtil;
 use Symfony\Component\Form\Util\ServerParams;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,8 +42,12 @@ class MediaController extends AbstractController
 
     public function postCollection(Request $request, EntityManagerInterface $entityManager, MediaManagerInterface $mediaManager, #[Autowire(service: 'form.server_params')] ServerParams $serverParams): Response
     {
-        $params = array_replace($request->query->all(), $request->request->all());
-        $submittedData = FormUtil::mergeParamsAndFiles($params, $request->files->all());
+        $submittedData = array_replace($request->query->all(), $request->request->all());
+        if (str_starts_with($request->headers->get('CONTENT_TYPE', ''), 'multipart/form-data')) {
+            $submittedData = FormUtil::mergeParamsAndFiles($submittedData, $request->files->all());
+        } elseif ($content = $request->getContent()) {
+            $submittedData['file'] = new File(FileUtils::createFromContent($content));
+        }
 
         $form = $this->createForm(MediaUploadType::class);
         $form->submit($submittedData);

@@ -77,7 +77,7 @@ class FileUtils
      */
     public static function createFromContent(string $content, ?string $fileName = null): string
     {
-        $file = Path::join(sys_get_temp_dir(), $fileName ?? uniqid('tmp_', true));
+        $file = Path::join(sys_get_temp_dir(), $fileName ?? uniqid());
 
         if (false === file_put_contents($file, $content)) {
             throw new \RuntimeException('Failed to save file.');
