@@ -41,7 +41,7 @@ class MediaSaveListener
             $width = $height = null;
         }
 
-        $targetFile = $this->naming->getTargetFile($event->getRule(), $file);
+        $targetFile = $this->naming->getTargetFile($event);
         $url = $this->storage->save($file, $targetFile);
 
         $media = $event->getMedia() ?? $this->repository->createNew();

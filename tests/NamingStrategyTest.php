@@ -6,9 +6,9 @@ namespace Siganushka\MediaBundle\Tests;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Siganushka\MediaBundle\NamingStrategy;
 use Siganushka\MediaBundle\Rule;
-use Siganushka\MediaBundle\RuleRegistry;
 
 class NamingStrategyTest extends TestCase
 {
@@ -23,21 +23,19 @@ class NamingStrategyTest extends TestCase
             '[uniqid]' => 'test333',
         ];
 
-        $registry = $this->createMock(RuleRegistry::class);
-
-        $naming1 = new NamingStrategy($registry, $namingStrategy, $placeholders);
-        $naming2 = new NamingStrategy($registry, $namingStrategy, $placeholders);
+        $naming1 = new NamingStrategy($namingStrategy, $placeholders);
+        $naming2 = new NamingStrategy($namingStrategy, $placeholders);
 
         $rule1 = new Rule('foo', namingStrategy: $namingStrategy);
         $rule2 = new Rule('foo');
 
-        static::assertSame($targetFile, $naming1->getTargetFile($rule1, $file));
-        static::assertSame($targetFile, $naming2->getTargetFile($rule2, $file));
+        static::assertSame($targetFile, $naming1->getTargetFile(new MediaSaveEvent($rule1, $file)));
+        static::assertSame($targetFile, $naming2->getTargetFile(new MediaSaveEvent($rule2, $file)));
     }
 
     public static function namingStrategyProvider(): iterable
     {
-        yield ['7e/0bd17a39cf13a.jpg', NamingStrategy::DEFAULT_NAMING];
+        yield ['7e/0b/d17a39cf13a8.jpg', NamingStrategy::DEFAULT_NAMING];
         yield [\sprintf('%s.jpg', date('y')), '[yy].[ext]'];
         yield [\sprintf('%s.jpg', date('Y')), '[yyyy].[ext]'];
         yield [\sprintf('%s.jpg', date('n')), '[m].[ext]'];

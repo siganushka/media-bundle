@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\Storage;
 
-use Siganushka\MediaBundle\Event\MediaEvent;
+use Siganushka\MediaBundle\Event\MediaSaveEvent;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Path;
 use Symfony\Component\HttpFoundation\UrlHelper;
@@ -18,7 +18,7 @@ class LocalStorage extends AbstractStorage
 
     public function doSave(string|\SplFileInfo $originFile, string $targetFile): string
     {
-        $file = MediaEvent::getSymfonyFile($originFile);
+        $file = MediaSaveEvent::getSymfonyFile($originFile);
 
         $filename = Path::join($this->storageDir, $targetFile);
         $pathinfo = pathinfo($filename);
