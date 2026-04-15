@@ -24,6 +24,7 @@ class MediaSaveListener
 
     public function __invoke(MediaSaveEvent $event): void
     {
+        $rule = $event->getRule();
         $file = $event->getFile();
 
         // [important] Clears file status cache before access file.
@@ -41,8 +42,8 @@ class MediaSaveListener
             $width = $height = null;
         }
 
-        $targetFile = $this->naming->getTargetFile($event);
-        $url = $this->storage->save($file, $targetFile);
+        $targetFile = $this->naming->getTargetFile($rule, $file);
+        $mediaUrl = $this->storage->save($file, $targetFile);
 
         $media = $event->getMedia() ?? $this->repository->createNew();
         $media->setHash($event->getHash());
@@ -52,7 +53,7 @@ class MediaSaveListener
         $media->setSize($size);
         $media->setWidth($width);
         $media->setHeight($height);
-        $media->setUrl($url);
+        $media->setUrl($mediaUrl);
 
         $event->setMedia($media);
     }
