@@ -46,11 +46,8 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
                 ->setArgument('$alias', $alias)
                 ->setArgument('$constraint', $options['constraint'])
                 ->setArgument('$constraintOptions', $options['constraint_options'])
+                ->setArgument('$namingStrategy', $options['naming'])
             ;
-
-            if ($options['naming']) {
-                $rule->setArgument('$namingStrategy', $options['naming']);
-            }
 
             if ($this->isConfigEnabled($container, $options['resize'])) {
                 if (!class_exists(\Imagick::class)) {
