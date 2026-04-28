@@ -9,11 +9,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 
-class MediaReferenceController extends AbstractController
+class MediaRefController extends AbstractController
 {
-    #[Route('/m/{hash<[0-9a-fA-F]+>}', name: 'siganushka_media_reference', methods: 'GET')]
     public function __invoke(Request $request, MediaRepository $repository, string $hash): Response
     {
         $entity = $repository->findOneByHash($hash);
