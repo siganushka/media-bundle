@@ -27,7 +27,7 @@ class FileUtils
         curl_setopt($curl, \CURLOPT_URL, $url);
         curl_setopt($curl, \CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($curl, \CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, \CURLOPT_FAILONERROR, true);
+        curl_setopt($curl, \CURLOPT_FAILONERROR, false);
         curl_setopt($curl, \CURLOPT_TIMEOUT, $timeout);
 
         $content = curl_exec($curl);
