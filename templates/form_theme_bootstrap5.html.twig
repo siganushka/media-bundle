@@ -5,6 +5,11 @@
     {% if style %}style="{{ style }}"{% endif %}
     data-controller="siganushka-media"
     data-siganushka-media-url-value="{{ path('siganushka_media_postcollection', {rule}) }}"
+    data-action="
+      dragenter->siganushka-media#dragenter:prevent
+      dragover->siganushka-media#dragover:prevent
+      dragleave->siganushka-media#dragleave:prevent
+      drop->siganushka-media#drop:prevent"
   >
     <div class="text-center text-break lh-ms" data-siganushka-media-target="view" style="display: contents">
       {% if data %}
@@ -19,12 +24,12 @@
     </div>
 
     <div class="spinner-border position-absolute top-50 start-50 d-none"></div>
-    <button type="button" class="btn-close rounded-circle bg-white position-absolute top-50 start-50 translate-middle z-1 d-none" data-action="click->siganushka-media#remove"></button>
+    <button type="button" class="btn-close rounded-circle bg-white position-absolute top-50 start-50 translate-middle z-1 d-none" data-action="click->siganushka-media#remove:prevent"></button>
 
     <input type="file" class="position-absolute top-100 start-50 translate-middle z-3" id="{{ id }}_file" accept="{{ accept }}"
       data-siganushka-media-target='file'
-      data-action="change->siganushka-media#change"
-      {{- disabled or data ? ' disabled' }}
+      data-action="change->siganushka-media#change paste->siganushka-media#paste"
+      {{- disabled ? ' disabled' }}
       {{- required ? ' required' }}
     />
 

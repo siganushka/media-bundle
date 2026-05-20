@@ -25,7 +25,6 @@ export default class extends Controller {
       const json = await response.json()
       return response.ok ? Promise.resolve(json) : Promise.reject(json.detail || response.statusText)
     }).then(res => {
-      event.target.disabled = true
       this.dataTarget.value = res.hash
       this.element.classList.add('siganushka-media-uploaded')
       if (res.mime.startsWith('image/')) {
@@ -37,16 +36,42 @@ export default class extends Controller {
       }
     }).catch(err => {
       alert(err)
-      event.target.disabled = false
     }).finally(() => {
       event.target.value = ''
       this.element.classList.remove('siganushka-media-loading')
     })
   }
 
-  remove(event) {
-    event.preventDefault()
-    this.fileTarget.disabled = false
+  paste(event) {
+    event.target.files = event.clipboardData.files
+    event.target.dispatchEvent(new Event('change', { bubbles: true }))
+  }
+
+  drop(event) {
+    if (!this.fileTarget.disabled) {
+      this.fileTarget.files = event.dataTransfer.files
+      this.fileTarget.dispatchEvent(new Event('change', { bubbles: true }))
+      this.element.classList.remove('siganushka-media-drag')
+    }
+  }
+
+  dragenter() {
+    if (!this.fileTarget.disabled) {
+      this.element.classList.add('siganushka-media-drag')
+    }
+  }
+
+  dragover(event) {
+    // console.log('dragover...', event)
+  }
+
+  dragleave() {
+    if (!this.fileTarget.disabled) {
+      this.element.classList.remove('siganushka-media-drag')
+    }
+  }
+
+  remove() {
     this.dataTarget.value = ''
     this.viewTarget.replaceChildren()
     this.element.classList.remove('siganushka-media-uploaded')
