@@ -29,7 +29,7 @@
     <input type="file" class="position-absolute top-100 start-50 translate-middle z-3" id="{{ id }}_file" accept="{{ accept }}"
       data-siganushka-media-target='file'
       data-action="change->siganushka-media#change paste->siganushka-media#paste"
-      {{- disabled ? ' disabled' }}
+      {{- disabled or data ? ' disabled' }}
       {{- required ? ' required' }}
     />
 
