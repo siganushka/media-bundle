@@ -25,6 +25,7 @@ export default class extends Controller {
       const json = await response.json()
       return response.ok ? Promise.resolve(json) : Promise.reject(json.detail || response.statusText)
     }).then(res => {
+      event.target.disabled = true
       this.dataTarget.value = res.hash
       this.element.classList.add('siganushka-media-uploaded')
       if (res.mime.startsWith('image/')) {
@@ -36,6 +37,7 @@ export default class extends Controller {
       }
     }).catch(err => {
       alert(err)
+      event.target.disabled = false
     }).finally(() => {
       event.target.value = ''
       this.element.classList.remove('siganushka-media-loading')
@@ -72,6 +74,7 @@ export default class extends Controller {
   }
 
   remove() {
+    this.fileTarget.disabled = false
     this.dataTarget.value = ''
     this.viewTarget.replaceChildren()
     this.element.classList.remove('siganushka-media-uploaded')
