@@ -33,7 +33,7 @@ export default class extends Controller {
       } else if (res.mime.startsWith('video/')) {
         this.viewTarget.innerHTML = `<video src="${res.url}" controls />`
       } else {
-        this.viewTarget.innerHTML = res.name
+        this.viewTarget.innerHTML = `<small>${res.name}</small>`
       }
     }).catch(err => {
       alert(err)

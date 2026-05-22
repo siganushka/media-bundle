@@ -5,20 +5,16 @@
     {% if style %}style="{{ style }}"{% endif %}
     data-controller="siganushka-media"
     data-siganushka-media-url-value="{{ path('siganushka_media_postcollection', {rule}) }}"
-    data-action="
-      dragenter->siganushka-media#dragenter:prevent
-      dragover->siganushka-media#dragover:prevent
-      dragleave->siganushka-media#dragleave:prevent
-      drop->siganushka-media#drop:prevent"
+    data-action="dragenter->siganushka-media#dragenter:prevent dragover->siganushka-media#dragover:prevent dragleave->siganushka-media#dragleave:prevent drop->siganushka-media#drop:prevent"
   >
-    <div class="text-center text-break lh-ms" data-siganushka-media-target="view" style="display: contents">
+    <div class="text-center text-break lh-sm" data-siganushka-media-target="view" style="display: contents">
       {% if data %}
         {%- if data.mime starts with 'image/' -%}
           <img src="{{ data.url }}" />
         {%- elseif data.mime starts with 'video/' -%}
           <video src="{{ data.url }}" controls />
         {%- else -%}
-          {{ data.name }}
+          <small>{{ data.name }}</small>
         {%- endif -%}
       {% endif %}
     </div>
