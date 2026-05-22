@@ -9,6 +9,7 @@ return [
     'media.name' => '名称',
     'media.extension' => '格式',
     'media.mime' => '类型',
+    'media.bytes' => '字节',
     'media.size' => '大小',
     'media.pixel' => '尺寸',
 ];

@@ -34,7 +34,7 @@ class MediaSaveListener
         $normalizedName = FileUtils::normalizeFilename($name);
         $extension = $file->guessExtension() ?? $file->getExtension();
         $mime = $file->getMimeType() ?? throw new \RuntimeException('Unable to get mime type.');
-        $size = $file->getSize() ?: 0;
+        $bytes = $file->getSize() ?: 0;
 
         try {
             [$width, $height] = FileUtils::getImageSize($file);
@@ -50,7 +50,7 @@ class MediaSaveListener
         $media->setName($normalizedName);
         $media->setExtension($extension);
         $media->setMime($mime);
-        $media->setSize($size);
+        $media->setBytes($bytes);
         $media->setWidth($width);
         $media->setHeight($height);
         $media->setUrl($mediaUrl);

@@ -26,7 +26,7 @@ class MediaNormalizerTest extends TestCase
         $media->setName('baz.jpg');
         $media->setExtension('jpg');
         $media->setMime('image/jpeg');
-        $media->setSize(1536);
+        $media->setBytes(1536);
         $media->setWidth(300);
 
         static::assertTrue($this->normalizer->supportsNormalization($media));
@@ -37,8 +37,8 @@ class MediaNormalizerTest extends TestCase
             'name' => 'baz.jpg',
             'extension' => 'jpg',
             'mime' => 'image/jpeg',
-            'size' => 1536,
-            'sizeStr' => '1.5KB',
+            'bytes' => 1536,
+            'size' => '1.5 KB',
             'width' => 300,
             'height' => null,
             'createdAt' => null,

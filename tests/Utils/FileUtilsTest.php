@@ -66,18 +66,6 @@ class FileUtilsTest extends TestCase
         FileUtils::createFromDataUri('foo');
     }
 
-    public function testGetFormattedSize(): void
-    {
-        static::assertSame('50.01KB', FileUtils::getFormattedSize('./tests/Fixtures/landscape.jpg'));
-    }
-
-    public function testGetFormattedSizeRuntimeException(): void
-    {
-        $this->expectException(\RuntimeException::class);
-
-        FileUtils::getFormattedSize('./non_existing_file');
-    }
-
     #[DataProvider('bytesProvider')]
     public function testFormatBytes(string $formatted, int $bytes): void
     {
@@ -86,14 +74,14 @@ class FileUtilsTest extends TestCase
 
     public static function bytesProvider(): iterable
     {
-        yield ['0B', 0];
-        yield ['0B', -1];
-        yield ['1B', 1];
-        yield ['1023B', 1023];
-        yield ['1KB', 1024];
-        yield ['64KB', 65535];
-        yield ['64MB', 65535 * 1024];
-        yield ['2GB', 2147483647];
-        yield ['8EB', \PHP_INT_MAX];
+        yield ['0 B', 0];
+        yield ['0 B', -1];
+        yield ['1 B', 1];
+        yield ['1023 B', 1023];
+        yield ['1 KB', 1024];
+        yield ['64 KB', 65535];
+        yield ['64 MB', 65535 * 1024];
+        yield ['2 GB', 2147483647];
+        yield ['8 EB', \PHP_INT_MAX];
     }
 }

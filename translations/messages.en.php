@@ -9,6 +9,7 @@ return [
     'media.name' => 'Name',
     'media.extension' => 'Extension',
     'media.mime' => 'Mime',
+    'media.bytes' => 'Bytes',
     'media.size' => 'Size',
     'media.pixel' => 'Pixel',
 ];

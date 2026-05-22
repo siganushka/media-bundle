@@ -36,7 +36,10 @@ class Media implements ResourceInterface, CreatableInterface, \Stringable
     protected ?string $mime = null;
 
     #[ORM\Column]
-    protected ?int $size = null;
+    protected ?int $bytes = null;
+
+    #[ORM\Column]
+    protected ?string $size = null;
 
     #[ORM\Column(nullable: true)]
     protected ?int $width = null;
@@ -104,21 +107,22 @@ class Media implements ResourceInterface, CreatableInterface, \Stringable
         return $this;
     }
 
-    public function getSize(): ?int
+    public function getBytes(): ?int
     {
-        return $this->size;
+        return $this->bytes;
     }
 
-    public function getSizeStr(): ?string
+    public function setBytes(int $bytes): static
     {
-        return FileUtils::formatBytes($this->size ?? 0);
-    }
-
-    public function setSize(int $size): static
-    {
-        $this->size = $size;
+        $this->bytes = $bytes;
+        $this->size = FileUtils::formatBytes($bytes);
 
         return $this;
+    }
+
+    public function getSize(): ?string
+    {
+        return $this->size;
     }
 
     public function getWidth(): ?int
