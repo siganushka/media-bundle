@@ -12,7 +12,7 @@ use Siganushka\Contracts\Doctrine\ResourceTrait;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Utils\FileUtils;
 
-#[ORM\Entity(repositoryClass: MediaRepository::class)]
+#[ORM\Entity(repositoryClass: MediaRepository::class, readOnly: true)]
 #[ORM\UniqueConstraint(columns: ['hash'])]
 #[ORM\Cache(usage: 'NONSTRICT_READ_WRITE')]
 class Media implements ResourceInterface, CreatableInterface, \Stringable
