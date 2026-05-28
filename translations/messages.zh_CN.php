@@ -5,7 +5,6 @@ declare(strict_types=1);
 return [
     'media.rule' => '规则',
     'media.file' => '文件',
-
     'media.name' => '名称',
     'media.extension' => '格式',
     'media.mime' => '类型',
