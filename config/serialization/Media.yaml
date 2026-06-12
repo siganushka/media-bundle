@@ -1,0 +1,24 @@
+Siganushka\MediaBundle\Entity\Media:
+    attributes:
+        id:
+            groups: []
+        hash:
+            groups: [media.item, media.collection]
+        url:
+            groups: [media.item, media.collection]
+        name:
+            groups: [media.item, media.collection]
+        extension:
+            groups: [media.item, media.collection]
+        mime:
+            groups: [media.item, media.collection]
+        bytes:
+            groups: [media.item, media.collection]
+        size:
+            groups: [media.item, media.collection]
+        width:
+            groups: [media.item, media.collection]
+        height:
+            groups: [media.item, media.collection]
+        createdAt:
+            groups: [media.item, media.collection]

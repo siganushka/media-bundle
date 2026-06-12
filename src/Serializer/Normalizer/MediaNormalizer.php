@@ -31,7 +31,7 @@ class MediaNormalizer implements NormalizerInterface
 
         /** @var array */
         $data = $this->normalizer->normalize($object, $format, array_merge_recursive($context, [
-            AbstractNormalizer::IGNORED_ATTRIBUTES => ['id'],
+            AbstractNormalizer::GROUPS => ['media.item'],
         ]));
 
         return $data;

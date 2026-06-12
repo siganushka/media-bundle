@@ -42,6 +42,7 @@ class MediaNormalizerTest extends TestCase
             'width' => 300,
             'height' => null,
             'createdAt' => null,
+            'id' => null,
         ], $this->normalizer->normalize($media, context: [
             MediaNormalizer::AS_REFERENCE => false,
         ]));
