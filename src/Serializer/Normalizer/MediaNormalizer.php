@@ -6,7 +6,6 @@ namespace Siganushka\MediaBundle\Serializer\Normalizer;
 
 use Siganushka\MediaBundle\Entity\Media;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class MediaNormalizer implements NormalizerInterface
@@ -30,9 +29,7 @@ class MediaNormalizer implements NormalizerInterface
         }
 
         /** @var array */
-        $data = $this->normalizer->normalize($object, $format, array_merge_recursive($context, [
-            AbstractNormalizer::GROUPS => ['media.item'],
-        ]));
+        $data = $this->normalizer->normalize($object, $format, $context);
 
         return $data;
     }

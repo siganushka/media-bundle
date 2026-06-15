@@ -1,7 +1,5 @@
 Siganushka\MediaBundle\Entity\Media:
     attributes:
-        id:
-            groups: []
         hash:
             groups: [media.item, media.collection]
         url:
