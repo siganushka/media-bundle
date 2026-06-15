@@ -73,7 +73,7 @@ class Configuration implements ConfigurationInterface
     {
         $rootNode->children()
             ->scalarNode('naming')
-            ->info('This value defines the default file naming strategy (Available placeholders: yy/yyyy/m/mm/d/dd/timestamp/uniqid/random/random:{LENGTH}:{START}/rule/ext/original_name_with_ext).')
+            ->info('This value defines the default file naming strategy (Available placeholders: yy/yyyy/m/mm/d/dd/timestamp/random/random:{LENGTH}:{START}/rule/ext/original_name/original_ext).')
             ->defaultValue(NamingStrategy::DEFAULT_NAMING)
             ->cannotBeEmpty()
         ;

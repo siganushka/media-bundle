@@ -56,6 +56,7 @@ class FileUtilsTest extends TestCase
         static::assertSame('php0123456789012.jpg', FileUtils::normalizeFilename('php01234567890123456789012345678901234567890123456789.jpg', 16));
         static::assertSame('php', FileUtils::normalizeFilename('php'));
         static::assertSame('abcdefg.jpg', FileUtils::normalizeFilename('abcdefghijklmnopqrstuvwxyz.jpg', 7));
+        static::assertSame('a-b-c---d.jpg', FileUtils::normalizeFilename('a b c   d.jpg'));
     }
 
     public function testDataUriInvalidArgumentException(): void

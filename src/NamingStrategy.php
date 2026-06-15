@@ -44,11 +44,11 @@ class NamingStrategy
                 '[d]' => date('j'),
                 '[dd]' => date('d'),
                 '[timestamp]' => time(),
-                '[uniqid]' => uniqid(),
                 '[random]' => $random,
                 '[rule]' => $rule->alias,
                 '[ext]' => $extension,
-                '[original_name_with_ext]' => $normalizedName,
+                '[original_name]' => pathinfo($normalizedName, \PATHINFO_FILENAME),
+                '[original_ext]' => pathinfo($normalizedName, \PATHINFO_EXTENSION),
             ]);
         }
 

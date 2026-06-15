@@ -17,7 +17,6 @@ class NamingStrategyTest extends TestCase
     {
         $placeholders = [
             '[timestamp]' => 'test111',
-            '[uniqid]' => 'test222',
             '[random]' => 'test333',
             '[custom]' => 'test444',
         ];
@@ -44,10 +43,9 @@ class NamingStrategyTest extends TestCase
         yield [\sprintf('%s.jpg', date('j')), '[d].[ext]'];
         yield [\sprintf('%s.jpg', date('d')), '[dd].[ext]'];
         yield ['test111.jpg', '[timestamp].[ext]'];
-        yield ['test222.jpg', '[uniqid].[ext]'];
         yield ['test333.jpg', '[random].[ext]'];
         yield ['foo.jpg', '[rule].[ext]'];
-        yield ['php.jpg', '[original_name_with_ext]'];
+        yield ['php.jpg', '[original_name].[original_ext]'];
         yield ['[invalid]', '[invalid]'];
         yield ['test444', '[custom]'];
     }
