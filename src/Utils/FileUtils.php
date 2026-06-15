@@ -101,7 +101,7 @@ class FileUtils
             $normalized .= '.'.$extension;
         }
 
-        return $normalized;
+        return str_replace(' ', '-', $normalized);
     }
 
     /**
