@@ -23,9 +23,7 @@ class MediaManager implements MediaManagerInterface
         }
 
         $event = new MediaSaveEvent($rule, $file);
-
         $this->eventDispatcher->dispatch($event);
-        $this->eventDispatcher->dispatch($event, MediaSaveEvent::getName($rule));
 
         return $event->getMedia() ?? throw new \RuntimeException('Unable to save file.');
     }
