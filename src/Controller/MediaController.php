@@ -53,7 +53,7 @@ class MediaController extends AbstractController
         if (!$form->isValid()) {
             return $this->json($form, Response::HTTP_BAD_REQUEST, context: [
                 FormErrorNormalizer::STATUS => Response::HTTP_BAD_REQUEST,
-                FormErrorNormalizer::WITH_ERRORS => false,
+                FormErrorNormalizer::ERRORS => false,
             ]);
         }
 
