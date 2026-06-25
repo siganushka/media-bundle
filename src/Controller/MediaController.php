@@ -30,8 +30,8 @@ class MediaController extends AbstractController
 
     public function getCollection(PaginatorInterface $paginator): Response
     {
-        $queryBuilder = $this->mediaRepository->createQueryBuilderWithOrderBy('m');
-        $pagination = $paginator->paginate($queryBuilder);
+        $qb = $this->mediaRepository->createQueryBuilderWithOrderBy('m');
+        $pagination = $paginator->paginate($qb);
 
         return $this->json($pagination, context: [
             AbstractNormalizer::GROUPS => ['media.collection'],

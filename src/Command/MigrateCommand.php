@@ -70,13 +70,13 @@ class MigrateCommand extends Command
             throw new \InvalidArgumentException(\sprintf('The "to-field" with value "%s" is not mapped for "%s".', $toField, $entityClass));
         }
 
-        $queryBuilder = $entityManager->getRepository($entityClass)
+        $qb = $entityManager->getRepository($entityClass)
             ->createQueryBuilder('t')
             // ->where(sprintf('t.%s IS NULL', $toField))
             // ->setMaxResults(10)
         ;
 
-        $query = $queryBuilder->getQuery();
+        $query = $qb->getQuery();
         /** @var array<int, object> */
         $result = $query->getResult();
 
