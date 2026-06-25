@@ -6,17 +6,15 @@ namespace Siganushka\MediaBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use Siganushka\GenericBundle\Response\ProblemJsonResponse;
+use Siganushka\GenericBundle\Serializer\Normalizer\FormErrorNormalizer;
 use Siganushka\MediaBundle\Form\MediaUploadType;
 use Siganushka\MediaBundle\MediaManagerInterface;
 use Siganushka\MediaBundle\Repository\MediaRepository;
-use Siganushka\MediaBundle\Rule;
 use Siganushka\MediaBundle\Serializer\Normalizer\MediaNormalizer;
 use Siganushka\MediaBundle\Utils\FileUtils;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Util\FormUtil;
 use Symfony\Component\Form\Util\ServerParams;
 use Symfony\Component\HttpFoundation\File\File;
@@ -43,12 +41,7 @@ class MediaController extends AbstractController
 
     public function postCollection(Request $request, EntityManagerInterface $entityManager, MediaManagerInterface $mediaManager, #[Autowire(service: 'form.server_params')] ServerParams $serverParams): Response
     {
-        $submittedData = array_replace($request->query->all(), $request->request->all());
-        if ($request->files->has('file')) {
-            $submittedData = FormUtil::mergeParamsAndFiles($submittedData, $request->files->all());
-        } elseif ($content = $request->getContent()) {
-            $submittedData['file'] = new File(FileUtils::createFromContent($content));
-        }
+        $submittedData = $this->parseSubmittedData($request);
 
         $form = $this->createForm(MediaUploadType::class);
         $form->submit($submittedData);
@@ -58,10 +51,13 @@ class MediaController extends AbstractController
         }
 
         if (!$form->isValid()) {
-            return $this->createFormErrorResponse($form, Response::HTTP_BAD_REQUEST);
+            return $this->json($form, Response::HTTP_BAD_REQUEST, context: [
+                FormErrorNormalizer::STATUS => Response::HTTP_BAD_REQUEST,
+                FormErrorNormalizer::WITH_ERRORS => false,
+            ]);
         }
 
-        /** @var array{ rule: Rule, file: File } */
+        /** @var array */
         $data = $form->getData();
 
         $entity = $mediaManager->save(...$data);
@@ -98,11 +94,16 @@ class MediaController extends AbstractController
         return new Response(status: Response::HTTP_NO_CONTENT);
     }
 
-    protected function createFormErrorResponse(FormInterface $form, int $statusCode): Response
+    private function parseSubmittedData(Request $request): array
     {
-        /** @var FormError */
-        $error = $form->getErrors(true, true)->current();
+        $submittedData = array_replace($request->query->all(), $request->request->all());
 
-        return new ProblemJsonResponse($error->getMessage(), $statusCode);
+        if ($request->files->has('file')) {
+            $submittedData = FormUtil::mergeParamsAndFiles($submittedData, $request->files->all());
+        } elseif ($content = $request->getContent()) {
+            $submittedData['file'] = new File(FileUtils::createFromContent($content));
+        }
+
+        return $submittedData;
     }
 }
