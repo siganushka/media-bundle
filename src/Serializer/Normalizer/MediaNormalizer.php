@@ -6,6 +6,7 @@ namespace Siganushka\MediaBundle\Serializer\Normalizer;
 
 use Siganushka\MediaBundle\Entity\Media;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class MediaNormalizer implements NormalizerInterface
@@ -27,6 +28,9 @@ class MediaNormalizer implements NormalizerInterface
         if ($asReference) {
             return $object->__toString();
         }
+
+        // Ignore id by default.
+        $context[AbstractNormalizer::IGNORED_ATTRIBUTES] ??= ['id'];
 
         /** @var array */
         $data = $this->normalizer->normalize($object, $format, $context);

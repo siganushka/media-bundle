@@ -20,7 +20,6 @@ use Symfony\Component\Form\Util\ServerParams;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
 class MediaController extends AbstractController
 {
@@ -34,7 +33,6 @@ class MediaController extends AbstractController
         $pagination = $paginator->paginate($qb);
 
         return $this->json($pagination, context: [
-            AbstractNormalizer::GROUPS => ['media.collection'],
             MediaNormalizer::AS_REFERENCE => false,
         ]);
     }
@@ -67,7 +65,6 @@ class MediaController extends AbstractController
         $entityManager->flush();
 
         return $this->json($entity, $status, context: [
-            AbstractNormalizer::GROUPS => ['media.item'],
             MediaNormalizer::AS_REFERENCE => false,
         ]);
     }
@@ -78,7 +75,6 @@ class MediaController extends AbstractController
             ?? throw $this->createNotFoundException();
 
         return $this->json($entity, context: [
-            AbstractNormalizer::GROUPS => ['media.item'],
             MediaNormalizer::AS_REFERENCE => false,
         ]);
     }
