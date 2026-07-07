@@ -19,6 +19,6 @@ class MediaRepository extends GenericEntityRepository
      */
     public function findOneByHash(string $hash): ?Media
     {
-        return $this->findOneBy(['hash' => $hash]);
+        return $this->findOneBy(compact('hash'));
     }
 }
