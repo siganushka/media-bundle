@@ -23,7 +23,7 @@ export default class extends Controller {
       headers: { Accept: 'application/json' },
     }).then(async response => {
       const json = await response.json()
-      return response.ok ? Promise.resolve(json) : Promise.reject(json.detail || response.statusText)
+      return response.ok ? Promise.resolve(json) : Promise.reject(json.detail || (`${response.status} ${response.statusText}`))
     }).then(res => {
       event.target.disabled = true
       this.dataTarget.value = res.hash
