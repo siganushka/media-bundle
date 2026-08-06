@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Siganushka\MediaBundle\DependencyInjection;
 
 use Doctrine\ORM\Events;
-use Siganushka\GenericBundle\DependencyInjection\SiganushkaGenericExtension;
 use Siganushka\MediaBundle\Command\MigrateCommand;
 use Siganushka\MediaBundle\Doctrine\MediaListener;
 use Siganushka\MediaBundle\NamingStrategy;
@@ -14,6 +13,7 @@ use Siganushka\MediaBundle\RuleRegistry;
 use Siganushka\MediaBundle\Storage\LocalStorage;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 use Spatie\ImageOptimizer\OptimizerChainFactory;
+use Symfony\Component\AssetMapper\AssetMapperInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -107,7 +107,7 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
             'doctrine' => ['mapping_override' => $mappingOverride],
         ]);
 
-        if (SiganushkaGenericExtension::isAssetMapperAvailable($container)) {
+        if ($this->isAssetMapperAvailable($container)) {
             $container->prependExtensionConfig('framework', [
                 'asset_mapper' => [
                     'paths' => [
@@ -116,5 +116,19 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
                 ],
             ]);
         }
+    }
+
+    private function isAssetMapperAvailable(ContainerBuilder $container): bool
+    {
+        if (!interface_exists(AssetMapperInterface::class)) {
+            return false;
+        }
+
+        $bundlesMetadata = $container->getParameter('kernel.bundles_metadata');
+        if (!isset($bundlesMetadata['FrameworkBundle'])) {
+            return false;
+        }
+
+        return is_file($bundlesMetadata['FrameworkBundle']['path'].'/Resources/config/asset_mapper.php');
     }
 }

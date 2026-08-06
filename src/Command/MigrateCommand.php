@@ -31,8 +31,8 @@ class MigrateCommand extends Command
         private readonly ManagerRegistry $managerRegistry,
         private readonly RuleRegistry $ruleRegistry,
         private readonly MediaManagerInterface $mediaManager,
-        private readonly string $storageDir,
-    ) {
+        private readonly string $storageDir)
+    {
         parent::__construct();
     }
 
