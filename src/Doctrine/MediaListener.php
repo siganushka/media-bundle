@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\Doctrine;
 
-use Siganushka\MediaBundle\Entity\Media;
+use Siganushka\MediaBundle\Model\MediaInterface;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 
 class MediaListener
@@ -13,7 +13,7 @@ class MediaListener
     {
     }
 
-    public function __invoke(Media $entity): void
+    public function __invoke(MediaInterface $entity): void
     {
         $url = $entity->getUrl();
         if (!\is_string($url)) {

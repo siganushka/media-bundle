@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\Serializer\Normalizer;
 
-use Siganushka\MediaBundle\Entity\Media;
+use Siganushka\MediaBundle\Model\MediaInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -20,7 +20,7 @@ class MediaNormalizer implements NormalizerInterface
     }
 
     /**
-     * @param Media $object
+     * @param MediaInterface $object
      */
     public function normalize($object, ?string $format = null, array $context = []): array|string
     {
@@ -40,13 +40,13 @@ class MediaNormalizer implements NormalizerInterface
 
     public function supportsNormalization($data, ?string $format = null, array $context = []): bool
     {
-        return $data instanceof Media;
+        return $data instanceof MediaInterface;
     }
 
     public function getSupportedTypes(?string $format): array
     {
         return [
-            Media::class => true,
+            MediaInterface::class => true,
         ];
     }
 }

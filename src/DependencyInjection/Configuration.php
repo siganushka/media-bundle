@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\DependencyInjection;
 
-use Siganushka\MediaBundle\Entity\Media;
+use Siganushka\MediaBundle\Model\MediaInterface;
 use Siganushka\MediaBundle\NamingStrategy;
-use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Storage\LocalStorage;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
@@ -19,8 +18,8 @@ use Symfony\Component\Validator\Constraints\Video;
 
 class Configuration implements ConfigurationInterface
 {
-    public static array $resourceMapping = [
-        'media_class' => [Media::class, MediaRepository::class],
+    public const RESOURCE_MAPPING = [
+        'media_class' => MediaInterface::class,
     ];
 
     /**
@@ -31,13 +30,14 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder('siganushka_media');
         $rootNode = $treeBuilder->getRootNode();
 
-        foreach (static::$resourceMapping as $configName => [$entityClass]) {
+        foreach (self::RESOURCE_MAPPING as $configName => $interface) {
             $rootNode->children()
                 ->scalarNode($configName)
-                    ->defaultValue($entityClass)
+                    ->isRequired()
+                    ->cannotBeEmpty()
                     ->validate()
-                        ->ifTrue(static fn (mixed $v): bool => \is_string($v) && !is_a($v, $entityClass, true))
-                        ->thenInvalid('The value must be instanceof '.$entityClass.', %s given.')
+                        ->ifTrue(static fn (mixed $v): bool => \is_string($v) && !is_subclass_of($v, $interface, true))
+                        ->thenInvalid('The value must be instanceof '.$interface.', %s given.')
                     ->end()
                 ->end()
             ;

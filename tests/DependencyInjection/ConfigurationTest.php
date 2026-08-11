@@ -6,11 +6,13 @@ namespace Siganushka\MediaBundle\Tests\DependencyInjection;
 
 use PHPUnit\Framework\TestCase;
 use Siganushka\MediaBundle\DependencyInjection\Configuration;
-use Siganushka\MediaBundle\Entity\Media;
+use Siganushka\MediaBundle\Model\MediaInterface;
 use Siganushka\MediaBundle\NamingStrategy;
 use Siganushka\MediaBundle\Storage\AliyunOssStorage;
 use Siganushka\MediaBundle\Storage\LocalStorage;
 use Siganushka\MediaBundle\Storage\StorageInterface;
+use Siganushka\MediaBundle\Tests\Fixtures\TestMedia;
+use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Validator\Constraints\File;
@@ -18,13 +20,24 @@ use Symfony\Component\Validator\Constraints\Image;
 
 class ConfigurationTest extends TestCase
 {
+    private ConfigurationInterface $configuration;
+    private Processor $processor;
+
+    protected function setUp(): void
+    {
+        $this->configuration = new Configuration();
+        $this->processor = new Processor();
+    }
+
     public function testDefaultConfig(): void
     {
-        $processor = new Processor();
-        $processedConfig = $processor->processConfiguration(new Configuration(), []);
+        $config = [
+            'media_class' => TestMedia::class,
+        ];
 
+        $processedConfig = $this->processor->processConfiguration($this->configuration, [$config]);
         static::assertSame($processedConfig, [
-            'media_class' => Media::class,
+            'media_class' => TestMedia::class,
             'storage' => LocalStorage::class,
             'naming' => NamingStrategy::DEFAULT_NAMING,
             'rules' => [],
@@ -34,7 +47,7 @@ class ConfigurationTest extends TestCase
     public function testCustomConfig(): void
     {
         $config = [
-            'media_class' => FooMedia::class,
+            'media_class' => TestMedia::class,
             'storage' => AliyunOssStorage::class,
             'naming' => '[yyyy][mm]/[hash].[ext]',
             'rules' => [
@@ -48,9 +61,7 @@ class ConfigurationTest extends TestCase
             ],
         ];
 
-        $processor = new Processor();
-        $processedConfig = $processor->processConfiguration(new Configuration(), [$config]);
-
+        $processedConfig = $this->processor->processConfiguration($this->configuration, [$config]);
         static::assertSame($processedConfig['media_class'], $config['media_class']);
         static::assertSame($processedConfig['storage'], $config['storage']);
         static::assertSame($processedConfig['naming'], $config['naming']);
@@ -67,29 +78,29 @@ class ConfigurationTest extends TestCase
 
         $config['rules']['bar']['resize'] = true;
         $config['rules']['bar']['optimize'] = true;
-        $processedConfig = $processor->processConfiguration(new Configuration(), [$config]);
+        $processedConfig = $this->processor->processConfiguration($this->configuration, [$config]);
 
         static::assertEquals($processedConfig['rules']['bar']['resize'], ['enabled' => true, 'max_width' => 1920, 'max_height' => 7680]);
         static::assertEquals($processedConfig['rules']['bar']['optimize'], ['enabled' => true, 'quality' => 90]);
 
         $config['rules']['bar']['resize'] = 500;
         $config['rules']['bar']['optimize'] = 75;
-        $processedConfig = $processor->processConfiguration(new Configuration(), [$config]);
+        $processedConfig = $this->processor->processConfiguration($this->configuration, [$config]);
 
         static::assertEquals($processedConfig['rules']['bar']['resize'], ['enabled' => true, 'max_width' => 500, 'max_height' => 500]);
         static::assertEquals($processedConfig['rules']['bar']['optimize'], ['enabled' => true, 'quality' => 75]);
 
         $config['rules']['bar']['resize'] = ['max_width' => 300];
-        $processedConfig = $processor->processConfiguration(new Configuration(), [$config]);
+        $processedConfig = $this->processor->processConfiguration($this->configuration, [$config]);
 
         static::assertEquals($processedConfig['rules']['bar']['resize'], ['enabled' => true, 'max_width' => 300, 'max_height' => 7680]);
 
         $config['rules']['bar']['resize'] = ['max_height' => 900];
-        $processedConfig = $processor->processConfiguration(new Configuration(), [$config]);
+        $processedConfig = $this->processor->processConfiguration($this->configuration, [$config]);
         static::assertEquals($processedConfig['rules']['bar']['resize'], ['enabled' => true, 'max_width' => 1920, 'max_height' => 900]);
 
         $config['rules']['bar']['resize'] = ['max_width' => 300, 'max_height' => 900];
-        $processedConfig = $processor->processConfiguration(new Configuration(), [$config]);
+        $processedConfig = $this->processor->processConfiguration($this->configuration, [$config]);
 
         static::assertEquals($processedConfig['rules']['bar']['resize'], ['enabled' => true, 'max_width' => 300, 'max_height' => 900]);
     }
@@ -97,14 +108,13 @@ class ConfigurationTest extends TestCase
     public function testMediaClassInvalidException(): void
     {
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage(\sprintf('The value must be instanceof %s, "stdClass" given', Media::class));
+        $this->expectExceptionMessage(\sprintf('The value must be instanceof %s, "stdClass" given', MediaInterface::class));
 
         $config = [
             'media_class' => \stdClass::class,
         ];
 
-        $processor = new Processor();
-        $processor->processConfiguration(new Configuration(), [$config]);
+        $this->processor->processConfiguration($this->configuration, [$config]);
     }
 
     public function testStorageInvalidException(): void
@@ -113,11 +123,11 @@ class ConfigurationTest extends TestCase
         $this->expectExceptionMessage(\sprintf('The value must be instanceof %s, "stdClass" given', StorageInterface::class));
 
         $config = [
+            'media_class' => TestMedia::class,
             'storage' => \stdClass::class,
         ];
 
-        $processor = new Processor();
-        $processor->processConfiguration(new Configuration(), [$config]);
+        $this->processor->processConfiguration($this->configuration, [$config]);
     }
 
     public function testRuleConstraintInvalidException(): void
@@ -126,6 +136,7 @@ class ConfigurationTest extends TestCase
         $this->expectExceptionMessage(\sprintf('The value must be instanceof %s, "stdClass" given', File::class));
 
         $config = [
+            'media_class' => TestMedia::class,
             'rules' => [
                 'foo' => [
                     'constraint' => \stdClass::class,
@@ -133,8 +144,7 @@ class ConfigurationTest extends TestCase
             ],
         ];
 
-        $processor = new Processor();
-        $processor->processConfiguration(new Configuration(), [$config]);
+        $this->processor->processConfiguration($this->configuration, [$config]);
     }
 
     public function testRuleOptimizeInvalidException(): void
@@ -143,6 +153,7 @@ class ConfigurationTest extends TestCase
         $this->expectExceptionMessage('The value 120 is too big for path "siganushka_media.rules.foo.optimize.quality". Should be less than or equal to 100');
 
         $config = [
+            'media_class' => TestMedia::class,
             'rules' => [
                 'foo' => [
                     'optimize' => 120,
@@ -150,11 +161,6 @@ class ConfigurationTest extends TestCase
             ],
         ];
 
-        $processor = new Processor();
-        $processor->processConfiguration(new Configuration(), [$config]);
+        $this->processor->processConfiguration($this->configuration, [$config]);
     }
-}
-
-class FooMedia extends Media
-{
 }

@@ -5,17 +5,15 @@ declare(strict_types=1);
 namespace Siganushka\MediaBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Siganushka\Contracts\Doctrine\CreatableInterface;
 use Siganushka\Contracts\Doctrine\CreatableTrait;
-use Siganushka\Contracts\Doctrine\ResourceInterface;
 use Siganushka\Contracts\Doctrine\ResourceTrait;
+use Siganushka\MediaBundle\Model\MediaInterface;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Utils\FileUtils;
 
-#[ORM\Entity(repositoryClass: MediaRepository::class, readOnly: true)]
+#[ORM\MappedSuperclass(repositoryClass: MediaRepository::class)]
 #[ORM\UniqueConstraint(columns: ['hash'])]
-#[ORM\Cache(usage: 'NONSTRICT_READ_WRITE')]
-class Media implements ResourceInterface, CreatableInterface, \Stringable
+abstract class AbstractMedia implements MediaInterface
 {
     use CreatableTrait;
     use ResourceTrait;

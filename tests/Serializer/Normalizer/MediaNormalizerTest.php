@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Siganushka\MediaBundle\Tests\Serializer\Normalizer;
 
 use PHPUnit\Framework\TestCase;
-use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Serializer\Normalizer\MediaNormalizer;
+use Siganushka\MediaBundle\Tests\Fixtures\TestMedia;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class MediaNormalizerTest extends TestCase
@@ -20,7 +20,7 @@ class MediaNormalizerTest extends TestCase
 
     public function testNormalize(): void
     {
-        $media = new Media();
+        $media = new TestMedia();
         $media->setHash('test_hash');
         $media->setUrl('http://localhost/foo/bar/baz.jpg');
         $media->setName('baz.jpg');

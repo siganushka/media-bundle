@@ -9,8 +9,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Doctrine\Persistence\ManagerRegistry;
 use Siganushka\Contracts\Doctrine\ResourceInterface;
-use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\MediaManagerInterface;
+use Siganushka\MediaBundle\Model\MediaInterface;
 use Siganushka\MediaBundle\RuleRegistry;
 use Siganushka\MediaBundle\Utils\FileUtils;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -105,7 +105,7 @@ class MigrateCommand extends Command
                 $toValue = null;
             }
 
-            if ($toValue instanceof Media || ($toValue instanceof Collection && $toValue->count())) {
+            if ($toValue instanceof MediaInterface || ($toValue instanceof Collection && $toValue->count())) {
                 $output->writeln(\sprintf('<comment>%s already migrated.</comment>', $message));
                 continue;
             }
@@ -206,7 +206,7 @@ class MigrateCommand extends Command
                 $name = $metadata->getName();
                 if ($metadata->isMappedSuperclass
                     || $metadata->isEmbeddedClass
-                    || is_subclass_of($name, Media::class, true)) {
+                    || is_subclass_of($name, MediaInterface::class, true)) {
                     continue;
                 }
 

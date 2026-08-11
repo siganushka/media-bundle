@@ -7,16 +7,16 @@ namespace Siganushka\MediaBundle\Tests\Form\DataTransformer;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use PHPUnit\Framework\TestCase;
-use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Form\DataTransformer\MediaToReferenceTransformer;
 use Siganushka\MediaBundle\Repository\MediaRepository;
+use Siganushka\MediaBundle\Tests\Fixtures\TestMedia;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 
 class MediaToReferenceTransformerTest extends TestCase
 {
     public function testTransform(): void
     {
-        $media = new Media();
+        $media = new TestMedia();
         $media->setHash('test_hash');
 
         $transformer = $this->createDataTransformer();
@@ -31,11 +31,11 @@ class MediaToReferenceTransformerTest extends TestCase
         static::assertNull($transformer->reverseTransform(null));
 
         $media = $transformer->reverseTransform('test_hash');
-        static::assertInstanceOf(Media::class, $media);
+        static::assertInstanceOf(TestMedia::class, $media);
         static::assertSame('test_hash', $media->getHash());
 
         $media = $transformer->reverseTransform('http://localhost/test.png?hash=test_hash');
-        static::assertInstanceOf(Media::class, $media);
+        static::assertInstanceOf(TestMedia::class, $media);
         static::assertSame('test_hash', $media->getHash());
     }
 
@@ -50,29 +50,25 @@ class MediaToReferenceTransformerTest extends TestCase
 
     private function createDataTransformer(): MediaToReferenceTransformer
     {
-        $media = new Media();
+        $media = new TestMedia();
         $media->setHash('test_hash');
 
         $repository = $this->createMock(MediaRepository::class);
-        $repository->expects(static::any())
-            ->method('getClassName')
-            ->willReturn(Media::class)
+        $repository->method('getClassName')
+            ->willReturn(TestMedia::class)
         ;
 
-        $repository->expects(static::any())
-            ->method('findOneBy')
+        $repository->method('findOneBy')
             ->willReturnCallback(static fn (array $value) => $value === ['hash' => 'test_hash'] ? $media : null)
         ;
 
         $objectManager = $this->createMock(ObjectManager::class);
-        $objectManager->expects(static::any())
-            ->method('getRepository')
+        $objectManager->method('getRepository')
             ->willReturn($repository)
         ;
 
         $managerRegistry = $this->createMock(ManagerRegistry::class);
-        $managerRegistry->expects(static::any())
-            ->method('getManagerForClass')
+        $managerRegistry->method('getManagerForClass')
             ->willReturn($objectManager)
         ;
 

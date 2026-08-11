@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle;
 
-use Siganushka\MediaBundle\Entity\Media;
+use Siganushka\MediaBundle\Model\MediaInterface;
 
 interface MediaManagerInterface
 {
-    public function save(string|Rule $rule, string|\SplFileInfo $file): Media;
+    public function save(string|Rule $rule, string|\SplFileInfo $file): MediaInterface;
 }

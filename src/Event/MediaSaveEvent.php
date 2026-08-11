@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\Event;
 
-use Siganushka\MediaBundle\Entity\Media;
+use Siganushka\MediaBundle\Model\MediaInterface;
 
 class MediaSaveEvent extends MediaEvent
 {
-    private ?Media $media = null;
+    private ?MediaInterface $media = null;
 
-    public function getMedia(): ?Media
+    public function getMedia(): ?MediaInterface
     {
         return $this->media;
     }
 
-    public function setMedia(?Media $media): self
+    public function setMedia(?MediaInterface $media): self
     {
         $this->media = $media;
 

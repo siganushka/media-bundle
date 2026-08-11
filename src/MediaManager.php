@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle;
 
-use Siganushka\MediaBundle\Entity\Media;
 use Siganushka\MediaBundle\Event\MediaSaveEvent;
+use Siganushka\MediaBundle\Model\MediaInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class MediaManager implements MediaManagerInterface
@@ -16,7 +16,7 @@ class MediaManager implements MediaManagerInterface
     ) {
     }
 
-    public function save(string|Rule $rule, string|\SplFileInfo $file): Media
+    public function save(string|Rule $rule, string|\SplFileInfo $file): MediaInterface
     {
         if (\is_string($rule)) {
             $rule = $this->ruleRegistry->get($rule);
