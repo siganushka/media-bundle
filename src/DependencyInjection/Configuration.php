@@ -6,6 +6,7 @@ namespace Siganushka\MediaBundle\DependencyInjection;
 
 use Siganushka\MediaBundle\Model\MediaInterface;
 use Siganushka\MediaBundle\NamingStrategy;
+use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Storage\LocalStorage;
 use Siganushka\MediaBundle\Storage\StorageInterface;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
@@ -19,7 +20,7 @@ use Symfony\Component\Validator\Constraints\Video;
 class Configuration implements ConfigurationInterface
 {
     public const RESOURCE_MAPPING = [
-        'media_class' => MediaInterface::class,
+        'media_class' => [MediaInterface::class, MediaRepository::class],
     ];
 
     /**
@@ -30,7 +31,7 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder('siganushka_media');
         $rootNode = $treeBuilder->getRootNode();
 
-        foreach (self::RESOURCE_MAPPING as $configName => $interface) {
+        foreach (self::RESOURCE_MAPPING as $configName => [$interface]) {
             $rootNode->children()
                 ->scalarNode($configName)
                     ->isRequired()

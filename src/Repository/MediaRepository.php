@@ -15,11 +15,6 @@ use Siganushka\MediaBundle\Model\MediaInterface;
  */
 class MediaRepository extends GenericEntityRepository
 {
-    public function __construct(ManagerRegistry $registry, string $entityClass = MediaInterface::class)
-    {
-        parent::__construct($registry, $entityClass);
-    }
-
     /**
      * @return T|null
      */

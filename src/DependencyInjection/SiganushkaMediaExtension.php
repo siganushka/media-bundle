@@ -32,6 +32,11 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
+        foreach (Configuration::RESOURCE_MAPPING as $configName => [, $repositoryClass]) {
+            $repositoryClass = $container->findDefinition($repositoryClass);
+            $repositoryClass->setArgument('$entityClass', $config[$configName]);
+        }
+
         $servicesMap = [];
         foreach ($config['rules'] as $alias => $options) {
             $id = \sprintf('siganushka_media.rule.%s', $alias);
@@ -86,7 +91,7 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         $config = array_merge(...$configs);
 
         $resolveTargetEntities = [];
-        foreach (Configuration::RESOURCE_MAPPING as $configName => $interface) {
+        foreach (Configuration::RESOURCE_MAPPING as $configName => [$interface]) {
             $resolveTargetEntities[$interface] = $config[$configName] ?? null;
         }
 
