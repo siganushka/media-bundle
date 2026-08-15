@@ -77,7 +77,7 @@ class SiganushkaMediaExtension extends Extension implements PrependExtensionInte
         $localStorage->setArgument('$storageDir', '%siganushka_media.storage_dir%');
 
         $mediaListener = $container->findDefinition(MediaListener::class);
-        $mediaListener->addTag('doctrine.orm.entity_listener', ['event' => Events::postRemove, 'entity' => $config['media_class']]);
+        $mediaListener->addTag('doctrine.orm.entity_listener', ['event' => Events::postRemove, 'entity' => $config['media_class'], 'priority' => -8]);
 
         $namingStrategy = $container->findDefinition(NamingStrategy::class);
         $namingStrategy->setArgument('$defaultNamingStrategy', $config['naming']);

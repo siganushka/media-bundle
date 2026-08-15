@@ -43,7 +43,7 @@ class SiganushkaMediaExtensionTest extends TestCase
 
         $mediaListener = $container->findDefinition(MediaListener::class);
         static::assertSame([
-            ['event' => 'postRemove', 'entity' => TestMedia::class],
+            ['event' => 'postRemove', 'entity' => TestMedia::class, 'priority' => -8],
         ], $mediaListener->getTag('doctrine.orm.entity_listener'));
 
         $namingStrategy = $container->findDefinition(NamingStrategy::class);

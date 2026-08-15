@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Siganushka\MediaBundle\Repository;
 
-use Doctrine\Persistence\ManagerRegistry;
 use Siganushka\GenericBundle\Repository\GenericEntityRepository;
 use Siganushka\MediaBundle\Model\MediaInterface;
 
