@@ -32,6 +32,7 @@ class MediaUploadType extends AbstractType
                 'choice_translation_domain' => false,
                 'constraints' => new NotBlank(message: 'Media rule should not be blank.'),
                 'invalid_message' => 'Media rule is not valid.',
+                'priority' => 0,
             ])
         ;
 
@@ -56,6 +57,7 @@ class MediaUploadType extends AbstractType
         $parent->add('file', FileType::class, [
             'label' => 'media.file',
             'constraints' => $constraints,
+            'priority' => -10,
         ]);
     }
 }
