@@ -14,7 +14,7 @@
     "require": {
         "php": ">=8.2",
         "ext-fileinfo": "*",
-        "doctrine/doctrine-bundle": "^2.12|^3.0",
+        "doctrine/doctrine-bundle": "^2.18|^3.0",
         "knplabs/knp-components": "^5.0",
         "siganushka/doctrine-contracts": "^1.2",
         "siganushka/generic-bundle": "dev-main",
