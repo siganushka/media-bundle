@@ -7,6 +7,7 @@ namespace Siganushka\MediaBundle\Controller;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Siganushka\GenericBundle\Serializer\Normalizer\FormErrorNormalizer;
+use Siganushka\MediaBundle\Dto\MediaQueryDto;
 use Siganushka\MediaBundle\Form\MediaUploadType;
 use Siganushka\MediaBundle\MediaManagerInterface;
 use Siganushka\MediaBundle\Repository\MediaRepository;
@@ -20,6 +21,7 @@ use Symfony\Component\Form\Util\ServerParams;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 
 class MediaController extends AbstractController
 {
@@ -27,9 +29,9 @@ class MediaController extends AbstractController
     {
     }
 
-    public function getCollection(PaginatorInterface $paginator): Response
+    public function getCollection(PaginatorInterface $paginator, #[MapQueryString] MediaQueryDto $dto): Response
     {
-        $qb = $this->mediaRepository->createQueryBuilderWithOrderBy('m');
+        $qb = $this->mediaRepository->createQueryBuilderFromDto('m', $dto);
         $pagination = $paginator->paginate($qb);
 
         return $this->json($pagination, context: [
