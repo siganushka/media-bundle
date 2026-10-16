@@ -7,7 +7,7 @@ namespace Siganushka\MediaBundle\Tests\DependencyInjection;
 use PHPUnit\Framework\TestCase;
 use Siganushka\MediaBundle\Command\MigrateCommand;
 use Siganushka\MediaBundle\DependencyInjection\SiganushkaMediaExtension;
-use Siganushka\MediaBundle\Doctrine\MediaListener;
+use Siganushka\MediaBundle\Doctrine\MediaRemoveListener;
 use Siganushka\MediaBundle\Model\MediaInterface;
 use Siganushka\MediaBundle\NamingStrategy;
 use Siganushka\MediaBundle\RuleRegistry;
@@ -41,10 +41,10 @@ class SiganushkaMediaExtensionTest extends TestCase
         $localStorage = $container->findDefinition(LocalStorage::class);
         static::assertSame('%siganushka_media.storage_dir%', $localStorage->getArgument('$storageDir'));
 
-        $mediaListener = $container->findDefinition(MediaListener::class);
+        $mediaRemoveListener = $container->findDefinition(MediaRemoveListener::class);
         static::assertSame([
             ['event' => 'postRemove', 'entity' => TestMedia::class, 'priority' => -8],
-        ], $mediaListener->getTag('doctrine.orm.entity_listener'));
+        ], $mediaRemoveListener->getTag('doctrine.orm.entity_listener'));
 
         $namingStrategy = $container->findDefinition(NamingStrategy::class);
         static::assertSame(NamingStrategy::DEFAULT_NAMING, $namingStrategy->getArgument('$defaultNamingStrategy'));
