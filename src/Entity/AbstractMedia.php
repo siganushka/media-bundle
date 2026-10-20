@@ -18,7 +18,7 @@ abstract class AbstractMedia implements MediaInterface
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(options: ['unsigned' => true])]
     protected ?int $id = null;
 
     #[ORM\Column]
