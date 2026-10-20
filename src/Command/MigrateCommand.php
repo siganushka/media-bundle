@@ -8,7 +8,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Doctrine\Persistence\ManagerRegistry;
-use Siganushka\Contracts\Doctrine\ResourceInterface;
 use Siganushka\MediaBundle\MediaManagerInterface;
 use Siganushka\MediaBundle\Model\MediaInterface;
 use Siganushka\MediaBundle\RuleRegistry;
@@ -84,16 +83,19 @@ class MigrateCommand extends Command
         $current = $successfully = 0;
 
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
+        $classMetadata = $entityManager->getClassMetadata($entityClass);
+
         foreach ($result as $entity) {
             ++$current;
-            $identifier = $entity instanceof ResourceInterface
-                ? $entity->getId()
-                : $current;
+
+            /** @var array<string, string> */
+            $identifiers = $classMetadata->getIdentifierValues($entity);
+            $identifiersAsString = implode('-', $identifiers);
 
             $message = \sprintf('[%d/%d] #%d Execute migrate from %s::%s -> %s',
                 $current,
                 $total,
-                $identifier,
+                $identifiersAsString,
                 $entityClass,
                 $fromField,
                 $toField,

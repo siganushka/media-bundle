@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Siganushka\MediaBundle\Model;
 
 use Siganushka\Contracts\Doctrine\CreatableInterface;
-use Siganushka\Contracts\Doctrine\ResourceInterface;
 
-interface MediaInterface extends ResourceInterface, CreatableInterface, \Stringable
+interface MediaInterface extends CreatableInterface, \Stringable
 {
     public function getHash(): ?string;
 

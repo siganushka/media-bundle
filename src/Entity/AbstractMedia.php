@@ -6,7 +6,6 @@ namespace Siganushka\MediaBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Siganushka\Contracts\Doctrine\CreatableTrait;
-use Siganushka\Contracts\Doctrine\ResourceTrait;
 use Siganushka\MediaBundle\Model\MediaInterface;
 use Siganushka\MediaBundle\Repository\MediaRepository;
 use Siganushka\MediaBundle\Utils\FileUtils;
@@ -16,7 +15,11 @@ use Siganushka\MediaBundle\Utils\FileUtils;
 abstract class AbstractMedia implements MediaInterface
 {
     use CreatableTrait;
-    use ResourceTrait;
+
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    protected ?int $id = null;
 
     #[ORM\Column]
     protected ?string $hash = null;
@@ -44,6 +47,11 @@ abstract class AbstractMedia implements MediaInterface
 
     #[ORM\Column(nullable: true)]
     protected ?int $height = null;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
     public function getHash(): ?string
     {
