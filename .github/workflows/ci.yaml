@@ -1,0 +1,25 @@
+name: CI Test
+
+on:
+    push:
+        branches: [ main ]
+    pull_request:
+        branches: [ main ]
+
+jobs:
+    test:
+        name: Tests with PHP ${{ matrix.php-versions }}
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                php-versions: ['8.2', '8.3', '8.4', '8.5', '8.6']
+        steps:
+            - { name: Checkout code,        uses: actions/checkout@v6 }
+            - { name: Install PHP,          uses: shivammathur/setup-php@v2, with: { php-version: "${{ matrix.php-versions }}" }}
+            - { name: PHP Version,          run: php --version }
+            - { name: Validate composer,    run: composer validate --strict }
+            - { name: Install dependencies, run: composer install }
+            - { name: Install tools,        run: composer install -d tools/ }
+            - { name: Run tests,            run: tools/vendor/bin/simple-phpunit --debug }
+            - { name: Run phpstan,          run: tools/vendor/bin/phpstan --debug -vvv }
