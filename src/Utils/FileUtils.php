@@ -35,8 +35,6 @@ class FileUtils
             throw new \RuntimeException(curl_error($curl));
         }
 
-        curl_close($curl);
-
         return self::createFromContent($content, pathinfo($url, \PATHINFO_BASENAME));
     }
 
