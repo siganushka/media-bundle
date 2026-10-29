@@ -15,7 +15,7 @@ class MediaSaveEvent extends MediaEvent
         return $this->media;
     }
 
-    public function setMedia(?MediaInterface $media): self
+    public function setMedia(?MediaInterface $media): static
     {
         $this->media = $media;
 
