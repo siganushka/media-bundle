@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Siganushka\MediaBundle\NamingStrategy;
 use Siganushka\MediaBundle\Rule;
 use Siganushka\MediaBundle\RuleRegistry;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class NamingStrategyTest extends TestCase
 {
@@ -31,6 +32,31 @@ class NamingStrategyTest extends TestCase
 
         static::assertSame($targetFile, $naming->getTargetFile($rule1, $file));
         static::assertSame($targetFile, $naming->getTargetFile($rule2, $file));
+    }
+
+    public function testGetTargetFileWithStringRule(): void
+    {
+        $rule = new Rule('foo');
+
+        $registry = $this->createMock(RuleRegistry::class);
+        $registry->expects(static::once())
+            ->method('get')
+            ->with('foo')
+            ->willReturn($rule)
+        ;
+
+        $naming = new NamingStrategy($registry, '[rule].[ext]');
+
+        static::assertSame('foo.jpg', $naming->getTargetFile('foo', './tests/Fixtures/php.jpg'));
+    }
+
+    public function testGetTargetFileWithUploadedFile(): void
+    {
+        $file = new UploadedFile('./tests/Fixtures/php.jpg', 'Original Photo.jpg', 'image/jpeg', null, true);
+
+        $naming = new NamingStrategy($this->createMock(RuleRegistry::class), '[original_name].[ext]');
+
+        static::assertSame('Original-Photo.jpg', $naming->getTargetFile(new Rule('foo'), $file));
     }
 
     public static function namingStrategyProvider(): iterable

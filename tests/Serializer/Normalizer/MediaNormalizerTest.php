@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Siganushka\MediaBundle\Tests\Serializer\Normalizer;
 
 use PHPUnit\Framework\TestCase;
+use Siganushka\MediaBundle\Model\MediaInterface;
 use Siganushka\MediaBundle\Serializer\Normalizer\MediaNormalizer;
 use Siganushka\MediaBundle\Tests\Fixtures\TestMedia;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -45,5 +46,11 @@ class MediaNormalizerTest extends TestCase
         ], $this->normalizer->normalize($media, context: [
             MediaNormalizer::AS_REFERENCE => false,
         ]));
+    }
+
+    public function testSupportsNormalization(): void
+    {
+        static::assertFalse($this->normalizer->supportsNormalization(new \stdClass()));
+        static::assertSame([MediaInterface::class => true], $this->normalizer->getSupportedTypes(null));
     }
 }
